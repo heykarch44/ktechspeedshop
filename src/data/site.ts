@@ -1,6 +1,6 @@
 export const site = {
   name: "Ktech Speedshop",
-  shortName: "KTECH",
+  shortName: "K-TECH",
   url: "https://ktechspeedshop.com",
   tagline: "Custom C10 parts and builds",
   description:

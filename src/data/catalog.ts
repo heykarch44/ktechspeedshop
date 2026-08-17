@@ -64,7 +64,7 @@ export const builds: Build[] = [
     summary:
       "Bagged shortbed, LS power, tucked bodywork. Built to drive, not sit under a cover.",
     story:
-      "This 1968 shortbed started as a tired driver and left as a laid-out C10 with modern power and a clean engine bay. Air ride to put it on the ground, an LS3 that actually gets used, and bodywork that still looks like a truck. No cartoon stance. No trailer queen rules.",
+      "This 1968 shortbed started as a tired driver and left as a laid-out C10 with modern power and a clean engine bay. Air ride to put it on the ground, an LS3 that actually gets used, and bodywork that still looks like a truck.",
     specs: [
       "LS3 / 4L65E",
       "Air ride, front and rear",
@@ -117,7 +117,7 @@ export const builds: Build[] = [
       "Rally wheels",
       "Restored chrome and trim",
     ],
-    featured: true,
+    featured: false,
   },
   {
     slug: "78-squarebody",
@@ -139,7 +139,7 @@ export const builds: Build[] = [
       "LED lighting",
       "Custom interior",
     ],
-    featured: false,
+    featured: true,
   },
   {
     slug: "85-lifted-square",
