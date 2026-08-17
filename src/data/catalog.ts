@@ -164,9 +164,9 @@ export const builds: Build[] = [
     projectSlug: "85-c10-silverado",
   },
   {
-    slug: "71-longbed-project",
-    title: "1971 C10 Longbed",
-    year: 1971,
+    slug: "68-c10-in-build",
+    title: "1968 C10",
+    year: 1968,
     model: "C10",
     nickname: "In the jig",
     status: "in-build",
@@ -175,7 +175,7 @@ export const builds: Build[] = [
     summary:
       "Currently in the shop. Chassis, LS, and metalwork underway. Ask if you want in on a similar build.",
     story:
-      "Longbeds still have a place. This 71 is on stands for chassis work and an LS swap. Follow the shop on Instagram for in-progress shots — these are the photos most sites never show.",
+      "This 68 is on stands for chassis work and an LS swap. Follow the shop log for in-progress shots — these are the photos most sites never show.",
     specs: [
       "Frame and suspension in progress",
       "LS swap staged",
@@ -183,7 +183,7 @@ export const builds: Build[] = [
       "Available as a commissioned finish or similar build slot",
     ],
     featured: false,
-    projectSlug: "71-c10-longbed",
+    projectSlug: "68-c10-in-build",
   },
 ];
 

@@ -1,5 +1,5 @@
 ---
-project: 71-c10-longbed
+project: 68-c10-in-build
 title: Chassis on stands
 pubDate: 2026-07-11
 summary: Bed off, cab mocked, frame in the air. This is the unglamorous part that makes the stance work later.
