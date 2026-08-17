@@ -277,11 +277,11 @@ export const parts: Part[] = [
 
 export const merch: Merch[] = [
   {
-    slug: "ktech-snapback",
-    title: "K-TECH snapback",
+    slug: "ktech-trucker",
+    title: "K-TECH trucker",
     price: "$32",
     cover: "/images/merch/hat.png",
-    summary: "Black hat, rust K-TECH mark. The one that lives in the shop truck.",
+    summary: "Black flat-bill trucker, rust K-TECH mark. The one that lives in the shop truck.",
     sizes: "One size",
   },
   {
