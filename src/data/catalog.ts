@@ -46,6 +46,7 @@ export type Merch = {
   cover: string;
   summary: string;
   sizes?: string;
+  line: "shop" | "tech";
 };
 
 export const builds: Build[] = [
@@ -278,29 +279,53 @@ export const parts: Part[] = [
 export const merch: Merch[] = [
   {
     slug: "ktech-snapback",
-    title: "Ktech snapback",
+    title: "K-TECH snapback",
     price: "$32",
     cover: "/images/merch/hat.png",
-    summary: "Black hat, rust mark. The one that lives in the shop truck.",
+    summary: "Black hat, rust K-TECH mark. The one that lives in the shop truck.",
     sizes: "One size",
+    line: "shop",
   },
   {
     slug: "speedshop-tee",
     title: "Speedshop tee",
     price: "$28",
     cover: "/images/merch/tee.png",
-    summary: "Heavyweight black tee. KTECH SPEEDSHOP on the chest.",
+    summary: "Heavyweight black tee. K-TECH SPEEDSHOP on the chest.",
     sizes: "S–XXL",
+    line: "shop",
   },
   {
     slug: "shop-hoodie",
     title: "Shop hoodie",
     price: "$58",
     cover: "/images/merch/hoodie.png",
-    summary: "The hoodie you wear in the bay when the heater is lying.",
+    summary: "K-TECH SPEEDSHOP on the chest. The hoodie you wear in the bay when the heater is lying.",
     sizes: "S–XXL",
+    line: "shop",
+  },
+  {
+    slug: "k-tech-tee",
+    title: "K_tech tee",
+    price: "$28",
+    cover: "/images/merch/ktech-tee.png",
+    summary: "Bone mark, rust underscore. The tech side of the shop.",
+    sizes: "S–XXL",
+    line: "tech",
+  },
+  {
+    slug: "k-tech-sweatshirt",
+    title: "K_tech sweatshirt",
+    price: "$48",
+    cover: "/images/merch/ktech-sweatshirt.png",
+    summary: "Crewneck. K_tech on the chest. For the bay that also ships code.",
+    sizes: "S–XXL",
+    line: "tech",
   },
 ];
+
+export const shopMerch = merch.filter((item) => item.line === "shop");
+export const techMerch = merch.filter((item) => item.line === "tech");
 
 export function getBuild(slug: string) {
   return builds.find((item) => item.slug === slug);

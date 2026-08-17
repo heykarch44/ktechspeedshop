@@ -5,10 +5,10 @@ import { site } from "../data/site";
 <footer class="site-footer">
   <div class="footer-grid">
     <div>
-      <p class="kicker">Ktech Speedshop</p>
+      <p class="kicker">{site.name}</p>
       <h2 class="serif" style="font-size:2rem;margin:0.4rem 0 0.8rem">C10 trucks. Custom parts. No filler.</h2>
       <p style="color:var(--paper-dim);max-width:28rem">
-        Custom Chevrolet C10 builds and parts for 1960–1966, 1967–1972, and 1973–1987 squarebody trucks.
+        Custom Chevrolet C10 builds and parts for 1967–1972 and 1973–1987 squarebody trucks.
       </p>
     </div>
     <div class="footer-col">
@@ -34,7 +34,7 @@ import { site } from "../data/site";
     </div>
   </div>
   <div class="legal">
-    <span>© {new Date().getFullYear()} Ktech Speedshop</span>
+    <span>© {new Date().getFullYear()} {site.name}</span>
     <span>Custom C10 builds · parts · merch</span>
   </div>
 </footer>

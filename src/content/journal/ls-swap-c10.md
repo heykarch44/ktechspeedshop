@@ -1,6 +1,6 @@
 ---
 title: "Spec’ing an LS swap for a Chevrolet C10"
-description: "What to decide before an LS swap in a 1960–1987 C10: oil pan, transmission, mounts, cooling, exhaust, and wiring."
+description: "What to decide before an LS swap in a 1967–1987 C10: oil pan, transmission, mounts, cooling, exhaust, and wiring."
 pubDate: 2026-08-17
 image: /images/journal/engine.jpg
 tags:
@@ -12,7 +12,7 @@ An LS in a C10 is not exotic anymore. Doing it so the truck drives, cools, and s
 
 ## Decide these first
 
-- **Year of truck.** 60–66, 67–72, and 73–87 do not share the same engine bay problems.
+- **Year of truck.** 67–72 and 73–87 do not share the same engine bay problems.
 - **Oil pan and crossmember.** This pair decides whether the engine sits where it should or fights the steering.
 - **Transmission.** 4L60/65/80, 6L80, or a manual — each changes the tunnel, mounts, and shifter.
 - **Fuel and cooling.** Return vs returnless, radiator size, electric fans that actually pull air through a C10 core support.

@@ -4,7 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Card from "../components/Card.astro";
 import { site } from "../data/site";
-import { builds, listings, merch, parts } from "../data/catalog";
+import { builds, listings, shopMerch, techMerch, parts } from "../data/catalog";
 import { getUpdates } from "../lib/projects";
 import { formatDate } from "../lib/format";
 
@@ -13,8 +13,8 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
 ---
 
 <Base
-  title="Ktech Speedshop | Custom C10 Builds, Parts & Merch"
-  description="Ktech Speedshop builds custom Chevrolet C10 trucks and C10 parts. See completed builds, projects for sale, shop merch, and start a restomod."
+  title="K-TECH Speedshop | Custom C10 Builds, Parts & Merch"
+  description="K-TECH Speedshop builds custom Chevrolet C10 trucks and C10 parts. See completed builds, projects for sale, shop merch, and start a restomod."
   image="/images/builds/hero-c10.png"
 >
   <Header />
@@ -22,17 +22,17 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
     <section class="hero">
       <img
         src="/images/builds/hero-c10.png"
-        alt="Custom slammed black 1968 Chevrolet C10 shortbed built by Ktech Speedshop"
+        alt="Custom slammed black 1968 Chevrolet C10 shortbed built by K-TECH Speedshop"
         width="2400"
         height="1350"
         fetchpriority="high"
       />
       <div class="hero-copy">
-        <span class="kicker">Ktech Speedshop</span>
+        <span class="kicker">K-TECH Speedshop</span>
         <h1>C10s built to drive.</h1>
         <p>
           Custom Chevrolet C10 builds, shop-made parts, and the occasional truck for sale.
-          1960–1987.
+          1967–1987.
         </p>
         <div class="btn-row">
           <a class="btn rust" href="/builds">See the builds</a>
@@ -47,7 +47,7 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
         {
           Array.from({ length: 2 }).map(() => (
             <span>
-              60–66 C10 · 67–72 C10 · 73–87 Squarebody · LS swaps · Air ride · Chassis · Paint · Custom parts · Merch ·
+              67–72 C10 · 73–87 Squarebody · LS swaps · Air ride · Chassis · Paint · Custom parts · Merch ·
             </span>
           ))
         }
@@ -113,7 +113,7 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
       <div class="wrap split">
         <img
           src="/images/builds/engine-bay-ls.png"
-          alt="Custom LS-swapped Chevrolet C10 engine bay fabricated at Ktech Speedshop"
+          alt="Custom LS-swapped Chevrolet C10 engine bay fabricated at K-TECH Speedshop"
           width="1600"
           height="1200"
           loading="lazy"
@@ -151,7 +151,7 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
                 image={item.cover}
                 eyebrow={`${item.year} · ${item.price}`}
                 title={item.title}
-                alt={`${item.year} Chevrolet ${item.model} C10 for sale at Ktech Speedshop`}
+                alt={`${item.year} Chevrolet ${item.model} C10 for sale at K-TECH Speedshop`}
               />
             ))
           }
@@ -170,9 +170,33 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
         </div>
         <div class="product-grid">
           {
-            merch.map((item) => (
+            shopMerch.map((item) => (
               <a class="product" href="/shop">
-                <img src={item.cover} alt={`${item.title} from Ktech Speedshop`} width="800" height="800" loading="lazy" />
+                <img src={item.cover} alt={`${item.title} from K-TECH Speedshop`} width="800" height="800" loading="lazy" />
+                <div class="product-body">
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                  <span class="price">{item.price}</span>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+        <div class="section-head" style="margin-top:2.6rem">
+          <div>
+            <span class="kicker">K_tech</span>
+            <h2>The other bay.</h2>
+          </div>
+          <a class="btn ghost" href="/shop#tech">Tech merch</a>
+        </div>
+        <p class="lede" style="max-width:38rem;margin:0.2rem 0 1.4rem">
+          Same shop. Different stack. Most of these guys stop at the wrench.
+        </p>
+        <div class="product-grid two">
+          {
+            techMerch.map((item) => (
+              <a class="product" href="/shop#tech">
+                <img src={item.cover} alt={`${item.title} from K_tech`} width="800" height="800" loading="lazy" />
                 <div class="product-body">
                   <h3>{item.title}</h3>
                   <p>{item.summary}</p>
@@ -214,7 +238,7 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
     <section class="ig-band">
       <img
         src="/images/shop/garage.jpg"
-        alt="Ktech Speedshop garage floor during a C10 build"
+        alt="K-TECH Speedshop garage floor during a C10 build"
         width="1600"
         height="1000"
         loading="lazy"

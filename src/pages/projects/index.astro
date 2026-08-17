@@ -17,7 +17,7 @@ function latestFor(slug: string) {
 
 <Base
   title="C10 Projects and Build Logs"
-  description="Follow Ktech Speedshop C10 projects as they progress. Dated build updates, shop photos, and video blogs for trucks currently in the bay and finished builds."
+  description="Follow K-TECH Speedshop C10 projects as they progress. Dated build updates, shop photos, and video blogs for trucks currently in the bay and finished builds."
   image="/images/builds/71-project.png"
 >
   <Header />
@@ -39,7 +39,7 @@ function latestFor(slug: string) {
               image={project.data.cover}
               eyebrow={`${project.data.year} · ${statusLabel(project.data.status)}${latestUpdate ? ` · ${formatDate(latestUpdate.data.pubDate)}` : ""}`}
               title={project.data.title}
-              alt={`${project.data.year} Chevrolet ${project.data.model} project at Ktech Speedshop`}
+              alt={`${project.data.year} Chevrolet ${project.data.model} project at K-TECH Speedshop`}
             />
           );
         })

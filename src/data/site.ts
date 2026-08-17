@@ -1,10 +1,10 @@
 export const site = {
-  name: "Ktech Speedshop",
+  name: "K-TECH Speedshop",
   shortName: "K-TECH",
   url: "https://ktechspeedshop.com",
   tagline: "Custom C10 parts and builds",
   description:
-    "Ktech Speedshop builds custom Chevrolet C10 trucks and fabricates parts for 1960–1987 C10s. See completed builds, shop merch, and browse projects for sale.",
+    "K-TECH Speedshop builds custom Chevrolet C10 trucks and fabricates parts for 1967–1987 C10s. See completed builds, shop merch, and browse projects for sale.",
   email: "shop@ktechspeedshop.com",
   phone: "",
   instagramHandle: "@ktechspeedshop",

@@ -35,13 +35,13 @@ const articleSchema = {
     "@type": "CreativeWork",
     name: `${project.data.year} ${project.data.title} build log`,
   },
-  publisher: { "@type": "Organization", name: "Ktech Speedshop" },
+  publisher: { "@type": "Organization", name: "K-TECH Speedshop" },
 };
 ---
 
 <Base
   title={`${update.data.title} · ${project.data.title}`}
-  description={update.data.summary ?? `${update.data.title} update on the ${project.data.title} at Ktech Speedshop.`}
+  description={update.data.summary ?? `${update.data.title} update on the ${project.data.title} at K-TECH Speedshop.`}
   image={update.data.images[0] ?? project.data.cover}
   type="article"
 >

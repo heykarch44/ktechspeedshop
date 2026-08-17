@@ -30,4 +30,4 @@ Build one if you want a truck you can sit in, a larger parts pool, or a look tha
 - **Chassis and power** are generation-agnostic. A good shop can LS-swap and bag either one.
 - **Resale** still favors a clean 67–72 shortbed. Driving daily often favors a squarebody.
 
-Ktech Speedshop builds both. If you are stuck between years, [send photos of the truck you have — or the one you are about to buy](/contact). We will tell you if it is a build or a boat anchor.
+K-TECH Speedshop builds both. If you are stuck between years, [send photos of the truck you have — or the one you are about to buy](/contact). We will tell you if it is a build or a boat anchor.

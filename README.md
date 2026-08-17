@@ -1,4 +1,4 @@
-# Ktech Speedshop
+# K-TECH Speedshop
 
 Custom C10 builds, parts, merch, and projects for sale. Static Astro site for Cloudflare Pages.
 
