@@ -296,7 +296,7 @@ export const merch: Merch[] = [
     slug: "shop-hoodie",
     title: "K-TECH hoodie",
     price: "$58",
-    cover: "/images/merch/hoodie-matched.png",
+    cover: "/images/merch/hoodie-original.png",
     summary: "Right-leaning rust K-TECH SPEEDSHOP. The hoodie you wear in the bay when the heater is lying.",
     sizes: "S–XXL",
   },
