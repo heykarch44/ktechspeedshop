@@ -4,7 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Card from "../components/Card.astro";
 import { site } from "../data/site";
-import { builds, listings, shopMerch, techMerch, parts } from "../data/catalog";
+import { builds, listings, merch, parts } from "../data/catalog";
 import { getUpdates } from "../lib/projects";
 import { formatDate } from "../lib/format";
 
@@ -170,33 +170,9 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
         </div>
         <div class="product-grid">
           {
-            shopMerch.map((item) => (
+            merch.map((item) => (
               <a class="product" href="/shop">
                 <img src={item.cover} alt={`${item.title} from K-TECH Speedshop`} width="800" height="800" loading="lazy" />
-                <div class="product-body">
-                  <h3>{item.title}</h3>
-                  <p>{item.summary}</p>
-                  <span class="price">{item.price}</span>
-                </div>
-              </a>
-            ))
-          }
-        </div>
-        <div class="section-head" style="margin-top:2.6rem">
-          <div>
-            <span class="kicker">K_tech</span>
-            <h2>The other bay.</h2>
-          </div>
-          <a class="btn ghost" href="/shop#tech">Tech merch</a>
-        </div>
-        <p class="lede" style="max-width:38rem;margin:0.2rem 0 1.4rem">
-          Same shop. Different stack. Most of these guys stop at the wrench.
-        </p>
-        <div class="product-grid two">
-          {
-            techMerch.map((item) => (
-              <a class="product" href="/shop#tech">
-                <img src={item.cover} alt={`${item.title} from K_tech`} width="800" height="800" loading="lazy" />
                 <div class="product-body">
                   <h3>{item.title}</h3>
                   <p>{item.summary}</p>

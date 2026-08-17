@@ -112,10 +112,6 @@ h2,
   border-bottom: 1px solid var(--line);
 }
 
-#tech {
-  scroll-margin-top: 5.5rem;
-}
-
 .wordmark {
   display: flex;
   flex-direction: column;
@@ -354,11 +350,6 @@ h2,
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.7rem;
-}
-
-.product-grid.two {
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 52rem;
 }
 
 .product {
@@ -675,7 +666,6 @@ h2,
   .photo-grid,
   .photo-grid.three,
   .product-grid,
-  .product-grid.two,
   .split,
   .ig-band,
   .footer-grid,

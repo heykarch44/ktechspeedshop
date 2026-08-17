@@ -2,16 +2,13 @@
 import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import { shopMerch, techMerch } from "../data/catalog";
+import { merch } from "../data/catalog";
 import { site } from "../data/site";
-
-const shopEmail = (title: string) =>
-  `mailto:${site.email}?subject=${encodeURIComponent("Merch: " + title)}`;
 ---
 
 <Base
   title="K-TECH Speedshop Merch"
-  description="K-TECH Speedshop hats, tees, and hoodies, plus the K_tech line — the tech side of the shop. Order by Instagram DM or email."
+  description="K-TECH Speedshop hats, tees, hoodies, and K_tech merch. Order by Instagram DM or email. Sizes ship from the shop."
   image="/images/merch/hat.png"
 >
   <Header />
@@ -19,12 +16,12 @@ const shopEmail = (title: string) =>
     <span class="kicker">Merch</span>
     <h1>The uniform.</h1>
     <p class="lede">
-      Shop marks and the K_tech line. Order by Instagram or email with size. No fake 40-page store.
+      Hats, tees, hoodies. Order by Instagram or email with size. No fake 40-page store.
       When a drop is gone, it is gone.
     </p>
     <div class="product-grid" style="margin-top:2.2rem">
       {
-        shopMerch.map((item) => (
+        merch.map((item) => (
           <article class="product">
             <img src={item.cover} alt={`${item.title} K-TECH Speedshop merch`} width="800" height="800" loading="lazy" />
             <div class="product-body">
@@ -33,36 +30,7 @@ const shopEmail = (title: string) =>
               <p>{item.sizes}</p>
               <p class="price">{item.price}</p>
               <div class="btn-row" style="margin-top:0.8rem">
-                <a class="btn rust" href={shopEmail(item.title)}>Email to buy</a>
-                <a class="btn ghost" href={site.instagramUrl}>DM to buy</a>
-              </div>
-            </div>
-          </article>
-        ))
-      }
-    </div>
-
-    <div class="section-head" id="tech" style="margin-top:3.4rem">
-      <div>
-        <span class="kicker">K_tech</span>
-        <h2>The other bay.</h2>
-      </div>
-    </div>
-    <p class="lede" style="margin-top:0.4rem">
-      Same shop. Different stack. Most of these guys stop at the wrench.
-    </p>
-    <div class="product-grid two" style="margin-top:1.6rem">
-      {
-        techMerch.map((item) => (
-          <article class="product">
-            <img src={item.cover} alt={`${item.title} K_tech merch`} width="800" height="800" loading="lazy" />
-            <div class="product-body">
-              <h3>{item.title}</h3>
-              <p>{item.summary}</p>
-              <p>{item.sizes}</p>
-              <p class="price">{item.price}</p>
-              <div class="btn-row" style="margin-top:0.8rem">
-                <a class="btn rust" href={shopEmail(item.title)}>Email to buy</a>
+                <a class="btn rust" href={`mailto:${site.email}?subject=${encodeURIComponent("Merch: " + item.title)}`}>Email to buy</a>
                 <a class="btn ghost" href={site.instagramUrl}>DM to buy</a>
               </div>
             </div>

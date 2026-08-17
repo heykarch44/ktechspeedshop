@@ -46,7 +46,6 @@ export type Merch = {
   cover: string;
   summary: string;
   sizes?: string;
-  line: "shop" | "tech";
 };
 
 export const builds: Build[] = [
@@ -284,25 +283,22 @@ export const merch: Merch[] = [
     cover: "/images/merch/hat.png",
     summary: "Black hat, rust K-TECH mark. The one that lives in the shop truck.",
     sizes: "One size",
-    line: "shop",
   },
   {
     slug: "speedshop-tee",
-    title: "Speedshop tee",
+    title: "K-TECH tee",
     price: "$28",
     cover: "/images/merch/tee.png",
     summary: "Heavyweight black tee. K-TECH SPEEDSHOP on the chest.",
     sizes: "S–XXL",
-    line: "shop",
   },
   {
     slug: "shop-hoodie",
-    title: "Shop hoodie",
+    title: "K-TECH hoodie",
     price: "$58",
     cover: "/images/merch/hoodie.png",
     summary: "K-TECH SPEEDSHOP on the chest. The hoodie you wear in the bay when the heater is lying.",
     sizes: "S–XXL",
-    line: "shop",
   },
   {
     slug: "k-tech-tee",
@@ -311,7 +307,6 @@ export const merch: Merch[] = [
     cover: "/images/merch/ktech-tee.png",
     summary: "Bone mark, rust underscore. The tech side of the shop.",
     sizes: "S–XXL",
-    line: "tech",
   },
   {
     slug: "k-tech-sweatshirt",
@@ -320,12 +315,8 @@ export const merch: Merch[] = [
     cover: "/images/merch/ktech-sweatshirt.png",
     summary: "Crewneck. K_tech on the chest. For the bay that also ships code.",
     sizes: "S–XXL",
-    line: "tech",
   },
 ];
-
-export const shopMerch = merch.filter((item) => item.line === "shop");
-export const techMerch = merch.filter((item) => item.line === "tech");
 
 export function getBuild(slug: string) {
   return builds.find((item) => item.slug === slug);
