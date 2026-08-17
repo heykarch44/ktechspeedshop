@@ -1,0 +1,42 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Card from "../../components/Card.astro";
+import { listings } from "../../data/catalog";
+import { site } from "../../data/site";
+---
+
+<Base
+  title="C10 Trucks and Projects for Sale"
+  description="Chevrolet C10 projects and turn-key trucks for sale at Ktech Speedshop. Rolling chassis, in-progress builds, and finished squarebodies. Inquire before they hit a classifieds site."
+  image="/images/builds/71-project.png"
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">For sale</span>
+    <h1>On the market.</h1>
+    <p class="lede">
+      Finished trucks, rolling projects, and whatever we would rather sell than store.
+      Prices move. Instagram usually sees it first.
+    </p>
+    <div class="photo-grid" style="margin-top:2.2rem">
+      {
+        listings.map((item) => (
+          <Card
+            href={`/for-sale/${item.slug}`}
+            image={item.cover}
+            eyebrow={`${item.status} · ${item.price}`}
+            title={item.title}
+            alt={`${item.year} Chevrolet ${item.model} C10 for sale`}
+          />
+        ))
+      }
+    </div>
+    <p class="lede" style="margin-top:2rem">
+      Looking for something that is not listed? <a href={site.instagramUrl}>DM the shop</a> or
+      <a href="/contact">send a build brief</a>.
+    </p>
+  </main>
+  <Footer />
+</Base>

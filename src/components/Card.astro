@@ -1,0 +1,19 @@
+---
+type Props = {
+  href: string;
+  image: string;
+  eyebrow: string;
+  title: string;
+  alt: string;
+};
+
+const { href, image, eyebrow, title, alt } = Astro.props;
+---
+
+<a class="card" href={href}>
+  <img src={image} alt={alt} loading="lazy" width="1200" height="800" />
+  <div class="card-meta">
+    <small>{eyebrow}</small>
+    <h3>{title}</h3>
+  </div>
+</a>

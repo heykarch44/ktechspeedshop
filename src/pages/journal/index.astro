@@ -1,0 +1,41 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("journal")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Base
+  title="C10 Build Journal"
+  description="Practical notes from Ktech Speedshop on Chevrolet C10 restomods: 67–72 vs squarebody, LS swaps, and what a custom C10 actually costs."
+  image="/images/builds/engine-bay-ls.png"
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">Journal</span>
+    <h1>Notes from the bay.</h1>
+    <p class="lede">
+      Written for people about to buy a C10 or write a check on a build. This is also how the
+      site earns search traffic without paying for ads.
+    </p>
+    <div class="journal-list" style="margin-top:2.2rem">
+      {
+        posts.map((post) => (
+          <a class="journal-item" href={`/journal/${post.id}`}>
+            <img src={post.data.image} alt="" width="560" height="380" loading="lazy" />
+            <div>
+              <span class="kicker">{post.data.pubDate.toISOString().slice(0, 10)}</span>
+              <h2 style="font-size:2rem;margin:0.35rem 0 0.5rem">{post.data.title}</h2>
+              <p style="color:var(--paper-dim);margin:0">{post.data.description}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </main>
+  <Footer />
+</Base>

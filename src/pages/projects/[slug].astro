@@ -1,0 +1,97 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import VideoEmbed from "../../components/VideoEmbed.astro";
+import { getCollection, render } from "astro:content";
+import { getUpdates } from "../../lib/projects";
+import { formatDate, statusLabel } from "../../lib/format";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const updates = await getUpdates(project.id);
+---
+
+<Base
+  title={`${project.data.year} ${project.data.title} build log`}
+  description={project.data.summary}
+  image={project.data.cover}
+>
+  <Header />
+  <main id="main">
+    <section class="hero" style="min-height:78svh">
+      <img
+        src={project.data.cover}
+        alt={`${project.data.year} Chevrolet ${project.data.model} ${project.data.nickname ?? ""}`}
+        width="2400"
+        height="1350"
+      />
+      <div class="hero-copy">
+        <span class="kicker">{project.data.year} · {statusLabel(project.data.status)}</span>
+        <h1>{project.data.title}</h1>
+        <p>{project.data.summary}</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <span class="kicker">{project.data.nickname ?? "Project"}</span>
+          <h2>The truck.</h2>
+          <Content />
+          <div class="btn-row" style="margin-top:1.3rem">
+            <a class="btn rust" href="/contact">Ask about this build</a>
+            <a class="btn ghost" href="/projects">All projects</a>
+          </div>
+        </div>
+        <ul class="spec-list">
+          {project.data.specs.map((spec) => <li>{spec}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="kicker">Build log</span>
+            <h2>Dated entries.</h2>
+          </div>
+        </div>
+        <ol class="timeline">
+          {
+            updates.map((update) => (
+              <li class="timeline-item">
+                <a class="timeline-card" href={`/projects/${project.id}/${update.id}`}>
+                  <div class="timeline-meta">
+                    <time datetime={update.data.pubDate.toISOString()}>{formatDate(update.data.pubDate)}</time>
+                    {update.data.video && <span class="pill">Video</span>}
+                  </div>
+                  <h3>{update.data.title}</h3>
+                  {update.data.summary && <p>{update.data.summary}</p>}
+                  {update.data.images[0] && (
+                    <img src={update.data.images[0]} alt={update.data.title} width="1200" height="800" loading="lazy" />
+                  )}
+                </a>
+                {update.data.video && (
+                  <div style="margin-top:0.8rem">
+                    <VideoEmbed src={update.data.video} title={update.data.title} />
+                  </div>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

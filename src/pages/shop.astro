@@ -1,0 +1,43 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { merch } from "../data/catalog";
+import { site } from "../data/site";
+---
+
+<Base
+  title="Ktech Speedshop Merch"
+  description="Ktech Speedshop hats, tees, and hoodies. Order C10 shop merch by Instagram DM or email. Sizes ship from the shop."
+  image="/images/merch/hat.png"
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">Merch</span>
+    <h1>The uniform.</h1>
+    <p class="lede">
+      Hats, tees, hoodies. Order by Instagram or email with size. No fake 40-page store.
+      When a drop is gone, it is gone.
+    </p>
+    <div class="product-grid" style="margin-top:2.2rem">
+      {
+        merch.map((item) => (
+          <article class="product">
+            <img src={item.cover} alt={`${item.title} Ktech Speedshop merch`} width="800" height="800" loading="lazy" />
+            <div class="product-body">
+              <h3>{item.title}</h3>
+              <p>{item.summary}</p>
+              <p>{item.sizes}</p>
+              <p class="price">{item.price}</p>
+              <div class="btn-row" style="margin-top:0.8rem">
+                <a class="btn rust" href={`mailto:${site.email}?subject=${encodeURIComponent("Merch: " + item.title)}`}>Email to buy</a>
+                <a class="btn ghost" href={site.instagramUrl}>DM to buy</a>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </main>
+  <Footer />
+</Base>

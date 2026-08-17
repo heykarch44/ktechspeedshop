@@ -1,0 +1,40 @@
+---
+import { site } from "../data/site";
+---
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="kicker">Ktech Speedshop</p>
+      <h2 class="serif" style="font-size:2rem;margin:0.4rem 0 0.8rem">C10 trucks. Custom parts. No filler.</h2>
+      <p style="color:var(--paper-dim);max-width:28rem">
+        Custom Chevrolet C10 builds and parts for 1960–1966, 1967–1972, and 1973–1987 squarebody trucks.
+      </p>
+    </div>
+    <div class="footer-col">
+      <strong>Shop</strong>
+      <a href="/builds">Builds</a>
+      <a href="/projects">Build logs</a>
+      <a href="/for-sale">For sale</a>
+      <a href="/parts">C10 parts</a>
+      <a href="/shop">Merch</a>
+    </div>
+    <div class="footer-col">
+      <strong>Learn</strong>
+      <a href="/journal">Journal</a>
+      <a href="/journal/67-72-vs-squarebody-c10">67–72 vs squarebody</a>
+      <a href="/journal/what-a-custom-c10-build-costs">Build costs</a>
+      <a href="/about">The shop</a>
+    </div>
+    <div class="footer-col">
+      <strong>Contact</strong>
+      <a href={site.instagramUrl} rel="noopener noreferrer">{site.instagramHandle}</a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <a href="/contact">Start a build</a>
+    </div>
+  </div>
+  <div class="legal">
+    <span>© {new Date().getFullYear()} Ktech Speedshop</span>
+    <span>Custom C10 builds · parts · merch</span>
+  </div>
+</footer>

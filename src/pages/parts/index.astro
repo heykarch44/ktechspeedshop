@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { parts } from "../../data/catalog";
+---
+
+<Base
+  title="C10 Custom Parts"
+  description="Shop-made Chevrolet C10 parts from Ktech Speedshop. Tailgate latches, bed floor hinges, LS swap crossmembers, and cab mounts for 67–72 and squarebody trucks."
+  image="/images/parts/latch.png"
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">Parts</span>
+    <h1>C10 hardware.</h1>
+    <p class="lede">
+      Parts we actually bolt on. 1967–1972 and 1973–1987 squarebody. Order by email or Instagram —
+      we confirm fitment before anything ships.
+    </p>
+    <div class="product-grid" style="margin-top:2.2rem">
+      {
+        parts.map((item) => (
+          <a class="product" href={`/parts/${item.slug}`}>
+            <img src={item.cover} alt={`${item.title} C10 part`} width="800" height="800" loading="lazy" />
+            <div class="product-body">
+              <h3>{item.title}</h3>
+              <p>{item.fits}</p>
+              <span class="price">{item.price}</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </main>
+  <Footer />
+</Base>

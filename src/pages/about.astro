@@ -1,0 +1,50 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site";
+---
+
+<Base
+  title="The Shop"
+  description="Ktech Speedshop is a custom Chevrolet C10 shop building restomods, fabricating parts, and selling the occasional project truck. Follow the shop on Instagram."
+  image="/images/shop/weld.jpg"
+>
+  <Header />
+  <main id="main">
+    <section class="hero" style="min-height:70svh">
+      <img src="/images/shop/weld.jpg" alt="Fabrication work at Ktech Speedshop" width="2400" height="1350" />
+      <div class="hero-copy">
+        <span class="kicker">The shop</span>
+        <h1>Built here.</h1>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap split">
+        <div>
+          <p class="lede">
+            Ktech Speedshop is a C10 shop. Custom builds, parts we machine or kit ourselves,
+            merch, and trucks that need a new owner. The site exists so people can find the
+            work without a paid ad and without a 2005 auto-dealer template.
+          </p>
+          <p class="lede">
+            Drop your real shop story, city, and hours into this page when you are ready.
+            Until then, Instagram is the live floor and email is how a build starts.
+          </p>
+          <div class="btn-row" style="margin-top:1.2rem">
+            <a class="btn rust" href="/contact">Work with the shop</a>
+            <a class="btn ghost" href={site.instagramUrl}>{site.instagramHandle}</a>
+          </div>
+        </div>
+        <img
+          src="/images/shop/garage.jpg"
+          alt="C10 in the Ktech Speedshop garage"
+          width="1400"
+          height="1000"
+          loading="lazy"
+        />
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

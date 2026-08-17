@@ -1,0 +1,31 @@
+---
+import { parseVideo } from "../lib/format";
+
+type Props = {
+  src: string;
+  title: string;
+};
+
+const { src, title } = Astro.props;
+const video = parseVideo(src);
+---
+
+{
+  video && (
+    <div class="video-frame">
+      {video.type === "file" ? (
+        <video controls playsinline preload="metadata">
+          <source src={video.src} />
+        </video>
+      ) : (
+        <iframe
+          src={video.src}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+        />
+      )}
+    </div>
+  )
+}

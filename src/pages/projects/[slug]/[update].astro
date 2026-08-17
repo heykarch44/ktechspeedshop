@@ -1,0 +1,90 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import VideoEmbed from "../../../components/VideoEmbed.astro";
+import { getCollection, render } from "astro:content";
+import { formatDate, statusLabel } from "../../../lib/format";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  const updates = await getCollection("updates");
+  return updates.flatMap((update) => {
+    const project = projects.find((item) => item.id === update.data.project);
+    if (!project) return [];
+    return [
+      {
+        params: { slug: project.id, update: update.id },
+        props: { project, update },
+      },
+    ];
+  });
+}
+
+const { project, update } = Astro.props;
+const { Content } = await render(update);
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: update.data.title,
+  datePublished: update.data.pubDate.toISOString(),
+  image: update.data.images[0],
+  description: update.data.summary ?? project.data.summary,
+  url: new URL(`/projects/${project.id}/${update.id}`, Astro.site).toString(),
+  isPartOf: {
+    "@type": "CreativeWork",
+    name: `${project.data.year} ${project.data.title} build log`,
+  },
+  publisher: { "@type": "Organization", name: "Ktech Speedshop" },
+};
+---
+
+<Base
+  title={`${update.data.title} · ${project.data.title}`}
+  description={update.data.summary ?? `${update.data.title} update on the ${project.data.title} at Ktech Speedshop.`}
+  image={update.data.images[0] ?? project.data.cover}
+  type="article"
+>
+  <Header />
+  <main id="main">
+    <article>
+      <section class="hero" style="min-height:62svh">
+        <img
+          src={update.data.images[0] ?? project.data.cover}
+          alt={update.data.title}
+          width="2400"
+          height="1350"
+        />
+        <div class="hero-copy">
+          <span class="kicker">
+            <a href={`/projects/${project.id}`}>{project.data.title}</a>
+            · {formatDate(update.data.pubDate)}
+          </span>
+          <h1 style="font-size:clamp(2.8rem,8vw,5.4rem)">{update.data.title}</h1>
+          {update.data.summary && <p>{update.data.summary}</p>}
+        </div>
+      </section>
+      <section class="section">
+        <div class="wrap prose">
+          {update.data.video && <VideoEmbed src={update.data.video} title={update.data.title} />}
+          <Content />
+          {
+            update.data.images.length > 1 && (
+              <div class="update-gallery">
+                {update.data.images.slice(1).map((src) => (
+                  <img src={src} alt="" width="1400" height="900" loading="lazy" />
+                ))}
+              </div>
+            )
+          }
+          <p>
+            <a href={`/projects/${project.id}`}>Back to the {project.data.title} log</a>
+            · {statusLabel(project.data.status)}
+          </p>
+        </div>
+      </section>
+    </article>
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  </main>
+  <Footer />
+</Base>

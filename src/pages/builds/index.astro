@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Card from "../../components/Card.astro";
+import { builds } from "../../data/catalog";
+---
+
+<Base
+  title="Custom C10 Builds"
+  description="Custom Chevrolet C10 builds from Ktech Speedshop. 1960–1966, 1967–1972, and 1973–1987 squarebody restomods, LS swaps, air ride, and in-progress shop trucks."
+  image="/images/builds/72-orange.png"
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">Builds</span>
+    <h1>The trucks.</h1>
+    <p class="lede">
+      Completed C10s, squarebodies, and whatever is currently in the jig. Click in for specs.
+      Swap these photos for your real gallery whenever the next one rolls out.
+    </p>
+    <div class="photo-grid three" style="margin-top:2.2rem">
+      {
+        builds.map((build) => (
+          <Card
+            href={`/builds/${build.slug}`}
+            image={build.cover}
+            eyebrow={`${build.year} · ${build.status.replace("-", " ")}`}
+            title={build.title}
+            alt={`${build.year} Chevrolet ${build.model} custom C10 ${build.nickname} built by Ktech Speedshop`}
+          />
+        ))
+      }
+    </div>
+  </main>
+  <Footer />
+</Base>

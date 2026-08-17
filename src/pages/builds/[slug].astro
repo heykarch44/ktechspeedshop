@@ -1,0 +1,65 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { builds, getBuild } from "../../data/catalog";
+
+export function getStaticPaths() {
+  return builds.map((build) => ({ params: { slug: build.slug } }));
+}
+
+const { slug } = Astro.params;
+const build = getBuild(slug!);
+if (!build) throw new Error("Missing build");
+---
+
+<Base
+  title={`${build.year} ${build.title} custom C10`}
+  description={build.summary}
+  image={build.cover}
+>
+  <Header />
+  <main id="main">
+    <section class="hero" style="min-height:78svh">
+      <img src={build.cover} alt={`${build.year} Chevrolet ${build.model} ${build.nickname}`} width="2400" height="1350" />
+      <div class="hero-copy">
+        <span class="kicker">{build.year} · {build.status.replace("-", " ")}</span>
+        <h1>{build.title}</h1>
+        <p>{build.summary}</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap split">
+        <div>
+          <span class="kicker">{build.nickname}</span>
+          <h2>The build.</h2>
+          <p class="lede">{build.story}</p>
+          <div class="btn-row" style="margin-top:1.3rem">
+            <a class="btn rust" href="/contact">Start one like this</a>
+            {build.projectSlug && (
+              <a class="btn ghost" href={`/projects/${build.projectSlug}`}>Build log</a>
+            )}
+            <a class="btn ghost" href="/builds">All builds</a>
+          </div>
+        </div>
+        <div>
+          <ul class="spec-list">
+            {build.specs.map((spec) => <li>{spec}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+    {
+      build.gallery.length > 1 && (
+        <section class="section" style="padding-top:0">
+          <div class="wrap photo-grid">
+            {build.gallery.slice(1).map((src) => (
+              <img src={src} alt={`${build.title} detail`} width="1600" height="1000" loading="lazy" />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+</Base>

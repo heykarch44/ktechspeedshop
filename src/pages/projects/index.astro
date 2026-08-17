@@ -1,0 +1,73 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Card from "../../components/Card.astro";
+import { getProjects, getUpdates } from "../../lib/projects";
+import { formatDate, statusLabel } from "../../lib/format";
+
+const projects = await getProjects();
+const updates = await getUpdates();
+const latest = updates.slice(0, 4);
+
+function latestFor(slug: string) {
+  return updates.find((update) => update.data.project === slug);
+}
+---
+
+<Base
+  title="C10 Projects and Build Logs"
+  description="Follow Ktech Speedshop C10 projects as they progress. Dated build updates, shop photos, and video blogs for trucks currently in the bay and finished builds."
+  image="/images/builds/71-project.png"
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">Projects</span>
+    <h1>The log.</h1>
+    <p class="lede">
+      One page per truck. Dated entries as the build moves — photos, notes, and video when we have it.
+      This is the shop thread, not a finished-truck brochure.
+    </p>
+
+    <div class="photo-grid three" style="margin-top:2.2rem">
+      {
+        projects.map((project) => {
+          const latestUpdate = latestFor(project.id);
+          return (
+            <Card
+              href={`/projects/${project.id}`}
+              image={project.data.cover}
+              eyebrow={`${project.data.year} · ${statusLabel(project.data.status)}${latestUpdate ? ` · ${formatDate(latestUpdate.data.pubDate)}` : ""}`}
+              title={project.data.title}
+              alt={`${project.data.year} Chevrolet ${project.data.model} project at Ktech Speedshop`}
+            />
+          );
+        })
+      }
+    </div>
+
+    <div class="section-head" style="margin-top:4.5rem">
+      <div>
+        <span class="kicker">Latest entries</span>
+        <h2>What moved this week.</h2>
+      </div>
+    </div>
+    <div class="journal-list">
+      {
+        latest.map((update) => (
+          <a class="journal-item" href={`/projects/${update.data.project}/${update.id}`}>
+            {update.data.images[0] && (
+              <img src={update.data.images[0]} alt="" width="560" height="380" loading="lazy" />
+            )}
+            <div>
+              <span class="kicker">{formatDate(update.data.pubDate)}</span>
+              <h2 style="font-size:1.8rem;margin:0.35rem 0 0.5rem">{update.data.title}</h2>
+              <p style="color:var(--paper-dim);margin:0">{update.data.summary}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </main>
+  <Footer />
+</Base>
