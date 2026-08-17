@@ -189,19 +189,19 @@ export const builds: Build[] = [
 
 export const listings: SaleListing[] = [
   {
-    slug: "71-c10-project",
-    title: "1971 C10 longbed project",
-    year: 1971,
+    slug: "68-c10-project",
+    title: "1968 C10 project",
+    year: 1968,
     model: "C10",
     price: "Inquire",
     status: "available",
     cover: "/images/builds/71-project.png",
     summary:
-      "Rolling project with the hard metal started. Better than a Craigslist shell. Worse than a finished truck — on purpose.",
+      "Rolling 68 C10 with the hard metal started. Better than a Craigslist shell. Worse than a finished truck — on purpose.",
     details:
-      "This is a shop project, not a polished turn-key. Frame work is underway, LS is staged, and the cab is honest. If you want a C10 without paying for someone else's taste in paint, this is the lane. Serious inquiries only — tell us how you want it finished.",
+      "This is a shop project, not a polished turn-key. 1968 C10, frame work underway, LS staged, cab is honest. If you want a 68 without paying for someone else's taste in paint, this is the lane. Serious inquiries only — tell us how you want it finished.",
     highlights: [
-      "Longbed C10, 1971",
+      "1968 C10",
       "Chassis work started",
       "LS swap staged",
       "Can be finished in-house",
