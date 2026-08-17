@@ -3,6 +3,7 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://ktechspeedshop.com",
+  output: "static",
   compressHTML: true,
   integrations: [
     sitemap({

@@ -13,9 +13,12 @@ npm run dev
 
 Cloudflare Pages (git):
 
-- Framework preset: Astro
+- Framework preset: **Astro**
 - Build command: `npm run build`
 - Output directory: `dist`
+- Node version: `22`
+
+If the `*.pages.dev` URL is blank or 404, the project was probably created before those settings existed. Save the build settings above and **Retry deployment**.
 
 Or from this folder:
 
