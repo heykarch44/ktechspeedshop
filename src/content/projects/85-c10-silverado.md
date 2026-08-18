@@ -2,15 +2,15 @@
 title: "1985 C10 Silverado"
 year: 1985
 model: C10 Silverado
-nickname: Carolina
-status: complete
-cover: /images/builds/squarebody-blue.jpg
-summary: Lifted squarebody, matte Carolina blue, blacked-out trim. A C10 that still goes places.
-featured: false
+nickname: In the metal
+status: in-build
+cover: /images/builds/primer-sunset.png
+summary: Slammed squarebody in primer. Metal, stance, and wheels on — paint still coming.
+featured: true
 specs:
-  - Lifted suspension, color-matched
-  - Matte Carolina blue
-  - Blacked-out trim and bumpers
+  - Air ride, laid out
+  - Primer and metalwork in progress
+  - Modern wheels, tucked
 ---
 
-Not every C10 in this shop lays frame. This squarebody is the other direction.
+This one is still in the metal. Bags to put it on the ground, modern wheels, bodywork in progress.

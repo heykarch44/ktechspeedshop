@@ -1,10 +1,11 @@
 ---
 project: 85-c10-silverado
-title: Color-matched lift
+title: In the metal
 pubDate: 2026-03-09
-summary: Squarebody in the air, suspension painted with the body, blacked-out trim.
+summary: Slammed squarebody in primer. Stance and wheels on, paint still coming.
 images:
-  - /images/builds/squarebody-blue.jpg
+  - /images/builds/primer-sunset.png
+  - /images/builds/primer-side.png
 ---
 
-Lifted, not laid out. Suspension and wheels color-matched so it reads as one truck, not a kit.
+Bags down, wheels tucked, body still in primer. This is the truck before color.

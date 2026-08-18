@@ -72,7 +72,7 @@ export const builds: Build[] = [
       "Tucked bumpers, smoothed firewall",
       "Custom bed wood and rails",
     ],
-    featured: true,
+    featured: false,
     projectSlug: "68-c10-shortbed",
   },
   {
@@ -95,7 +95,7 @@ export const builds: Build[] = [
       "Updated steering and cooling",
       "Steelies and white-letter rubber",
     ],
-    featured: true,
+    featured: false,
   },
   {
     slug: "72-cheyenne-super",
@@ -126,18 +126,22 @@ export const builds: Build[] = [
     model: "C10",
     nickname: "Square",
     status: "complete",
-    cover: "/images/builds/78-square.png",
-    gallery: ["/images/builds/78-square.png"],
+    cover: "/images/builds/copper-front.png",
+    gallery: [
+      "/images/builds/copper-front.png",
+      "/images/builds/copper-garage.png",
+      "/images/builds/copper-qt.png",
+      "/images/builds/copper-rear.png",
+    ],
     summary:
-      "73–87 squarebody, bagged, blacked out, built to sit and cruise.",
+      "Slammed squarebody, satin copper, chrome up front. Built to sit and cruise.",
     story:
-      "Squarebodies are having a moment, and most of them look the same. This one is a two-tone shortbed with modern lighting, a laid-out stance, and an interior you can actually sit in for more than a parade lap.",
+      "Shop squarebody on bags. Satin copper, tucked wheels, chrome bumper. This is the truck in the bay — not a stock photo.",
     specs: [
-      "Air ride, body drop friendly",
-      "Two-tone paint",
-      "Billet wheels",
-      "LED lighting",
-      "Custom interior",
+      "Air ride, laid out",
+      "Satin copper",
+      "Chrome bumper, clean front",
+      "Tucked wheels",
     ],
     featured: true,
   },
@@ -146,21 +150,26 @@ export const builds: Build[] = [
     title: "1985 C10 Silverado",
     year: 1985,
     model: "C10 Silverado",
-    nickname: "Carolina",
-    status: "complete",
-    cover: "/images/builds/squarebody-blue.jpg",
-    gallery: ["/images/builds/squarebody-blue.jpg"],
-    summary:
-      "Not every C10 needs to lay frame. Color-matched lift, blacked-out trim, built to go anywhere.",
-    story:
-      "A squarebody does not have to be bagged to be a custom. This Silverado got a proper lift, color-matched suspension, and a matte finish that does not hide dirt. Shop truck energy. Highway manners.",
-    specs: [
-      "Lifted suspension, color-matched",
-      "Matte Carolina blue",
-      "Blacked-out trim and bumpers",
-      "Off-road wheel and tire package",
+    nickname: "In the metal",
+    status: "in-build",
+    cover: "/images/builds/primer-sunset.png",
+    gallery: [
+      "/images/builds/primer-sunset.png",
+      "/images/builds/primer-side.png",
+      "/images/builds/primer-golden.png",
+      "/images/builds/primer-trailer.png",
     ],
-    featured: false,
+    summary:
+      "Slammed squarebody in primer. Metal, stance, and wheels on — paint still coming.",
+    story:
+      "This one is still in the metal. Bags to put it on the ground, modern wheels, bodywork in progress. Follow the log if you want to see a squarebody before the color goes on.",
+    specs: [
+      "Air ride, laid out",
+      "Primer and metalwork in progress",
+      "Modern wheels, tucked",
+      "Still in the shop",
+    ],
+    featured: true,
     projectSlug: "85-c10-silverado",
   },
   {
@@ -214,15 +223,15 @@ export const listings: SaleListing[] = [
     model: "C10",
     price: "Coming to market",
     status: "coming",
-    cover: "/images/builds/78-square.png",
+    cover: "/images/builds/copper-rear.png",
     summary:
-      "Bagged squarebody finishing in the shop. Get on the list before it hits the site with a number.",
+      "Bagged squarebody. Satin copper, slammed. Get on the list before it hits the site with a number.",
     details:
-      "Shortbed squarebody, air ride, two-tone. We will publish price and a full gallery when it is ready to leave. DM the shop if you want first look.",
+      "Shortbed squarebody, air ride, satin copper. We will publish price and a full gallery when it is ready to leave. DM the shop if you want first look.",
     highlights: [
       "73–87 squarebody shortbed",
-      "Air ride",
-      "Turn-key driver when released",
+      "Air ride, laid out",
+      "Satin copper",
       "First look via Instagram",
     ],
   },
