@@ -328,8 +328,8 @@ export const merch: Merch[] = [
     slug: "ktech-trucker",
     title: "K-TECH trucker",
     price: "$32",
-    cover: "/images/merch/trucker-bill.png",
-    summary: "Foam-front mesh trucker, flat bill. K-TECH on the front, SPEEDSHOP on the brim.",
+    cover: "/images/merch/trucker-print.png",
+    summary: "Foam-front mesh trucker, flat bill. Printed K-TECH on the front, SPEEDSHOP under it and to the right.",
     sizes: "One size",
   },
   {
