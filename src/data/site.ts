@@ -11,7 +11,7 @@ export const site = {
   instagramUrl: "https://instagram.com/ktechspeedshop",
   locationName: "",
   address: "",
-  ogImage: "/images/builds/copper-front.png",
+  ogImage: "/images/builds/orng-hero.png",
 };
 
 export const nav = [

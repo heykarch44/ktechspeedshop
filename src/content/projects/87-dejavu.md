@@ -4,7 +4,7 @@ year: 1987
 model: C10
 nickname: DejaVu
 status: in-build
-cover: /images/builds/primer-sunset.png
+cover: /images/builds/dejavu-card.png
 summary: 1987 squarebody in primer. LS 6.0, bagged, 4-link, 24" UsMags.
 featured: true
 specs:
