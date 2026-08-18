@@ -1,0 +1,14 @@
+K-TECH Speedshop merch vectors
+Rust: #D3541A
+Cream (tech mark): #F1E7D4
+Transparent background. Type is outlined — no font install needed.
+
+ktech-hat.svg            Hat front. Italic K-TECH, SPEEDSHOP under and to the right.
+ktech-hoodie-chest.svg   Hoodie chest. Italic K-TECH, SPEEDSHOP tracked to width.
+ktech-c10-line.svg       Hoodie sleeve, line-art C10.
+ktech-tee.svg            Tee: K-TECH, SPEEDSHOP, slammed C10.
+ktech-c10-filled.svg     C10 only.
+ktech-tech.svg           Tech tee / sweatshirt lockup.
+ktech-wordmark.svg       Upright two-line wordmark.
+
+Print DTF or screen. Not embroidery. Scale freely. Keep rust on black.

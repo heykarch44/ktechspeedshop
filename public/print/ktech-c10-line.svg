@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 280" width="820" height="280">
+  <title>K-TECH Speedshop merch art</title>
+  <g id="c10-line" fill="none" stroke="#D3541A" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M48 170 L82 154 L122 120 L200 110 L240 80 L320 64 L400 64 L426 90 L448 110 L710 110 L726 90 L746 90 L760 120 L776 170 L776 198"/>
+    <path d="M138 190 L248 190"/>
+    <path d="M528 190 L638 190"/>
+    <path d="M248 80 L248 190"/>
+    <path d="M426 90 L426 190"/>
+    <path d="M128 120 L236 120"/>
+    <circle cx="188" cy="198" r="48"/>
+    <circle cx="588" cy="198" r="48"/>
+    <circle cx="188" cy="198" r="16"/>
+    <circle cx="588" cy="198" r="16"/>
+  </g>
+</svg>
