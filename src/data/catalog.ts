@@ -125,7 +125,7 @@ export const builds: Build[] = [
     year: 1978,
     model: "C10",
     nickname: "Square",
-    status: "complete",
+    status: "sold",
     cover: "/images/builds/copper-front.png",
     gallery: [
       "/images/builds/copper-front.png",
@@ -134,14 +134,15 @@ export const builds: Build[] = [
       "/images/builds/copper-rear.png",
     ],
     summary:
-      "Slammed squarebody, satin copper, chrome up front. Built to sit and cruise.",
+      "Slammed satin copper squarebody. Sold. Previous shop truck.",
     story:
-      "Shop squarebody on bags. Satin copper, tucked wheels, chrome bumper. This is the truck in the bay — not a stock photo.",
+      "Old shop squarebody on bags. Satin copper, tucked wheels, chrome bumper. It already has a home.",
     specs: [
       "Air ride, laid out",
       "Satin copper",
       "Chrome bumper, clean front",
       "Tucked wheels",
+      "Sold",
     ],
     featured: true,
   },
@@ -214,25 +215,6 @@ export const listings: SaleListing[] = [
       "Chassis work started",
       "LS swap staged",
       "Can be finished in-house",
-    ],
-  },
-  {
-    slug: "78-squarebody-driver",
-    title: "1978 C10 squarebody",
-    year: 1978,
-    model: "C10",
-    price: "Coming to market",
-    status: "coming",
-    cover: "/images/builds/copper-rear.png",
-    summary:
-      "Bagged squarebody. Satin copper, slammed. Get on the list before it hits the site with a number.",
-    details:
-      "Shortbed squarebody, air ride, satin copper. We will publish price and a full gallery when it is ready to leave. DM the shop if you want first look.",
-    highlights: [
-      "73–87 squarebody shortbed",
-      "Air ride, laid out",
-      "Satin copper",
-      "First look via Instagram",
     ],
   },
 ];
