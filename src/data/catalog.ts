@@ -131,9 +131,9 @@ export const builds: Build[] = [
     nickname: "ORNG",
     status: "sold",
     eyebrow: "1985 · complete · sold",
-    cover: "/images/builds/orng-card-2.png",
+    cover: "/images/builds/orng-card-3.png",
     gallery: [
-      "/images/builds/orng-card-2.png",
+      "/images/builds/orng-card-3.png",
       "/images/builds/copper-front.png",
       "/images/builds/copper-garage.png",
       "/images/builds/copper-qt.png",
@@ -163,9 +163,9 @@ export const builds: Build[] = [
     nickname: "DejaVu",
     status: "in-build",
     eyebrow: "1987 · in build",
-    cover: "/images/builds/dejavu-card-2.png",
+    cover: "/images/builds/dejavu-card-3.png",
     gallery: [
-      "/images/builds/dejavu-card-2.png",
+      "/images/builds/dejavu-card-3.png",
       "/images/builds/primer-sunset.png",
       "/images/builds/primer-side.png",
       "/images/builds/primer-golden.png",
@@ -218,7 +218,7 @@ export const listings: SaleListing[] = [
     price: "$ DM for Price",
     status: "available",
     eyebrow: "1987 · in build",
-    cover: "/images/builds/dejavu-card-2.png",
+    cover: "/images/builds/dejavu-card-3.png",
     summary:
       "1987 squarebody in primer. LS 6.0, bagged, 4-link, 24\" UsMags.",
     details:
@@ -240,7 +240,7 @@ export const listings: SaleListing[] = [
     status: "sold",
     ghostPrice: true,
     eyebrow: "1985 · complete · sold",
-    cover: "/images/builds/orng-card-2.png",
+    cover: "/images/builds/orng-card-3.png",
     summary:
       "1985 squarebody. Full custom chassis, supercharged 700hp LS3. Sold.",
     details:
