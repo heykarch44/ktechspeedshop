@@ -26,9 +26,12 @@ import { site } from "../../data/site";
           <Card
             href={`/for-sale/${item.slug}`}
             image={item.cover}
-            eyebrow={`${item.status} · ${item.price}`}
+            eyebrow={`${item.year} · ${item.status}`}
             title={item.title}
-            alt={`${item.year} Chevrolet ${item.model} C10 for sale`}
+            alt={`${item.year} Chevrolet ${item.model} ${item.title}`}
+            price={item.price}
+            ghostPrice={item.ghostPrice}
+            sold={item.status === "sold"}
           />
         ))
       }

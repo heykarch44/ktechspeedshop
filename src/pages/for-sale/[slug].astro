@@ -22,7 +22,7 @@ if (!item) throw new Error("Missing listing");
         <span class="kicker">{item.year} · {item.status}</span>
         <h1>{item.title}</h1>
         <p>{item.summary}</p>
-        <p class="price" style="font-size:1.4rem">{item.price}</p>
+        <p class:list={["price", { ghost: item.ghostPrice }]} style="font-size:1.4rem">{item.price}</p>
       </div>
     </section>
     <section class="section">
@@ -31,8 +31,14 @@ if (!item) throw new Error("Missing listing");
           <h2>The truck.</h2>
           <p class="lede">{item.details}</p>
           <div class="btn-row" style="margin-top:1.3rem">
-            <a class="btn rust" href={`mailto:${site.email}?subject=${encodeURIComponent("For sale: " + item.title)}`}>Email to inquire</a>
-            <a class="btn ghost" href={site.instagramUrl}>Instagram DM</a>
+            {item.status === "sold" ? (
+              <a class="btn ghost" href="/builds">See other builds</a>
+            ) : (
+              <>
+                <a class="btn rust" href={`mailto:${site.email}?subject=${encodeURIComponent("For sale: " + item.title)}`}>Email to inquire</a>
+                <a class="btn ghost" href={site.instagramUrl}>Instagram DM</a>
+              </>
+            )}
           </div>
         </div>
         <ul class="spec-list">

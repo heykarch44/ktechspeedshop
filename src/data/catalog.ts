@@ -14,6 +14,7 @@ export type Build = {
   specs: string[];
   featured: boolean;
   projectSlug?: string;
+  price?: string;
 };
 
 export type SaleListing = {
@@ -22,11 +23,12 @@ export type SaleListing = {
   year: number;
   model: string;
   price: string;
-  status: "available" | "pending" | "coming";
+  status: "available" | "pending" | "coming" | "sold";
   cover: string;
   summary: string;
   details: string;
   highlights: string[];
+  ghostPrice?: boolean;
 };
 
 export type Part = {
@@ -120,11 +122,11 @@ export const builds: Build[] = [
     featured: false,
   },
   {
-    slug: "78-squarebody",
-    title: "1978 C10 Squarebody",
-    year: 1978,
+    slug: "85-orng",
+    title: "ORNG",
+    year: 1985,
     model: "C10",
-    nickname: "Square",
+    nickname: "ORNG",
     status: "sold",
     cover: "/images/builds/copper-front.png",
     gallery: [
@@ -134,24 +136,27 @@ export const builds: Build[] = [
       "/images/builds/copper-rear.png",
     ],
     summary:
-      "Slammed satin copper squarebody. Sold. Previous shop truck.",
+      "1985 squarebody. Full custom chassis, supercharged 700hp LS3. Sold.",
     story:
-      "Old shop squarebody on bags. Satin copper, tucked wheels, chrome bumper. It already has a home.",
+      "ORNG. Satin copper 85, built and gone. Full custom chassis, supercharged 700hp LS3, tucked, QA1, Wilwood, vintage air, 4-link.",
     specs: [
-      "Air ride, laid out",
-      "Satin copper",
-      "Chrome bumper, clean front",
+      "Full custom chassis",
+      "Supercharged 700hp LS3",
       "Tucked wheels",
-      "Sold",
+      "QA1 coilovers",
+      "Wilwood brakes",
+      "Vintage Air",
+      "4-link",
     ],
     featured: true,
+    price: "$85,000",
   },
   {
-    slug: "85-lifted-square",
-    title: "1985 C10 Silverado",
-    year: 1985,
-    model: "C10 Silverado",
-    nickname: "In the metal",
+    slug: "87-dejavu",
+    title: "DejaVu",
+    year: 1987,
+    model: "C10",
+    nickname: "DejaVu",
     status: "in-build",
     cover: "/images/builds/primer-sunset.png",
     gallery: [
@@ -161,17 +166,17 @@ export const builds: Build[] = [
       "/images/builds/primer-trailer.png",
     ],
     summary:
-      "Slammed squarebody in primer. Metal, stance, and wheels on — paint still coming.",
+      "1987 squarebody in primer. LS 6.0, bagged, 4-link, 24\" UsMags.",
     story:
-      "This one is still in the metal. Bags to put it on the ground, modern wheels, bodywork in progress. Follow the log if you want to see a squarebody before the color goes on.",
+      "DejaVu. Still in the metal. LS 6.0, bags, 4-link, 24-inch UsMags. Stance and power are on — paint still coming.",
     specs: [
-      "Air ride, laid out",
-      "Primer and metalwork in progress",
-      "Modern wheels, tucked",
-      "Still in the shop",
+      "LS 6.0",
+      "Bagged",
+      "4-link",
+      "24\" UsMags",
     ],
     featured: true,
-    projectSlug: "85-c10-silverado",
+    projectSlug: "87-dejavu",
   },
   {
     slug: "68-c10-in-build",
@@ -198,6 +203,49 @@ export const builds: Build[] = [
 ];
 
 export const listings: SaleListing[] = [
+  {
+    slug: "87-dejavu",
+    title: "DejaVu",
+    year: 1987,
+    model: "C10",
+    price: "Inquire",
+    status: "available",
+    cover: "/images/builds/primer-sunset.png",
+    summary:
+      "1987 squarebody in primer. LS 6.0, bagged, 4-link, 24\" UsMags.",
+    details:
+      "DejaVu. Metal still showing, stance and power already there. LS 6.0, bags, 4-link, 24-inch UsMags. Inquire if you want it finished in-house or rolling as-is.",
+    highlights: [
+      "1987 C10",
+      "LS 6.0",
+      "Bagged",
+      "4-link",
+      "24\" UsMags",
+    ],
+  },
+  {
+    slug: "85-orng",
+    title: "ORNG",
+    year: 1985,
+    model: "C10",
+    price: "$85,000",
+    status: "sold",
+    ghostPrice: true,
+    cover: "/images/builds/copper-front.png",
+    summary:
+      "1985 squarebody. Full custom chassis, supercharged 700hp LS3. Sold.",
+    details:
+      "ORNG already has a home. Full custom chassis, supercharged 700hp LS3, tucked wheels, QA1 coilovers, Wilwood, vintage air, 4-link.",
+    highlights: [
+      "Full custom chassis",
+      "Supercharged 700hp LS3",
+      "Tucked wheels",
+      "QA1 coilovers",
+      "Wilwood brakes",
+      "Vintage Air",
+      "4-link",
+    ],
+  },
   {
     slug: "68-c10-project",
     title: "1968 C10 project",

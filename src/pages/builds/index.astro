@@ -17,7 +17,6 @@ import { builds } from "../../data/catalog";
     <h1>The trucks.</h1>
     <p class="lede">
       Completed C10s, squarebodies, and whatever is currently in the jig. Click in for specs.
-      Swap these photos for your real gallery whenever the next one rolls out.
     </p>
     <div class="photo-grid three" style="margin-top:2.2rem">
       {
@@ -27,7 +26,10 @@ import { builds } from "../../data/catalog";
             image={build.cover}
             eyebrow={`${build.year} · ${build.status.replace("-", " ")}`}
             title={build.title}
-            alt={`${build.year} Chevrolet ${build.model} custom C10 ${build.nickname} built by K-TECH Speedshop`}
+            alt={`${build.year} Chevrolet ${build.model} ${build.nickname} built by K-TECH Speedshop`}
+            price={build.price}
+            ghostPrice={build.status === "sold"}
+            sold={build.status === "sold"}
           />
         ))
       }

@@ -5,15 +5,21 @@ type Props = {
   eyebrow: string;
   title: string;
   alt: string;
+  price?: string;
+  ghostPrice?: boolean;
+  sold?: boolean;
 };
 
-const { href, image, eyebrow, title, alt } = Astro.props;
+const { href, image, eyebrow, title, alt, price, ghostPrice, sold } = Astro.props;
 ---
 
-<a class="card" href={href}>
+<a class:list={["card", { sold }]} href={href}>
   <img src={image} alt={alt} loading="lazy" width="1200" height="800" />
   <div class="card-meta">
     <small>{eyebrow}</small>
     <h3>{title}</h3>
+    {price && (
+      <p class:list={["card-price", { ghost: ghostPrice }]}>{price}</p>
+    )}
   </div>
 </a>

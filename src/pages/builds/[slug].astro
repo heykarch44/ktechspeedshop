@@ -26,6 +26,9 @@ if (!build) throw new Error("Missing build");
         <span class="kicker">{build.year} · {build.status.replace("-", " ")}</span>
         <h1>{build.title}</h1>
         <p>{build.summary}</p>
+        {build.price && (
+          <p class:list={["price", { ghost: build.status === "sold" }]} style="font-size:1.4rem">{build.price}</p>
+        )}
       </div>
     </section>
     <section class="section">

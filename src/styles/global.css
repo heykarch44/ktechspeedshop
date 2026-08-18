@@ -346,6 +346,23 @@ h2,
   font-size: 1.45rem;
 }
 
+.card-price {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  font-size: 1.05rem;
+}
+
+.card-price.ghost {
+  color: var(--muted);
+  opacity: 0.55;
+}
+
+.card.sold img {
+  filter: grayscale(0.25);
+  opacity: 0.72;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -380,6 +397,11 @@ h2,
   color: var(--rust);
   font-family: var(--font-display);
   letter-spacing: 0.08em;
+}
+
+.price.ghost {
+  color: var(--muted);
+  opacity: 0.55;
 }
 
 .split {

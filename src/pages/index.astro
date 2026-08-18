@@ -4,7 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Card from "../components/Card.astro";
 import { site } from "../data/site";
-import { builds, listings, merch, parts } from "../data/catalog";
+import { builds, merch, parts } from "../data/catalog";
 import { getUpdates } from "../lib/projects";
 import { formatDate } from "../lib/format";
 
@@ -22,7 +22,7 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
     <section class="hero">
       <img
         src="/images/builds/copper-front.png"
-        alt="Slammed satin copper Chevrolet C10 squarebody built by K-TECH Speedshop"
+        alt="1985 Chevrolet C10 ORNG, slammed satin copper squarebody built by K-TECH Speedshop"
         width="2400"
         height="1350"
         fetchpriority="high"
@@ -58,20 +58,23 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
       <div class="wrap">
         <div class="section-head">
           <div>
-            <span class="kicker">Builds</span>
-            <h2>What left the bay.</h2>
+            <span class="kicker">For sale</span>
+            <h2>What's available.</h2>
           </div>
-          <a class="btn ghost" href="/builds">All builds</a>
+          <a class="btn ghost" href="/for-sale">See inventory</a>
         </div>
         <div class="photo-grid">
           {
             featured.map((build) => (
               <Card
-                href={`/builds/${build.slug}`}
+                href={build.status === "sold" ? `/builds/${build.slug}` : `/for-sale/${build.slug}`}
                 image={build.cover}
                 eyebrow={`${build.year} · ${build.status.replace("-", " ")}`}
                 title={build.title}
-                alt={`${build.year} Chevrolet ${build.model} custom C10 build ${build.nickname}`}
+                alt={`${build.year} Chevrolet ${build.model} ${build.nickname}`}
+                price={build.price}
+                ghostPrice={build.status === "sold"}
+                sold={build.status === "sold"}
               />
             ))
           }
@@ -130,31 +133,6 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
             <a class="btn rust" href="/parts">Shop C10 parts</a>
             <a class="btn ghost" href="/contact">Start a build</a>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" style="background:var(--bg-2)">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <span class="kicker">For sale</span>
-            <h2>Projects on the market.</h2>
-          </div>
-          <a class="btn ghost" href="/for-sale">See inventory</a>
-        </div>
-        <div class="photo-grid">
-          {
-            listings.map((item) => (
-              <Card
-                href={`/for-sale/${item.slug}`}
-                image={item.cover}
-                eyebrow={`${item.year} · ${item.price}`}
-                title={item.title}
-                alt={`${item.year} Chevrolet ${item.model} C10 for sale at K-TECH Speedshop`}
-              />
-            ))
-          }
         </div>
       </div>
     </section>
