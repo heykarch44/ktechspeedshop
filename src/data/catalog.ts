@@ -15,6 +15,7 @@ export type Build = {
   featured: boolean;
   projectSlug?: string;
   price?: string;
+  eyebrow?: string;
 };
 
 export type SaleListing = {
@@ -29,6 +30,7 @@ export type SaleListing = {
   details: string;
   highlights: string[];
   ghostPrice?: boolean;
+  eyebrow?: string;
 };
 
 export type Part = {
@@ -123,11 +125,12 @@ export const builds: Build[] = [
   },
   {
     slug: "85-orng",
-    title: "ORNG",
+    title: "1985 ORNG C10 Squarebody",
     year: 1985,
     model: "C10",
     nickname: "ORNG",
     status: "sold",
+    eyebrow: "1985 · complete · sold",
     cover: "/images/builds/copper-front.png",
     gallery: [
       "/images/builds/copper-front.png",
@@ -149,15 +152,16 @@ export const builds: Build[] = [
       "4-link",
     ],
     featured: true,
-    price: "$85,000",
+    price: "$85k",
   },
   {
     slug: "87-dejavu",
-    title: "DejaVu",
+    title: "1987 DejaVu C10 Squarebody",
     year: 1987,
     model: "C10",
     nickname: "DejaVu",
     status: "in-build",
+    eyebrow: "1987 · in build",
     cover: "/images/builds/primer-sunset.png",
     gallery: [
       "/images/builds/primer-sunset.png",
@@ -176,6 +180,7 @@ export const builds: Build[] = [
       "24\" UsMags",
     ],
     featured: true,
+    price: "$ DM for Price",
     projectSlug: "87-dejavu",
   },
   {
@@ -205,11 +210,12 @@ export const builds: Build[] = [
 export const listings: SaleListing[] = [
   {
     slug: "87-dejavu",
-    title: "DejaVu",
+    title: "1987 DejaVu C10 Squarebody",
     year: 1987,
     model: "C10",
-    price: "Inquire",
+    price: "$ DM for Price",
     status: "available",
+    eyebrow: "1987 · in build",
     cover: "/images/builds/primer-sunset.png",
     summary:
       "1987 squarebody in primer. LS 6.0, bagged, 4-link, 24\" UsMags.",
@@ -225,12 +231,13 @@ export const listings: SaleListing[] = [
   },
   {
     slug: "85-orng",
-    title: "ORNG",
+    title: "1985 ORNG C10 Squarebody",
     year: 1985,
     model: "C10",
-    price: "$85,000",
+    price: "$85k",
     status: "sold",
     ghostPrice: true,
+    eyebrow: "1985 · complete · sold",
     cover: "/images/builds/copper-front.png",
     summary:
       "1985 squarebody. Full custom chassis, supercharged 700hp LS3. Sold.",

@@ -23,7 +23,7 @@ if (!build) throw new Error("Missing build");
     <section class="hero" style="min-height:78svh">
       <img src={build.cover} alt={`${build.year} Chevrolet ${build.model} ${build.nickname}`} width="2400" height="1350" />
       <div class="hero-copy">
-        <span class="kicker">{build.year} · {build.status.replace("-", " ")}</span>
+        <span class="kicker">{build.eyebrow ?? `${build.year} · ${build.status.replace("-", " ")}`}</span>
         <h1>{build.title}</h1>
         <p>{build.summary}</p>
         {build.price && (

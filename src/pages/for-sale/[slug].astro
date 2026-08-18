@@ -19,7 +19,7 @@ if (!item) throw new Error("Missing listing");
     <section class="hero" style="min-height:72svh">
       <img src={item.cover} alt={item.title} width="2400" height="1350" />
       <div class="hero-copy">
-        <span class="kicker">{item.year} · {item.status}</span>
+        <span class="kicker">{item.eyebrow ?? `${item.year} · ${item.status}`}</span>
         <h1>{item.title}</h1>
         <p>{item.summary}</p>
         <p class:list={["price", { ghost: item.ghostPrice }]} style="font-size:1.4rem">{item.price}</p>

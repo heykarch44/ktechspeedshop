@@ -69,7 +69,7 @@ const latestUpdates = (await getUpdates()).slice(0, 3);
               <Card
                 href={build.status === "sold" ? `/builds/${build.slug}` : `/for-sale/${build.slug}`}
                 image={build.cover}
-                eyebrow={`${build.year} · ${build.status.replace("-", " ")}`}
+                eyebrow={build.eyebrow ?? `${build.year} · ${build.status.replace("-", " ")}`}
                 title={build.title}
                 alt={`${build.year} Chevrolet ${build.model} ${build.nickname}`}
                 price={build.price}

@@ -24,7 +24,7 @@ import { builds } from "../../data/catalog";
           <Card
             href={`/builds/${build.slug}`}
             image={build.cover}
-            eyebrow={`${build.year} · ${build.status.replace("-", " ")}`}
+            eyebrow={build.eyebrow ?? `${build.year} · ${build.status.replace("-", " ")}`}
             title={build.title}
             alt={`${build.year} Chevrolet ${build.model} ${build.nickname} built by K-TECH Speedshop`}
             price={build.price}
