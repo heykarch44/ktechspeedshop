@@ -1,0 +1,342 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Base
+  title="C10 Frame Tech"
+  description="K-TECH Speedshop boxed C10 chassis geometry: taped squarebody body mounts, 2×6 spine, Wilwood 831-14202 ProSpindle, and Fusion layout for 67–87 trucks."
+  image="/images/shop/weld.jpg"
+>
+  <Header />
+  <main id="main" class="wrap page-hero tech-hero">
+    <span class="kicker">Chassis</span>
+    <h1>Frame tech.</h1>
+    <p class="lede">
+      Working spec for a 67–87 C10 2WD restomod chassis: 2×6 A500 spine, plate clips,
+      weld-on body hats, Wilwood 2.5" ProSpindle. Taped 2026-09-01 on a squarebody.
+      Prototype is a 73–87 short, 117.5" wheelbase.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-tile">
+        <strong>33.5"</strong>
+        <span>Core C-C, taped</span>
+      </div>
+      <div class="stat-tile">
+        <strong>42.5"</strong>
+        <span>Mid / cab-front C-C</span>
+      </div>
+      <div class="stat-tile">
+        <strong>23.5"</strong>
+        <span>Back of cab C-C</span>
+      </div>
+      <div class="stat-tile">
+        <strong>98"</strong>
+        <span>Core to cab-rear</span>
+      </div>
+    </div>
+
+    <article class="prose tech-doc">
+      <h2>Architecture</h2>
+      <p>
+        Not one universal 67–87 weldment. One rail architecture, generation-specific body hats,
+        wheelbase on the rear clip.
+      </p>
+      <p>
+        Buy two sticks of A500 2×6 × 0.188 (or 0.250). Laser the front and rear clips from 3/16
+        plate, tab-and-slot. Year/model is weld-on hats — core, cab, later engine and trans.
+        67–72 and 73–87 are different hats on the same spine.
+      </p>
+      <p>
+        Slip-fit is a jig. Clips are a 12–16" open C that drop over the tube. A500 will not
+        telescope through a sharp square hole. Clocking key on the tube top. Through-bolts, then
+        weld the strap and perimeter. The truck ships fully welded.
+      </p>
+      <p>
+        Raised bed: bed mounts are free. Body problem is core + cab only. Split 2–4" behind the
+        rear cab mount, in the straight rail. Keep one rail spacing. Track width is housing plus
+        backspacing, not pinching the 2×6s.
+      </p>
+
+      <h2>Taped body mounts</h2>
+      <p>Center-to-center. Three widths, two spans. Not one cab width.</p>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Fusion</th>
+              <th>Width C-C</th>
+              <th>Along the rail</th>
+              <th>Vs 2×6</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Core support</td>
+              <td>CORE</td>
+              <td>33.5"</td>
+              <td>datum</td>
+              <td>Rails sit here (16.75" off CL)</td>
+            </tr>
+            <tr>
+              <td>Mid / cab front</td>
+              <td>CAB_F</td>
+              <td>42.5"</td>
+              <td>55" behind core</td>
+              <td>Hat ~4.5" outboard of tube</td>
+            </tr>
+            <tr>
+              <td>Back of cab</td>
+              <td>CAB_R</td>
+              <td>23.5"</td>
+              <td>43" behind mid</td>
+              <td>Hat ~5.0" inboard of tube</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The 2×6 follows the core. Do not dogleg the tube to hit mid or cab-rear holes. Those are
+        weld-on hats.
+      </p>
+      <p class="note">
+        Still open: core vs front axle (<code>core_x</code>). Placeholder is −33". Tape core-bolt
+        to front-axle centerline when the Wilwood is on the truck. That number slides the whole
+        cab station set in Fusion.
+      </p>
+
+      <h2>Locked product</h2>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Lock</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Knuckle</td>
+              <td>Wilwood ProSpindle 831-14202, 2.5" drop, 1971–1987 pair</td>
+            </tr>
+            <tr>
+              <td>Same knuckle 67–72?</td>
+              <td>Yes. New A-arms use 73–87 ball joints. Do not order 831-14201.</td>
+            </tr>
+            <tr>
+              <td>Hub</td>
+              <td>Modular / unit hub, 5×4.75 and 5×5</td>
+            </tr>
+            <tr>
+              <td>Rear</td>
+              <td>4-link, 22–24" lowers (20" is the floor)</td>
+            </tr>
+            <tr>
+              <td>Tire / bags</td>
+              <td>32" OD lay-out, ~11" bag stroke</td>
+            </tr>
+            <tr>
+              <td>Rail</td>
+              <td>2×6 × 3/16 A500, 6" tall, 2" across the car</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>CPP X10 was considered and dropped because Wilwood published the print.</p>
+
+      <h3>Wilwood 831-14202</h3>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Dim</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Spindle drop</td><td>2.50"</td></tr>
+            <tr><td>BJ spread</td><td>9.06"</td></tr>
+            <tr><td>Kingpin vs hub face</td><td>82°</td></tr>
+            <tr><td>Hub face to BJ axis</td><td>3.68"</td></tr>
+            <tr><td>Tie rod reach</td><td>4.09"</td></tr>
+            <tr><td>Tie rod drop</td><td>2.35"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Spine and clips</h2>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Dim</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Tube</td><td>2 × 6 × 0.188" A500</td></tr>
+            <tr><td>Orientation</td><td>6" tall, 2" across the car</td></tr>
+            <tr><td>Rail CL from vehicle CL</td><td>16.75"</td></tr>
+            <tr><td>Clip overlap</td><td>14"</td></tr>
+            <tr><td>Clip plate</td><td>0.188"</td></tr>
+            <tr><td>C-socket clearance</td><td>0.030" per side</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Clip is a 3-sided C plus closing strap, U-notch for tube radius. Tabs proud 0.06–0.10".
+        Laser slot ~+0.010 over plate — freeze with a coupon.
+      </p>
+
+      <h2>Fusion coordinates</h2>
+      <p>
+        Origin = front axle × ground × frame centerline. +X rear, +Y up, +Z passenger.
+        If the canvas looks empty after Run: Fit view. Rails sit 16.75" off center, not on the origin.
+      </p>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>front_overhang</td><td>34"</td><td>Estimate — horns / core</td></tr>
+            <tr><td>wb</td><td>117.5"</td><td>Locked for first proto</td></tr>
+            <tr><td>rear_overhang</td><td>42"</td><td>Estimate — raised bed</td></tr>
+            <tr><td>core_x</td><td>−33"</td><td>Placeholder — tape next</td></tr>
+            <tr><td>cab_f_x</td><td>core_x + 55</td><td>Computed from tape</td></tr>
+            <tr><td>cab_r_x</td><td>cab_f_x + 43</td><td>Computed from tape</td></tr>
+            <tr><td>rail_bottom</td><td>8"</td><td>Ride height — bags change this</td></tr>
+            <tr><td>spine_length</td><td>193.5"</td><td>34 + 117.5 + 42</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Wheelbases</h2>
+      <p>Rear clip changes these. Cab hats do not.</p>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Body</th>
+              <th>Years</th>
+              <th>WB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Short 6.5'</td><td>67–72</td><td>115.0"</td></tr>
+            <tr><td>Long 8'</td><td>67–72</td><td>127.0"</td></tr>
+            <tr><td>Short 6.5' (prototype)</td><td>73–87</td><td>117.5"</td></tr>
+            <tr><td>Long 8'</td><td>73–87</td><td>131.5"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Shared vs split</h2>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Share 67–87</th>
+              <th>Split by generation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2×6 spine, clip sockets, fixture pins</td>
+              <td>Cab / core hole pattern</td>
+            </tr>
+            <tr>
+              <td>IFS and 4-link architecture</td>
+              <td>Core support / horns vs OEM clip</td>
+            </tr>
+            <tr>
+              <td>Wilwood knuckle + 73–87 BJs</td>
+              <td>Engine-to-firewall hats</td>
+            </tr>
+            <tr>
+              <td>One rail spacing (core 33.5")</td>
+              <td>Wheelbase on the rear clip</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Do not share cab holes across 67–72 and 73–87.</p>
+
+      <h2>Front clip</h2>
+      <p>Order: knuckle → travel envelope → lower inner → upper inner → rack last.</p>
+      <ol>
+        <li>Ground, 32" tire, spindle at ride and at lay-out (frame near ground = full jounce).</li>
+        <li>Drop in 831-14202. That locks BJ height vs hub.</li>
+        <li>Lower arm ~level at ride, as long as the fender allows (~14–16").</li>
+        <li>Upper inner from BJ spread, not from the rail.</li>
+        <li>Rack last. Tie rod same length as the lower arm and parallel in top and side view.</li>
+        <li>Engine: pan vs K-member ~1". Pan vs ground at lay-out is the real limit.</li>
+      </ol>
+      <p>
+        Cab still sits on the taped mounts. 2×6 under the cab stays at mount_y. Front clip may
+        hang below the tube. Do not kink the 2×6 for the arms. 11" of bag travel will not hide a
+        high/low rack.
+      </p>
+
+      <h2>Rear 4-link</h2>
+      <ul>
+        <li>Lower bars 22–24"</li>
+        <li>Uppers within ~1" of the lowers</li>
+        <li>Level or slightly downhill to the front at ride</li>
+        <li>Mild anti-squat</li>
+        <li>Front pickups just behind the cab</li>
+        <li>Track width = housing + backspace, not rail pinch</li>
+      </ul>
+
+      <h2>Fusion file</h2>
+      <p>
+        Script folder: <code>chassis/fusion/KTECH_C10_Chassis_Setup</code>. Copy into Fusion My
+        Scripts. Preferences → Design → Default design type → Hybrid. Run
+        <strong>KTECH_C10_Chassis_Setup</strong>. Do not run the leftover script named C10.
+      </p>
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Role now</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>00_ORIGIN</td><td>6" cube so a good run is obvious</td></tr>
+            <tr><td>00_SKELETON</td><td>SK_SIDE, SK_TOP</td></tr>
+            <tr><td>01_SPINE_2x6</td><td>Two mirrored tubes on core width</td></tr>
+            <tr><td>02_CLIP_FRONT</td><td>Empty — next CAD</td></tr>
+            <tr><td>03_CLIP_REAR</td><td>Empty — next CAD</td></tr>
+            <tr><td>04_MOUNTS_73_87</td><td>CORE / CAB_F / CAB_R construction points</td></tr>
+            <tr><td>04_MOUNTS_67_72</td><td>Empty hat</td></tr>
+            <tr><td>05_IFS</td><td>Empty — Wilwood + arms + rack</td></tr>
+            <tr><td>06_REAR</td><td>Empty — 4-link</td></tr>
+            <tr><td>07_FIXTURE</td><td>Empty — weld table</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Next on the Fusion PC</h2>
+      <ol>
+        <li>Hybrid + New Design + Run KTECH_C10_Chassis_Setup. Confirm six mount points.</li>
+        <li>Tape core to front axle. Set core_x. Re-run.</li>
+        <li>Model 831-14202 on SK_SIDE from wilwood-831-14202.png.</li>
+        <li>Front clip C-socket + LCA inners. Do not dogleg the 2×6.</li>
+        <li>Rear 4-link at 22–24", step around 32" tire + 11" bags.</li>
+      </ol>
+      <p>
+        This is a fabrication architecture, not a stamped chassis. FEA the splice, IFS pickups,
+        and 4-link before kits leave the shop.
+      </p>
+    </article>
+  </main>
+  <Footer />
+</Base>
