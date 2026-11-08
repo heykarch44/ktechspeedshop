@@ -1,0 +1,6 @@
+name,inches,note
+core_width,33.5,Core support C-C. Taped.
+mid_width,42.5,Mid / cab-front mount C-C. Outboard of the 2x6.
+rear_cab_width,23.5,Back of cab C-C. Inboard of the 2x6.
+core_to_mid,55,Core to mid along the rail.
+mid_to_rear,43,Mid to back of cab along the rail.

@@ -1,0 +1,11 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "Ktech Speedshop",
+    "description": {
+        "": "Creates a new Fusion document for the Ktech C10 chassis: user parameters, layout sketches, 2x6 A500 spine, and 10 body-mount construction points."
+    },
+    "version": "1.0.0",
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}

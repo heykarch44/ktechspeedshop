@@ -1,0 +1,33 @@
+name,expression,unit,comment
+tube_w,2,in,A500 tube width across the car (2x6 standing tall)
+tube_h,6,in,A500 tube height
+wall,0.188,in,A500 wall. Use 0.250 for heavier
+rail_bottom,8,in,Bottom of 2x6 off the ground at ride height. CHANGE with bags.
+front_overhang,34,in,Tube ahead of front axle. Horns / core support.
+wb,117.5,in,Wheelbase. 73-87 short=117.5  long=131.5  67-72 short=115  long=127
+rear_overhang,42,in,Tube behind rear axle. Raised bed — not a body-mount number.
+overlap,14,in,Front and rear clip socket length on the tube
+clip_t,0.188,in,Plate thickness for clips
+clip_clear,0.030,in,Per-side clearance in the C-socket
+tire_od,32,in,Lay-out tire. Lock this before the rear clip.
+bag_stroke,11,in,Bag travel target
+spindle_drop,2.5,in,LOCKED. Wilwood ProSpindle 831-14202 2.5 drop 71-87. Same knuckle 67-87 with 73-87 BJs.
+bj_spread,9.06,in,Upper to lower BJ centers. From Wilwood drawing.
+kpi_to_hub,3.68,in,Hub face to BJ axis.
+kingpin_deg,82,,BJ axis vs hub face, degrees.
+tre_reach,4.09,in,Hub center to tie-rod hole.
+tre_drop,2.35,in,Tie-rod hole below spindle centerline.
+spine_length,front_overhang + wb + rear_overhang,in,Computed tube length
+core_width,33.5,in,TAPED. Core support C-C
+mid_width,42.5,in,TAPED. Mid / cab-front mount C-C
+rear_cab_width,23.5,in,TAPED. Back of cab mount C-C
+core_to_mid,55,in,TAPED. Core to mid along the rail
+mid_to_rear,43,in,TAPED. Mid to back of cab along the rail
+mount_y,rail_bottom + tube_h,in,Mounts on top of the rail
+core_half,core_width / 2,in,Computed
+mid_half,mid_width / 2,in,Computed
+rear_half,rear_cab_width / 2,in,Computed
+rail_cl,core_width / 2,in,2x6 follows core. Mid/rear are weld-on hats.
+core_x,-33,in,Core vs front axle. Set when you place the IFS.
+cab_f_x,core_x + core_to_mid,in,Computed
+cab_r_x,cab_f_x + mid_to_rear,in,Computed
