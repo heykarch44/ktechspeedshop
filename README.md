@@ -61,3 +61,11 @@ The site is static HTML, fast, and already has:
 - Descriptive image alt text
 
 Next wins: your city and phone in `site.ts`, real build photos, and a new journal post whenever a truck leaves the shop.
+
+## Sharing and hobby use
+
+If you are a student or hobbyist interested in frame geometry for your own project, reach out - we are happy to share and see what you build.
+
+Public visibility does not make this entire repository open source or grant a blanket license to its code, branding, CAD files, or other assets. Please contact the owner to agree on permission for commercial use or redistribution.
+
+The chassis designs are works in progress. Dimensions and geometry are starting points, not validated fabrication plans. Verify fit, materials, welding, and structural adequacy before building.

@@ -1,0 +1,69 @@
+name,expression,unit,comment
+tube_w,2,in,A500 tube width across the car (2x6 standing tall)
+tube_h,6,in,A500 tube height
+wall,0.188,in,A500 wall. Use 0.250 for heavier
+rail_bottom,8,in,Bottom of 2x6 off the ground at ride height. CHANGE with bags.
+wb_73_87_short,117.5,in,73-87 C10 shortbed wheelbase — first prototype
+wb_67_72_short,115.0,in,67-72 C10 shortbed wheelbase — switch wb expression to this
+wb,wb_73_87_short,in,Active wheelbase. Proto = wb_73_87_short; set to wb_67_72_short for 67-72
+rear_overhang,42,in,Tube/clip behind rear axle. Raised bed — PLACEHOLDER estimate
+core_width,33.5,in,TAPED. Core support C-C. 2x6 follows this.
+rail_cl,core_width / 2,in,2x6 CL from vehicle CL
+core_x,-33,in,Core vs front axle. PLACEHOLDER until IFS lands.
+core_to_mid,55,in,TAPED. Core to mid / cab-front along the rail
+mid_to_rear,43,in,TAPED. Mid to back of cab along the rail
+cab_f_x,core_x + core_to_mid,in,Computed
+cab_r_x,cab_f_x + mid_to_rear,in,Computed
+splice_aft,3,in,PLACEHOLDER. Split behind cab_r before clip starts
+slip_overlap,8,in,Slip-fit overlap of plate box over 2x6 center tube
+clip_t,0.188,in,Laser plate thickness for clip rails and keyed mounts
+clip_clear,0.030,in,Per-side slip-fit clearance. Inside = tube OD + 2*clip_clear
+center_tube_end_x,cab_r_x + splice_aft,in,Aft end of purchased 2x6 center tube
+clip_front_x,center_tube_end_x - slip_overlap,in,Forward end of plate box (starts over tube)
+clip_rear_x,wb + rear_overhang,in,Aft end of rear clip
+slip_id_w,tube_w + 2 * clip_clear,in,Slip-fit inside width
+slip_id_h,tube_h + 2 * clip_clear,in,Slip-fit inside height
+box_od_w,slip_id_w + 2 * clip_t,in,Assembled box outer width
+box_od_h,slip_id_h + 2 * clip_t,in,Assembled box outer height (straight section)
+tab_width,0.750,in,PLACEHOLDER. Tab width along plate edge
+tab_length,clip_t,in,Tab protrusion = mating plate thickness
+slot_clear,0.010,in,PLACEHOLDER. Laser slot oversize vs tab (freeze with coupon)
+tab_pitch,4.000,in,PLACEHOLDER. Center-to-center tab spacing along long edges
+tire_od,32,in,Lay-out tire. Lock before finalizing kickup
+bag_stroke,11,in,Bag travel target
+kickup_ahead,10,in,PLACEHOLDER. Kickup start ahead of rear axle CL
+kickup_aft,8,in,PLACEHOLDER. Kickup ends aft of rear axle CL
+kickup_rise,4,in,PLACEHOLDER. Vertical rise of rail top over axle
+kickup_ramp,4,in,PLACEHOLDER. Horizontal length of each kickup ramp
+lower_link_len,23,in,PLACEHOLDER. Triangulated lower bar length (22-24 in target)
+upper_link_len,22,in,PLACEHOLDER. Upper bar length — within ~1 in of lowers
+lower_pickup_x,cab_r_x + 2,in,PLACEHOLDER. Frame lower 4-link pickup just behind cab
+upper_pickup_x,cab_r_x + 6,in,PLACEHOLDER. Frame upper 4-link pickup
+lower_pickup_y,rail_bottom + 1,in,PLACEHOLDER. Lower pickup height at ride
+upper_pickup_y,rail_bottom + tube_h - 1,in,PLACEHOLDER. Upper pickup height at ride
+axle_link_spread_z,18,in,PLACEHOLDER. Axle-side lower link half-spread from CL
+frame_link_spread_z,rail_cl,in,Frame-side lower pickups at rail CL
+upper_xmember_w,2.000,in,PLACEHOLDER. Upper crossmember plate width (along X)
+upper_xmember_h,4.000,in,PLACEHOLDER. Upper crossmember plate height
+bracket_plate_w,4.000,in,PLACEHOLDER. 4-link bracket plate width
+bracket_plate_h,3.500,in,PLACEHOLDER. 4-link bracket plate height
+bracket_hole_d,0.625,in,PLACEHOLDER. Link bolt hole diameter
+suspension_mode,1,,1 = airbag upper mount; 0 = coilover upper mount (read at run)
+bag_mount_w,6.000,in,PLACEHOLDER. Bag/shock upper mount plate width along X
+bag_mount_l,8.000,in,PLACEHOLDER. Bag/shock upper mount plate length across car (per side pad)
+bag_mount_z_off,2.000,in,PLACEHOLDER. Mount pad inset from rail outboard face
+coilover_mount_w,3.000,in,PLACEHOLDER. Coilover upper mount plate width along X
+coilover_mount_l,4.000,in,PLACEHOLDER. Coilover upper mount plate length
+axle_wms_a,63.625,in,WMS width A — set by wheel/tire combo (user param)
+brake_space,2.500,in,Torino late big bearing brake space per side
+housing_end_b,axle_wms_a - 2 * brake_space,in,Housing end-to-end B
+axle_tube_od,3.000,in,Axle tube OD
+axle_tube_wall,0.188,in,Axle tube wall
+pinion_offset,0.940,in,Housing-centered pinion offset toward passenger (+Z)
+cs_width,11.250,in,PLACEHOLDER UNVERIFIED — Currie 9-inch center section width. Awaiting Currie CAD.
+cs_height,9.500,in,PLACEHOLDER UNVERIFIED — Currie 9-inch center section height. Awaiting Currie CAD.
+cs_depth,8.000,in,PLACEHOLDER UNVERIFIED — Currie center section depth along X. Awaiting Currie CAD.
+tube_insert,2.500,in,PLACEHOLDER UNVERIFIED — Axle tube insertion into center section. Awaiting Currie CAD.
+axle_tube_len,(housing_end_b - cs_width) / 2 + tube_insert,in,Derived axle tube length each side
+axle_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Axle centerline height at ride — edit with bags
+mount_y,rail_bottom + tube_h,in,Top of straight 2x6 / slip section

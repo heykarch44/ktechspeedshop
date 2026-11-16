@@ -1,0 +1,11 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "Ktech Speedshop",
+    "description": {
+        "": "Creates a parametric Ktech C10 rear clip: 2x6 center-tube reference, four-piece tab-slot plate rails with slip-fit, triangulated 4-link brackets, axle mockup, and DXF plate export."
+    },
+    "version": "1.0.0",
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}
