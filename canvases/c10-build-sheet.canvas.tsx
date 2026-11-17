@@ -1093,14 +1093,8 @@ const SECTIONS: Section[] = [
       {
         id: "serpentine",
         name: "Accessory drive",
-        brand: "ICT / Holley",
+        brand: "Holley",
         options: [
-          {
-            id: "ict-serpentine",
-            label: "ICT Billet LS serpentine, alt + PS + A/C",
-            sku: "ICT LS drive",
-            price: 895,
-          },
           {
             id: "holley-hi-ram",
             label: "Holley mid-mount accessory drive, LS",
@@ -1433,7 +1427,7 @@ const DEFAULT_SELECTIONS: Record<string, string> = {
   fluids: "fluids-fill",
   driveshaft: "custom-1350",
   mounts: "ls-mounts",
-  serpentine: "ict-serpentine",
+  serpentine: "holley-hi-ram",
   transCooler: "derale-cooler",
   fuelLines: "fuel-lines-an",
   shifter: "lokar-auto",
