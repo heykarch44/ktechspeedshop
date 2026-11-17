@@ -3,7 +3,7 @@
     "type": "script",
     "author": "Ktech Speedshop",
     "description": {
-        "": "Creates a parametric Ktech C10 rear clip: 2x6 center-tube reference, four-piece tab-slot plate rails with slip-fit, triangulated 4-link brackets, axle mockup, and DXF plate export."
+        "": "Creates a parametric Ktech C10 rear clip: 2x6 center-tube reference, four-piece tab-slot plate rails with slip-fit, triangulated or parallel+Watts 4-link (rear_link_type), keyed over-axle crossmember with bag/coilover mounts, aft square receivers + rear XM + cross-bolts for slide-in utility module, axle mockup, DXF plate export, and bar cut list."
     },
     "version": "1.0.0",
     "supportedOS": "windows|mac",

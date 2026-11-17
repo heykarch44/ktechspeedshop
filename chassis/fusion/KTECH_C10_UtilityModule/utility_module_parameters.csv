@@ -1,0 +1,91 @@
+name,expression,unit,comment
+tube_w,2,in,Shared spine name — A500 width (reference; module uses mod_od)
+tube_h,6,in,Shared spine name — A500 height (reference)
+wall,0.188,in,Shared spine wall (reference)
+rail_bottom,8,in,Shared — bottom of 2x6 off ground at ride
+wb_73_87_short,117.5,in,73-87 C10 shortbed wheelbase — first prototype
+wb,wb_73_87_short,in,Active wheelbase (match rear clip)
+core_width,33.5,in,TAPED. Core support C-C
+rail_cl,core_width / 2,in,Rail / receiver CL from vehicle CL (match rear clip)
+clip_t,0.188,in,Laser plate thickness for tray / bulkhead / keys
+clip_clear,0.030,in,Shared slip clear name (module uses mod_slip_clear)
+kickup_aft,8,in,PLACEHOLDER. Match rear clip — kickup ends aft of axle
+rcv_od,2.500,in,PLACEHOLDER. Match rear clip receiver outer size
+rcv_wall,0.188,in,PLACEHOLDER. Match rear clip receiver wall
+rcv_front_x,wb + kickup_aft,in,PLACEHOLDER. Match rear clip — receiver forward face
+rcv_length,14.000,in,PLACEHOLDER. Match rear clip receiver length
+rcv_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Match rear clip receiver CL height
+rcv_bolt_d,0.500,in,PLACEHOLDER. Match rear clip cross-bolt diameter
+rcv_bolt_count,2,,PLACEHOLDER. Match rear clip cross-bolt count
+rcv_bolt_pitch,3.000,in,PLACEHOLDER. Match rear clip cross-bolt pitch
+rcv_bolt_first_x,rcv_front_x + 2.000 in,in,PLACEHOLDER. Match rear clip first bolt X
+module_variant,air_fuel,,PLACEHOLDER. air_fuel|fuel_only — string enum (not Fusion length)
+mod_od,2.000,in,PLACEHOLDER. Module rail square tube outer size (slides inside receiver)
+mod_wall,0.188,in,PLACEHOLDER. Module rail square tube wall
+mod_slip_clear,0.030,in,PLACEHOLDER. Per-side clearance vs receiver ID (tube-in-tube)
+mod_insert_len,rcv_length - 0.250 in,in,PLACEHOLDER. Length of module rail inserted into receiver
+mod_tray_len,36.000,in,PLACEHOLDER. Tray / exposed rail length aft of receiver mouth
+mod_rail_len,mod_insert_len + mod_tray_len,in,Total module rail length
+mod_front_x,rcv_front_x + 0.125 in,in,PLACEHOLDER. Module rail forward tip X (inside receiver)
+mod_rear_x,mod_front_x + mod_rail_len,in,Module rail aft tip X
+tray_t,clip_t,in,PLACEHOLDER. Tray plate thickness
+tray_width,2 * rail_cl - mod_od,in,PLACEHOLDER. Tray plate width (spans between rail inboard faces)
+tray_length,mod_tray_len,in,PLACEHOLDER. Tray plate length along X
+tray_x0,rcv_front_x + rcv_length,in,PLACEHOLDER. Tray forward edge at receiver mouth
+tray_y,rcv_cl_y - mod_od / 2,in,PLACEHOLDER. Tray top face height (sits on rail top)
+tray_drop,0.000,in,PLACEHOLDER. Extra tray drop below rail top (0 = flush on rails)
+tab_width,0.750,in,PLACEHOLDER. Tray key tab width
+tab_length,clip_t,in,Tab protrusion = mating plate / rail wall seat
+slot_clear,0.010,in,PLACEHOLDER. Laser slot oversize vs tab
+fuel_l,28.000,in,PLACEHOLDER. Fuel tank overall length along X
+fuel_w,18.000,in,PLACEHOLDER. Fuel tank overall width along Z
+fuel_h,10.000,in,PLACEHOLDER. Fuel tank overall height along Y
+fuel_wall,0.125,in,PLACEHOLDER. Welded aluminum tank wall
+fuel_x,tray_x0 + 4.000 in,in,PLACEHOLDER. Fuel tank forward face X
+fuel_y,tray_y + tray_t,in,PLACEHOLDER. Fuel tank bottom Y (on tray)
+fuel_sump_l,6.000,in,PLACEHOLDER. Sump pocket length along X
+fuel_sump_w,8.000,in,PLACEHOLDER. Sump pocket width along Z
+fuel_sump_h,2.000,in,PLACEHOLDER. Sump pocket depth below tank bottom
+fuel_pump_flange_od,6.000,in,PLACEHOLDER. Radium-style in-tank pump module flange OD
+fuel_pump_flange_bolt_pc,5.375,in,PLACEHOLDER. Pump flange bolt circle
+fuel_pump_flange_bolt_d,0.312,in,PLACEHOLDER. Pump flange bolt hole dia (5/16)
+fuel_pump_flange_bolt_n,6,,PLACEHOLDER. Pump flange bolt count
+fuel_fill_od,2.250,in,PLACEHOLDER. Fill bung / neck OD
+fuel_vent_od,0.750,in,PLACEHOLDER. Vent / rollover valve bung OD
+fuel_sender_od,1.500,in,PLACEHOLDER. Fuel sender hole / flange OD
+fuel_feed_an,0.750,in,PLACEHOLDER. Feed bung major (AN-equivalent envelope)
+fuel_return_an,0.625,in,PLACEHOLDER. Return bung major (AN-equivalent envelope)
+air_tank_l,20.000,in,PLACEHOLDER. Air tank length along X (air_fuel only)
+air_tank_od,6.000,in,PLACEHOLDER. Air tank OD
+air_tank_x,tray_x0 + 4.000 in,in,PLACEHOLDER. Air tank forward end X
+air_tank_y,tray_y + tray_t + air_tank_od / 2 + 1.000 in,in,PLACEHOLDER. Air tank CL height
+air_tank_z,rail_cl * 0.35,in,PLACEHOLDER. Air tank CL lateral from frame CL
+comp_l,10.000,in,PLACEHOLDER. Compressor envelope length along X
+comp_w,6.000,in,PLACEHOLDER. Compressor envelope width along Z
+comp_h,8.000,in,PLACEHOLDER. Compressor envelope height
+comp_gap,2.000,in,PLACEHOLDER. Gap between twin compressors along Z
+comp_x,tray_x0 + 18.000 in,in,PLACEHOLDER. Compressor forward face X
+comp_y,tray_y + tray_t,in,PLACEHOLDER. Compressor bottom Y
+manifold_l,8.000,in,PLACEHOLDER. Valve manifold envelope length along X
+manifold_w,4.000,in,PLACEHOLDER. Valve manifold envelope width along Z
+manifold_h,3.000,in,PLACEHOLDER. Valve manifold envelope height
+manifold_x,tray_x0 + 28.000 in,in,PLACEHOLDER. Manifold forward face X
+manifold_y,tray_y + tray_t,in,PLACEHOLDER. Manifold bottom Y
+batt_l,13.000,in,PLACEHOLDER. Battery envelope length along X
+batt_w,7.000,in,PLACEHOLDER. Battery envelope width along Z
+batt_h,8.000,in,PLACEHOLDER. Battery envelope height
+batt_gap,1.500,in,PLACEHOLDER. Gap between twin batteries along Z
+batt_x,tray_x0 + 22.000 in,in,PLACEHOLDER. Battery forward face X
+batt_y,tray_y + tray_t,in,PLACEHOLDER. Battery bottom Y
+bh_t,clip_t,in,PLACEHOLDER. Bulkhead service plate thickness
+bh_w,tray_width,in,PLACEHOLDER. Bulkhead plate width along Z
+bh_h,12.000,in,PLACEHOLDER. Bulkhead plate height along Y
+bh_x,tray_x0,in,PLACEHOLDER. Bulkhead plate aft face X (forward wall of tray bay)
+bh_y,tray_y,in,PLACEHOLDER. Bulkhead plate bottom Y
+bh_an_feed_d,0.750,in,PLACEHOLDER. AN fuel feed pass-through hole dia
+bh_an_return_d,0.625,in,PLACEHOLDER. AN fuel return pass-through hole dia
+bh_air_d,0.500,in,PLACEHOLDER. Air line pass-through hole dia
+bh_batt_cable_d,1.000,in,PLACEHOLDER. Battery cable pass-through hole dia
+bh_ctrl_d,1.250,in,PLACEHOLDER. Control connector pass-through hole dia
+bh_pitch_z,2.500,in,PLACEHOLDER. Horizontal spacing of bulkhead pass-throughs
+bh_row_y,bh_y + bh_h * 0.55,in,PLACEHOLDER. Vertical center of pass-through row

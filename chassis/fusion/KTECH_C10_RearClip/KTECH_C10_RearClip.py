@@ -12,11 +12,19 @@
 #   inboard / outboard) that slip-fits over the tube for length adjust,
 #   then welds. Tab-and-slot keys locate subassemblies into the rails.
 #   Prototype: 73-87 short (wb = wb_73_87_short). Switch to wb_67_72_short
-#   for 67-72. Rear: triangulated 4-link, Currie 9-inch, bag OR coilover.
+#   for 67-72. REV-B layout: outboard lower 4-link bars; rear_link_type selects
+#   triangulated (inboard uppers) or parallel_watts (parallel uppers + Watts
+#   lateral). Inboard bag/shock on axle tubes; keyed over-axle XM with bag OR
+#   coilover (suspension_mode). Rails / kickup / OA XM / receivers stay identical
+#   across link variants so the same UtilityModule plugs into either.
+#   Aft of kickup the rails step back down; square RECEIVER tubes key/weld into
+#   the rail plates, tied by a rear crossmember, with cross-bolt holes for a
+#   slide-in utility module (see KTECH_C10_UtilityModule).
 #
 # Coordinates (Fusion Y-up) — same as KTECH_C10_Chassis_Setup
 #   Origin = front axle × ground × frame centerline
 #   +X = rear   +Y = up   +Z = passenger (right)
+#   Layout params lower_link_y / bag_y / shock_y are LATERAL (|Z| from frame CL).
 
 import csv
 import math
@@ -35,26 +43,62 @@ except Exception:
 PLATE_BODY_NAMES = (
     "RAIL_RH_TOP_FWD",
     "RAIL_RH_TOP_AFT",
+    "RAIL_RH_TOP_TAIL",
     "RAIL_RH_BOT_FWD",
     "RAIL_RH_BOT_AFT",
+    "RAIL_RH_BOT_TAIL",
     "RAIL_RH_OUTBOARD",
     "RAIL_RH_INBOARD",
     "RAIL_LH_TOP_FWD",
     "RAIL_LH_TOP_AFT",
+    "RAIL_LH_TOP_TAIL",
     "RAIL_LH_BOT_FWD",
     "RAIL_LH_BOT_AFT",
+    "RAIL_LH_BOT_TAIL",
     "RAIL_LH_OUTBOARD",
     "RAIL_LH_INBOARD",
     "XMEMBER_UPPER",
+    "XMEMBER_OA_TOP",
+    "XMEMBER_OA_WEB_FWD",
+    "XMEMBER_OA_WEB_AFT",
+    "XMEMBER_OA_BOT",
     "BRACKET_LOWER_RH",
     "BRACKET_LOWER_LH",
     "BRACKET_UPPER_RH",
     "BRACKET_UPPER_LH",
-    "MOUNT_BAG_RH",
-    "MOUNT_BAG_LH",
-    "MOUNT_COILOVER_RH",
-    "MOUNT_COILOVER_LH",
+    "AXLE_TAB_LOWER_RH",
+    "AXLE_TAB_LOWER_LH",
+    "AXLE_TAB_UPPER_RH",
+    "AXLE_TAB_UPPER_LH",
+    "SHOCK_TAB_UPPER_RH_A",
+    "SHOCK_TAB_UPPER_RH_B",
+    "SHOCK_TAB_UPPER_LH_A",
+    "SHOCK_TAB_UPPER_LH_B",
+    "SHOCK_TAB_LOWER_RH_A",
+    "SHOCK_TAB_LOWER_RH_B",
+    "SHOCK_TAB_LOWER_LH_A",
+    "SHOCK_TAB_LOWER_LH_B",
+    "MOUNT_BAG_UPPER_RH",
+    "MOUNT_BAG_UPPER_LH",
+    "MOUNT_BAG_LOWER_RH",
+    "MOUNT_BAG_LOWER_LH",
+    "XMEMBER_RCV",
+    "RCV_KEY_RH_IN",
+    "RCV_KEY_RH_OUT",
+    "RCV_KEY_LH_IN",
+    "RCV_KEY_LH_OUT",
+    "BRACKET_WATTS_RH",
+    "BRACKET_WATTS_LH",
+    "WATTS_CRANK",
+    "WATTS_PIVOT_MOUNT",
 )
+
+# String / enum params (Fusion user params are numeric; these live in CSV + attributes).
+STRING_PARAMS = {
+    "rear_link_type": "triangulated",
+    "lateral_locator": "none",
+    "rod_end_shank_thread": "3/4-16",
+}
 
 PARAM_ORDER = [
     # Shared spine / tape names (match KTECH_C10_Chassis_Setup)
@@ -97,27 +141,114 @@ PARAM_ORDER = [
     ("kickup_aft", "8 in", "in", "PLACEHOLDER. Kickup end aft of axle"),
     ("kickup_rise", "4 in", "in", "PLACEHOLDER. Rail top rise over axle"),
     ("kickup_ramp", "4 in", "in", "PLACEHOLDER. Kickup ramp length"),
-    # Triangulated 4-link
-    ("lower_link_len", "23 in", "in", "PLACEHOLDER. Lower bar length"),
-    ("upper_link_len", "22 in", "in", "PLACEHOLDER. Upper bar length"),
+    # 4-link — REV-B lowers outboard; uppers inboard (triangulated) or parallel
+    ("lower_link_len", "23 in", "in", "PLACEHOLDER. Target lower C-C (actual from pickups)"),
+    ("upper_link_len", "22 in", "in", "PLACEHOLDER. Target upper C-C (actual from pickups)"),
     ("lower_pickup_x", "cab_r_x + 2 in", "in", "PLACEHOLDER. Frame lower pickup X"),
     ("upper_pickup_x", "cab_r_x + 6 in", "in", "PLACEHOLDER. Frame upper pickup X"),
-    ("lower_pickup_y", "rail_bottom + 1 in", "in", "PLACEHOLDER. Lower pickup Y"),
-    ("upper_pickup_y", "rail_bottom + tube_h - 1 in", "in", "PLACEHOLDER. Upper pickup Y"),
-    ("axle_link_spread_z", "18 in", "in", "PLACEHOLDER. Axle lower half-spread"),
-    ("frame_link_spread_z", "rail_cl", "in", "Frame lower pickups at rail CL"),
-    ("upper_xmember_w", "2.000 in", "in", "PLACEHOLDER. Upper xmember width along X"),
-    ("upper_xmember_h", "4.000 in", "in", "PLACEHOLDER. Upper xmember height"),
+    ("lower_pickup_y", "rail_bottom + 1 in", "in", "PLACEHOLDER. Lower pickup height (Fusion Y)"),
+    ("upper_pickup_y", "rail_bottom + tube_h - 1 in", "in", "PLACEHOLDER. Upper pickup height (Fusion Y)"),
+    # lower_link_y / bag_y / shock_y = lateral |Z| from frame CL (not Fusion Y-up)
+    (
+        "lower_link_y",
+        "rail_cl + tube_w / 2 + clip_clear + clip_t + 0.75 in",
+        "in",
+        "PLACEHOLDER. Lower bar lateral from CL — outboard of rail outboard face",
+    ),
+    ("axle_link_spread_z", "lower_link_y", "in", "Legacy alias → lower_link_y (outboard lowers)"),
+    ("frame_link_spread_z", "lower_link_y", "in", "Frame lower pickups at lower_link_y (outboard)"),
+    (
+        "frame_upper_spread_z",
+        "rail_cl * 0.5",
+        "in",
+        "PLACEHOLDER. Frame upper half-spread — triangulated inboard (ignored when parallel_watts)",
+    ),
+    ("link_bar_od", "1.25 in", "in", "Four-link bar tube OD"),
+    ("link_bar_wall", "0.120 in", "in", "PLACEHOLDER. Four-link bar tube wall"),
+    ("rod_end_shank_od", "0.750 in", "in", "PLACEHOLDER. Shank major dia (3/4-16)"),
+    ("rod_end_housing_od", "1.750 in", "in", "PLACEHOLDER. Bushing housing OD"),
+    ("rod_end_housing_width", "0.875 in", "in", "PLACEHOLDER. Bushing housing width"),
+    ("rod_end_bore", "0.625 in", "in", "PLACEHOLDER. Rod-end bolt bore"),
+    ("rod_end_eye_to_shoulder", "2.125 in", "in", "PLACEHOLDER. Eye center to shoulder"),
+    (
+        "rod_end_thread_engagement_min",
+        "1.000 in",
+        "in",
+        "PLACEHOLDER. Min thread engagement into bung",
+    ),
+    (
+        "rod_end_adjustable_length",
+        "1.500 in",
+        "in",
+        "PLACEHOLDER. Spin-to-adjust range each end",
+    ),
+    ("bung_length", "1.500 in", "in", "PLACEHOLDER. Threaded tube insert length"),
+    ("bung_od", "link_bar_od - 2 * link_bar_wall", "in", "Bung OD ≈ tube ID"),
+    ("jam_nut_od", "1.125 in", "in", "PLACEHOLDER. Jam nut OD"),
+    ("jam_nut_width", "0.375 in", "in", "PLACEHOLDER. Jam nut width"),
+    ("axle_bracket_w", "4.000 in", "in", "PLACEHOLDER. Axle link tab width along X"),
+    ("axle_bracket_h", "3.000 in", "in", "PLACEHOLDER. Axle link tab height along Y"),
+    ("axle_bracket_t", "clip_t", "in", "Axle link tab plate thickness"),
+    ("upper_xmember_w", "2.000 in", "in", "PLACEHOLDER. Frame upper 4-link xmember width along X"),
+    ("upper_xmember_h", "4.000 in", "in", "PLACEHOLDER. Frame upper 4-link xmember height"),
     ("bracket_plate_w", "4.000 in", "in", "PLACEHOLDER. Link bracket width"),
     ("bracket_plate_h", "3.500 in", "in", "PLACEHOLDER. Link bracket height"),
     ("bracket_hole_d", "0.625 in", "in", "PLACEHOLDER. Link bolt hole dia"),
     # Suspension mode: 1 = airbag, 0 = coilover (evaluated at run)
-    ("suspension_mode", "1", "", "1=airbag upper mount, 0=coilover"),
+    ("suspension_mode", "1", "", "1=airbag on over-axle XM, 0=coilover/shock tabs"),
+    # Over-axle crossmember (kickup rails, above axle CL)
+    ("ox_plate_t", "0.188 in", "in", "PLACEHOLDER. Over-axle XM laser plate thickness"),
+    ("ox_width_x", "6.000 in", "in", "PLACEHOLDER. Over-axle XM fore-aft width"),
+    ("ox_web_h", "3.000 in", "in", "PLACEHOLDER. Over-axle XM front/rear web height"),
+    ("ox_include_bottom", "1", "", "1=include bottom plate, 0=open channel"),
+    # Shared bag / coilover mount positions (REV-B: inboard of rails)
+    (
+        "bag_diameter",
+        "8.000 in",
+        "in",
+        "PLACEHOLDER. Airbag OD for clearance checks (not solid-modeled)",
+    ),
+    (
+        "bag_y",
+        "(rail_cl - box_od_w / 2 + frame_upper_spread_z) / 2",
+        "in",
+        "PLACEHOLDER. Bag center lateral — between rail inboard face and upper link",
+    ),
+    (
+        "shock_y",
+        "bag_y",
+        "in",
+        "PLACEHOLDER. Shock/coilover lateral — same inboard bay as bag by default",
+    ),
+    ("mount_z_off", "bag_y", "in", "Legacy alias → bag_y (shared mount lateral)"),
+    ("mount_x_off", "0.000 in", "in", "PLACEHOLDER. Mount fore/aft offset from axle CL"),
+    (
+        "shock_eye_y",
+        "rail_bottom + tube_h + kickup_rise - 1 in",
+        "in",
+        "PLACEHOLDER. Upper shock/coilover eye height (Fusion Y)",
+    ),
+    ("shock_bore", "0.500 in", "in", "PLACEHOLDER. Shock/coilover bolt bore"),
+    ("shock_tab_w", "2.500 in", "in", "PLACEHOLDER. Shock tab width along X"),
+    ("shock_tab_h", "3.500 in", "in", "PLACEHOLDER. Shock tab height along Y"),
+    ("shock_tab_gap", "1.000 in", "in", "PLACEHOLDER. Double-shear clear between tabs"),
     ("bag_mount_w", "6.000 in", "in", "PLACEHOLDER. Bag mount plate width along X"),
-    ("bag_mount_l", "8.000 in", "in", "PLACEHOLDER. Bag mount plate length"),
-    ("bag_mount_z_off", "2.000 in", "in", "PLACEHOLDER. Pad inset from outboard"),
-    ("coilover_mount_w", "3.000 in", "in", "PLACEHOLDER. Coilover mount width along X"),
-    ("coilover_mount_l", "4.000 in", "in", "PLACEHOLDER. Coilover mount length"),
+    ("bag_mount_l", "6.000 in", "in", "PLACEHOLDER. Bag mount plate length along Z"),
+    ("bag_stud_d", "0.375 in", "in", "PLACEHOLDER. Single 3/8 bag stud hole dia"),
+    ("bag_stud_offset", "1.500 in", "in", "PLACEHOLDER. Stud offset from plate center along X"),
+    ("bag_air_hole_d", "0.750 in", "in", "PLACEHOLDER. Center air-fitting hole dia"),
+    (
+        "axle_travel_up",
+        "3.000 in",
+        "in",
+        "PLACEHOLDER. Axle bump travel up for clearance checks",
+    ),
+    (
+        "axle_travel_down",
+        "5.000 in",
+        "in",
+        "PLACEHOLDER. Axle droop travel down for bar-to-rail clearance",
+    ),
     # Currie 9-inch axle mockup
     ("axle_wms_a", "63.625 in", "in", "WMS width A — set by wheel/tire combo"),
     ("brake_space", "2.500 in", "in", "Torino late big bearing space per side"),
@@ -156,7 +287,248 @@ PARAM_ORDER = [
         "Derived axle tube length each side",
     ),
     ("axle_cl_y", "rail_bottom + tube_h / 2", "in", "PLACEHOLDER. Axle CL height at ride"),
+    ("axle_lower_pickup_x", "wb", "in", "PLACEHOLDER. Axle lower pickup X"),
+    ("axle_lower_pickup_y", "axle_cl_y - 1 in", "in", "PLACEHOLDER. Axle lower pickup height"),
+    (
+        "axle_lower_spread_z",
+        "lower_link_y",
+        "in",
+        "PLACEHOLDER. Axle lower lateral — outboard of rails near housing tubes",
+    ),
+    ("axle_upper_pickup_x", "wb", "in", "PLACEHOLDER. Axle upper pickup X"),
+    ("axle_upper_pickup_y", "axle_cl_y + 2 in", "in", "PLACEHOLDER. Axle upper pickup height"),
+    (
+        "axle_upper_spread_z",
+        "cs_width / 2 + 1.5 in",
+        "in",
+        "PLACEHOLDER. Axle upper half-spread — triangulated (ignored when parallel_watts)",
+    ),
     ("mount_y", "rail_bottom + tube_h", "in", "Top of straight tube / slip section"),
+    # Watts link (used when rear_link_type = parallel_watts) — all PLACEHOLDER
+    (
+        "watts_pivot_x",
+        "wb + cs_depth / 2",
+        "in",
+        "PLACEHOLDER. Watts pivot X — aft face of housing center section",
+    ),
+    (
+        "watts_pivot_y",
+        "axle_cl_y",
+        "in",
+        "PLACEHOLDER. Watts center pivot height at ride (Fusion Y)",
+    ),
+    (
+        "watts_crank_len",
+        "6.000 in",
+        "in",
+        "PLACEHOLDER. Bell crank tip-to-pivot (half-arm length)",
+    ),
+    (
+        "watts_crank_arm_w",
+        "1.500 in",
+        "in",
+        "PLACEHOLDER. Bell crank arm width",
+    ),
+    (
+        "watts_crank_t",
+        "clip_t",
+        "in",
+        "PLACEHOLDER. Bell crank plate thickness along X",
+    ),
+    (
+        "watts_link_len",
+        "12.000 in",
+        "in",
+        "PLACEHOLDER. Target Watts lateral link C-C (actual from pickups)",
+    ),
+    (
+        "watts_link_od",
+        "0.750 in",
+        "in",
+        "PLACEHOLDER. Watts lateral link tube OD",
+    ),
+    (
+        "watts_link_wall",
+        "0.120 in",
+        "in",
+        "PLACEHOLDER. Watts lateral link tube wall",
+    ),
+    (
+        "watts_bolt_d",
+        "0.500 in",
+        "in",
+        "PLACEHOLDER. Watts link / frame bracket bolt diameter",
+    ),
+    (
+        "watts_pivot_bolt_d",
+        "0.625 in",
+        "in",
+        "PLACEHOLDER. Watts center pivot bolt diameter",
+    ),
+    (
+        "watts_bracket_w",
+        "3.000 in",
+        "in",
+        "PLACEHOLDER. Frame Watts bracket width along X",
+    ),
+    (
+        "watts_bracket_h",
+        "3.000 in",
+        "in",
+        "PLACEHOLDER. Frame Watts bracket height along Y",
+    ),
+    (
+        "watts_frame_x",
+        "watts_pivot_x",
+        "in",
+        "PLACEHOLDER. Frame Watts bracket station X (horizontal links)",
+    ),
+    (
+        "watts_frame_y",
+        "watts_pivot_y",
+        "in",
+        "PLACEHOLDER. Frame Watts pickup height (Fusion Y)",
+    ),
+    (
+        "watts_pivot_mount_w",
+        "4.000 in",
+        "in",
+        "PLACEHOLDER. Axle Watts pivot mount plate width along Z",
+    ),
+    (
+        "watts_pivot_mount_h",
+        "4.000 in",
+        "in",
+        "PLACEHOLDER. Axle Watts pivot mount plate height along Y",
+    ),
+    # Aft receivers (slide-in utility module — tube-in-tube)
+    (
+        "rcv_od",
+        "2.500 in",
+        "in",
+        "PLACEHOLDER. Receiver square tube outer size (OD)",
+    ),
+    (
+        "rcv_wall",
+        "0.188 in",
+        "in",
+        "PLACEHOLDER. Receiver square tube wall",
+    ),
+    (
+        "rcv_length",
+        "14.000 in",
+        "in",
+        "PLACEHOLDER. Receiver tube length along X (aft of kickup step-down)",
+    ),
+    (
+        "rcv_front_x",
+        "wb + kickup_aft",
+        "in",
+        "PLACEHOLDER. Receiver forward face X (start of step-down aft bay)",
+    ),
+    (
+        "rcv_rear_x",
+        "rcv_front_x + rcv_length",
+        "in",
+        "Receiver aft face X",
+    ),
+    (
+        "rcv_cl_y",
+        "rail_bottom + tube_h / 2",
+        "in",
+        "PLACEHOLDER. Receiver CL height (Fusion Y) after kickup step-down",
+    ),
+    (
+        "rcv_bolt_d",
+        "0.500 in",
+        "in",
+        "PLACEHOLDER. Cross-bolt hole diameter through receiver (locks slide-in module)",
+    ),
+    (
+        "rcv_bolt_count",
+        "2",
+        "",
+        "PLACEHOLDER. Number of cross-bolts per receiver",
+    ),
+    (
+        "rcv_bolt_pitch",
+        "3.000 in",
+        "in",
+        "PLACEHOLDER. Cross-bolt spacing along X",
+    ),
+    (
+        "rcv_bolt_first_x",
+        "rcv_front_x + 2.000 in",
+        "in",
+        "PLACEHOLDER. First cross-bolt X from receiver front",
+    ),
+    (
+        "rcv_key_w",
+        "1.500 in",
+        "in",
+        "PLACEHOLDER. Receiver key tab width along X into rail plates",
+    ),
+    (
+        "rcv_key_h",
+        "rcv_od",
+        "in",
+        "PLACEHOLDER. Receiver key tab height (matches tube OD)",
+    ),
+    (
+        "rcv_xm_w",
+        "2.000 in",
+        "in",
+        "PLACEHOLDER. Rear receiver XM fore-aft envelope (layout ref; thickness is rcv_xm_t)",
+    ),
+    (
+        "rcv_xm_h",
+        "rcv_od",
+        "in",
+        "PLACEHOLDER. Rear receiver crossmember plate height",
+    ),
+    (
+        "rcv_xm_t",
+        "clip_t",
+        "in",
+        "PLACEHOLDER. Rear receiver crossmember plate thickness along X",
+    ),
+    (
+        "rcv_xm_x",
+        "rcv_front_x + rcv_length / 2",
+        "in",
+        "PLACEHOLDER. Rear receiver crossmember center X",
+    ),
+    # Utility-module fuel tank envelope mirrors (clearance only — after rcv_*)
+    (
+        "um_fuel_l",
+        "28.000 in",
+        "in",
+        "PLACEHOLDER. Match UtilityModule fuel_l — Watts clearance",
+    ),
+    (
+        "um_fuel_w",
+        "18.000 in",
+        "in",
+        "PLACEHOLDER. Match UtilityModule fuel_w — Watts clearance",
+    ),
+    (
+        "um_fuel_h",
+        "10.000 in",
+        "in",
+        "PLACEHOLDER. Match UtilityModule fuel_h — Watts clearance",
+    ),
+    (
+        "um_fuel_x",
+        "rcv_front_x + rcv_length + 4.000 in",
+        "in",
+        "PLACEHOLDER. Match UtilityModule fuel_x — Watts clearance",
+    ),
+    (
+        "um_fuel_y",
+        "rcv_cl_y - 1.000 in + clip_t",
+        "in",
+        "PLACEHOLDER. Match UtilityModule fuel_y approx (tray top + tray_t)",
+    ),
 ]
 
 DO = adsk.fusion.DimensionOrientations
@@ -221,19 +593,31 @@ def run(_context):
         links = add_component(root, "04_FOUR_LINK")
         axle = add_component(root, "05_AXLE_REF")
         mounts = add_component(root, "06_BAG_SHOCK")
+        receivers = add_component(root, "08_RECEIVERS")
         add_component(root, "07_FIXTURE")
 
         draw_layout_sketches(skel)
         build_center_tube_ref(center)
         build_rail_side(rail_rh, passenger=True)
         build_rail_side(rail_lh, passenger=False)
+        link_type = rear_link_type_value()
         build_upper_crossmember(xmembers)
         build_four_link_brackets(links)
         build_axle_ref(axle)
-        build_suspension_mounts(mounts)
+        build_axle_link_brackets(axle)
+        cut_rows = build_four_link_bars(links)
+        maybe_build_lateral_locator(links)
+        build_over_axle_crossmember(xmembers)
+        build_suspension_mounts(mounts, axle)
+        build_receivers(receivers, rail_rh, rail_lh, xmembers)
+
+        cut_path = os.path.join(SCRIPT_DIR, "four_link_bar_cut_list.csv")
+        write_bar_cut_list(cut_path, cut_rows)
 
         dxf_dir = os.path.join(SCRIPT_DIR, "dxf_out")
         n_dxf = export_plate_dxfs(design, dxf_dir)
+        gap_in, gap_note = bump_clearance_report(design)
+        clear_txt = layout_clearance_report(design)
 
         try:
             app.activeViewport.fit()
@@ -242,13 +626,50 @@ def run(_context):
 
         mode = suspension_mode_value(design)
         mode_txt = "airbag" if mode >= 0.5 else "coilover"
+        if link_type == "parallel_watts":
+            link_txt = (
+                "parallel_watts — uppers parallel to lowers in plan; Watts lateral "
+                "on axle CS aft face"
+            )
+            lat_txt = "watts (implied by parallel_watts)"
+        else:
+            link_txt = "triangulated — uppers inboard toward third member"
+            lat = string_param("lateral_locator", "none").strip().lower()
+            if lat == "panhard":
+                lat_txt = "panhard (TODO — not modeled)"
+            elif lat == "watts":
+                lat_txt = "watts (use rear_link_type=parallel_watts)"
+            else:
+                lat_txt = "none (triangulated uppers provide lateral)"
         ui.messageBox(
             "Rear clip built in this document.\n\n"
             "Prototype WB = wb_73_87_short (117.5). For 67-72 set wb = wb_67_72_short.\n"
+            "rear_link_type: {}\n"
+            "REV-B: lowers outboard (lower_link_y); bag/shock inboard "
+            "(bag_y / shock_y). Rails/kickup/OA XM/receivers identical for both "
+            "link variants.\n"
             "Suspension mount mode: {} (suspension_mode user param).\n"
-            "Exported {} plate DXFs to:\n{}\n\n"
+            "Four-link bars: {} (1.25 tube + RH/LH rod ends; cut list written).\n"
+            "Over-axle XM bump clearance (underside vs housing/CS): {:.3f} in — {}.\n"
+            "{}\n"
+            "Aft receivers: square tube (rcv_od x rcv_wall) + rear XM + cross-bolts "
+            "for slide-in utility module (same interface either variant).\n"
+            "Lateral locator: {}.\n"
+            "Exported {} plate DXFs to:\n{}\n"
+            "Bar cut list:\n{}\n\n"
             "Fit view if the canvas looks empty. Rails sit at rail_cl off CL.\n"
-            "Save as KTECH_C10_REAR_CLIP.".format(mode_txt, n_dxf, dxf_dir)
+            "Save as KTECH_C10_REAR_CLIP.".format(
+                link_txt,
+                mode_txt,
+                len(cut_rows),
+                gap_in,
+                gap_note,
+                clear_txt,
+                lat_txt,
+                n_dxf,
+                dxf_dir,
+                cut_path,
+            )
         )
     except Exception:
         if ui:
@@ -260,7 +681,7 @@ def run(_context):
 # ---------------------------------------------------------------------------
 
 def apply_csv_overrides():
-    """Load rear_clip_parameters.csv into PARAM_ORDER expressions."""
+    """Load rear_clip_parameters.csv into PARAM_ORDER expressions + STRING_PARAMS."""
     by_name = {row[0]: row for row in PARAM_ORDER}
     params_path = os.path.join(SCRIPT_DIR, "rear_clip_parameters.csv")
     if not os.path.isfile(params_path):
@@ -268,11 +689,16 @@ def apply_csv_overrides():
     with open(params_path, newline="", encoding="utf-8") as handle:
         for row in csv.DictReader(handle):
             name = (row.get("name") or "").strip()
+            expr = (row.get("expression") or "").strip()
+            unit = (row.get("unit") or "").strip()
+            comment = (row.get("comment") or "").strip()
+            if name in STRING_PARAMS:
+                STRING_PARAMS[name] = expr if expr else STRING_PARAMS[name]
+                continue
             if name not in by_name:
                 continue
-            expr = (row.get("expression") or "").strip()
-            unit = (row.get("unit") or "in").strip()
-            comment = (row.get("comment") or by_name[name][3]).strip()
+            unit = unit or "in"
+            comment = comment or by_name[name][3]
             by_name[name] = (name, _expr_with_unit(expr, unit), unit, comment)
     PARAM_ORDER[:] = [by_name[row[0]] for row in PARAM_ORDER]
 
@@ -310,6 +736,12 @@ def add_parameters(design):
                 params.add(name, value, unit if unit else "in", comment)
         except Exception:
             continue
+    # Persist string enums on the design (Fusion user params are numeric).
+    for key, val in STRING_PARAMS.items():
+        try:
+            design.attributes.add("KTECH_C10_RearClip", key, str(val))
+        except Exception:
+            pass
 
 
 def param_cm(design, name):
@@ -321,6 +753,22 @@ def suspension_mode_value(design):
         return design.userParameters.itemByName("suspension_mode").value
     except Exception:
         return 1.0
+
+
+def string_param(name, default=""):
+    return STRING_PARAMS.get(name, default)
+
+
+def rear_link_type_value():
+    """triangulated (default) | parallel_watts."""
+    raw = string_param("rear_link_type", "triangulated").strip().lower()
+    if raw in ("parallel_watts", "parallel", "watts", "parallel-watts"):
+        return "parallel_watts"
+    return "triangulated"
+
+
+def is_parallel_watts():
+    return rear_link_type_value() == "parallel_watts"
 
 
 # ---------------------------------------------------------------------------
@@ -488,22 +936,24 @@ def _kickup_world_points(design, top=True):
     x_k2 = wb + aft - ramp
     x_k3 = wb + aft
 
+    # REV-B: rise over axle, plateau, then step back down aft of kickup
+    # (receiver bay at normal rail height behind x_k3).
     if top:
         return [
             (xf, y_top),
             (x_k0, y_top),
             (x_k1, y_top_hi),
             (x_k2, y_top_hi),
-            (x_k3, y_top_hi),
-            (xr, y_top_hi),
+            (x_k3, y_top),
+            (xr, y_top),
         ]
     return [
         (xf, y_bot),
         (x_k0, y_bot),
         (x_k1, y_bot_hi),
         (x_k2, y_bot_hi),
-        (x_k3, y_bot_hi),
-        (xr, y_bot_hi),
+        (x_k3, y_bot),
+        (xr, y_bot),
     ]
 
 
@@ -625,8 +1075,19 @@ def build_rail_side(comp, passenger=True):
     # Tab-and-slot keys along long edges of the forward box section.
     _add_rail_tabs_and_slots(comp, design, side, sign, z_in_inner, z_out_inner, t)
 
-    # Key slots in outboard plate for lower/upper link brackets (fixture role).
+    # Key slots in outboard plate for lower-link brackets (REV-B outboard lowers).
+    # Parallel-watts also keys upper brackets into the same outboard plate.
     _add_bracket_key_slots(comp, design, side, sign)
+
+    # Key slots in inboard plate so rails fixture the over-axle crossmember.
+    _add_over_axle_key_slots(comp, design, side, sign)
+
+    # Watts frame brackets key into inboard plates (parallel_watts only).
+    if is_parallel_watts():
+        _add_watts_key_slots(comp, design, side, sign)
+
+    # Key pockets for aft receiver tubes (inboard + outboard).
+    _add_receiver_key_slots(comp, design, side, sign)
 
 
 def _extrude_side_plate(comp, design, role, side, z_start, toward_outboard, sign):
@@ -690,7 +1151,7 @@ def _largest_profile(sk):
 
 
 def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
-    """Flat top/bottom plates: forward (pre-kickup) and aft (raised) segments."""
+    """Flat top/bottom plates: forward, raised kickup plateau, and aft step-down."""
     rb = param_cm(design, "rail_bottom")
     clear = param_cm(design, "clip_clear")
     th = param_cm(design, "tube_h")
@@ -704,15 +1165,19 @@ def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
     ramp = param_cm(design, "kickup_ramp")
 
     x_k0 = wb - ahead
+    x_k1 = x_k0 + ramp
+    x_k2 = wb + aft - ramp
     x_k3 = wb + aft
-    # Forward segment ends at start of kickup ramp; aft starts after kickup.
+    # Forward ends at kickup start; raised plateau between ramps; aft after step-down.
     x_fwd_end = x_k0
+    x_plat_start = x_k1
+    x_plat_end = x_k2
     x_aft_start = x_k3
 
     y_bot_outer = rb - clear - t
     y_top_outer = rb + th + clear
-    y_bot_aft = y_bot_outer + rise
-    y_top_aft = y_top_outer + rise
+    y_bot_hi = y_bot_outer + rise
+    y_top_hi = y_top_outer + rise
 
     z0 = min(z_in_outer, z_out_outer)
     z1 = max(z_in_outer, z_out_outer)
@@ -741,14 +1206,15 @@ def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
         thickness_expr="clip_t",
         up=False,
     )
-    if x_aft_start < xr - 0.1 * IN_TO_CM:
+    # Raised kickup plateau (between rise and step-down ramps).
+    if x_plat_start < x_plat_end - 0.1 * IN_TO_CM:
         _extrude_rect_plate(
             comp,
             "TOP_AFT",
             side,
-            x0=x_aft_start,
-            x1=xr,
-            y=y_top_aft,
+            x0=x_plat_start,
+            x1=x_plat_end,
+            y=y_top_hi,
             z0=z0,
             z1=z1,
             thickness_expr="clip_t",
@@ -758,9 +1224,35 @@ def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
             comp,
             "BOT_AFT",
             side,
+            x0=x_plat_start,
+            x1=x_plat_end,
+            y=y_bot_hi + t,
+            z0=z0,
+            z1=z1,
+            thickness_expr="clip_t",
+            up=False,
+        )
+    # Step-down aft bay (receiver tubes key into this section).
+    if x_aft_start < xr - 0.1 * IN_TO_CM:
+        _extrude_rect_plate(
+            comp,
+            "TOP_TAIL",
+            side,
             x0=x_aft_start,
             x1=xr,
-            y=y_bot_aft + t,
+            y=y_top_outer,
+            z0=z0,
+            z1=z1,
+            thickness_expr="clip_t",
+            up=True,
+        )
+        _extrude_rect_plate(
+            comp,
+            "BOT_TAIL",
+            side,
+            x0=x_aft_start,
+            x1=xr,
+            y=y_bot_outer + t,
             z0=z0,
             z1=z1,
             thickness_expr="clip_t",
@@ -971,27 +1463,37 @@ def _add_tab_on_side(comp, name, xc, y, z, sign, tab_w, tab_l, upward):
 
 
 def _add_bracket_key_slots(comp, design, side, sign):
-    """Rectangular key slots in the outboard plate for 4-link bracket plates."""
-    lower_x = param_cm(design, "lower_pickup_x")
-    upper_x = param_cm(design, "upper_pickup_x")
-    lower_y = param_cm(design, "lower_pickup_y")
-    upper_y = param_cm(design, "upper_pickup_y")
+    """Key slots in the outboard plate for link brackets.
+
+    Always keys lowers (REV-B outboard). Keys uppers only for parallel_watts
+    (triangulated uppers sit inboard — no outboard rail keys).
+    """
     bw = param_cm(design, "bracket_plate_w")
     bh = param_cm(design, "bracket_plate_h")
     sc = param_cm(design, "slot_clear")
     cl = param_cm(design, "rail_cl") * sign
     tw = param_cm(design, "tube_w")
     clear = param_cm(design, "clip_clear")
-
     z_out_inner = cl + sign * (tw / 2.0 + clear)
 
-    for label, xc, yc in (
-        ("KEY_LOWER", lower_x, lower_y),
-        ("KEY_UPPER", upper_x, upper_y),
-    ):
+    pockets = [
+        ("KEY_LOWER", param_cm(design, "lower_pickup_x"), param_cm(design, "lower_pickup_y")),
+    ]
+    if is_parallel_watts():
+        pockets.append(
+            (
+                "KEY_UPPER",
+                param_cm(design, "upper_pickup_x"),
+                param_cm(design, "upper_pickup_y"),
+            )
+        )
+
+    for label, xc, yc in pockets:
         planes = comp.constructionPlanes
         pin = planes.createInput()
-        pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_out_inner))
+        pin.setByOffset(
+            comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_out_inner)
+        )
         pl = planes.add(pin)
         pl.name = "PL_{}_{}".format(side, label)
 
@@ -1000,11 +1502,122 @@ def _add_bracket_key_slots(comp, design, side, sign):
         sk.isComputeDeferred = True
         hx = bw / 2.0 + sc
         hy = bh / 2.0 + sc
-        # Key pocket: slightly oversized bracket footprint.
-        p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc - hy, z_out_inner))
-        p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc + hy, z_out_inner))
-        p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc + hy, z_out_inner))
-        p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc - hy, z_out_inner))
+        p00 = sk.modelToSketchSpace(
+            adsk.core.Point3D.create(xc - hx, yc - hy, z_out_inner)
+        )
+        p01 = sk.modelToSketchSpace(
+            adsk.core.Point3D.create(xc - hx, yc + hy, z_out_inner)
+        )
+        p11 = sk.modelToSketchSpace(
+            adsk.core.Point3D.create(xc + hx, yc + hy, z_out_inner)
+        )
+        p10 = sk.modelToSketchSpace(
+            adsk.core.Point3D.create(xc + hx, yc - hy, z_out_inner)
+        )
+        lines = sk.sketchCurves.sketchLines
+        lines.addByTwoPoints(p00, p01)
+        lines.addByTwoPoints(p01, p11)
+        lines.addByTwoPoints(p11, p10)
+        lines.addByTwoPoints(p10, p00)
+        sk.isComputeDeferred = False
+        if sk.profiles.count < 1:
+            continue
+        prof = _largest_profile(sk)
+        extrudes = comp.features.extrudeFeatures
+        ext_in = extrudes.createInput(
+            prof, adsk.fusion.FeatureOperations.CutFeatureOperation
+        )
+        reverse = sign > 0
+        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByString("clip_t"))
+        try:
+            ext = extrudes.add(ext_in)
+            ext.name = "EX_{}_{}".format(side, label)
+        except Exception:
+            pass
+
+
+def _add_watts_key_slots(comp, design, side, sign):
+    """Key pockets in the inboard plate for Watts frame brackets."""
+    xc = param_cm(design, "watts_frame_x")
+    yc = param_cm(design, "watts_frame_y")
+    bw = param_cm(design, "watts_bracket_w")
+    bh = param_cm(design, "watts_bracket_h")
+    sc = param_cm(design, "slot_clear")
+    z_in = _rail_inboard_inner_z(design, sign)
+    label = "KEY_WATTS"
+
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_in))
+    pl = planes.add(pin)
+    pl.name = "PL_{}_{}".format(side, label)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}_{}".format(side, label)
+    sk.isComputeDeferred = True
+    hx = bw / 2.0 + sc
+    hy = bh / 2.0 + sc
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc - hy, z_in))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc + hy, z_in))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc + hy, z_in))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc - hy, z_in))
+    lines = sk.sketchCurves.sketchLines
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    sk.isComputeDeferred = False
+    if sk.profiles.count < 1:
+        return
+    prof = _largest_profile(sk)
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    reverse = sign > 0
+    ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByString("clip_t"))
+    try:
+        ext = extrudes.add(ext_in)
+        ext.name = "EX_{}_{}".format(side, label)
+    except Exception:
+        pass
+
+
+def _add_over_axle_key_slots(comp, design, side, sign):
+    """Rectangular key pockets in the inboard plate for over-axle XM ends."""
+    wb = param_cm(design, "wb")
+    ox_w = param_cm(design, "ox_width_x")
+    ox_t = param_cm(design, "ox_plate_t")
+    ox_h = param_cm(design, "ox_web_h")
+    sc = param_cm(design, "slot_clear")
+    y_top = _over_axle_top_y(design)
+    z_in = _rail_inboard_inner_z(design, sign)
+    include_bot = _ox_include_bottom(design)
+
+    # Pockets cut from inboard inner face into plate thickness (clip_t).
+    # Web pockets centered on the web plate thickness (extruded inboard from outer face).
+    pockets = [
+        ("OA_TOP", wb, y_top + ox_t / 2.0, ox_w, ox_t),
+        ("OA_WEB_FWD", wb - ox_w / 2.0 + ox_t / 2.0, y_top - ox_h / 2.0, ox_t, ox_h),
+        ("OA_WEB_AFT", wb + ox_w / 2.0 - ox_t / 2.0, y_top - ox_h / 2.0, ox_t, ox_h),
+    ]
+    if include_bot:
+        pockets.append(("OA_BOT", wb, y_top - ox_h - ox_t / 2.0, ox_w, ox_t))
+
+    for label, xc, yc, span_x, span_y in pockets:
+        planes = comp.constructionPlanes
+        pin = planes.createInput()
+        pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_in))
+        pl = planes.add(pin)
+        pl.name = "PL_{}_{}".format(side, label)
+
+        sk = comp.sketches.add(pl)
+        sk.name = "SK_{}_{}".format(side, label)
+        sk.isComputeDeferred = True
+        hx = span_x / 2.0 + sc
+        hy = span_y / 2.0 + sc
+        p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc - hy, z_in))
+        p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc + hy, z_in))
+        p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc + hy, z_in))
+        p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc - hy, z_in))
         lines = sk.sketchCurves.sketchLines
         lines.addByTwoPoints(p00, p01)
         lines.addByTwoPoints(p01, p11)
@@ -1016,6 +1629,7 @@ def _add_bracket_key_slots(comp, design, side, sign):
         prof = _largest_profile(sk)
         extrudes = comp.features.extrudeFeatures
         ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
+        # Inboard plate extruded toward CL from z_in; cut into the plate (RH −Z, LH +Z).
         reverse = sign > 0
         ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByString("clip_t"))
         try:
@@ -1023,6 +1637,97 @@ def _add_bracket_key_slots(comp, design, side, sign):
             ext.name = "EX_{}_{}".format(side, label)
         except Exception:
             pass
+
+
+def _rail_inboard_inner_z(design, sign):
+    cl = param_cm(design, "rail_cl") * sign
+    tw = param_cm(design, "tube_w")
+    clear = param_cm(design, "clip_clear")
+    return cl - sign * (tw / 2.0 + clear)
+
+
+def _rail_outboard_inner_z(design, sign):
+    cl = param_cm(design, "rail_cl") * sign
+    tw = param_cm(design, "tube_w")
+    clear = param_cm(design, "clip_clear")
+    return cl + sign * (tw / 2.0 + clear)
+
+
+def _add_receiver_key_slots(comp, design, side, sign):
+    """Rectangular key pockets in inboard/outboard plates for aft receiver keys."""
+    rcv_x0 = param_cm(design, "rcv_front_x")
+    rcv_len = param_cm(design, "rcv_length")
+    key_w = param_cm(design, "rcv_key_w")
+    key_h = param_cm(design, "rcv_key_h")
+    cy = param_cm(design, "rcv_cl_y")
+    sc = param_cm(design, "slot_clear")
+    # Key centered on receiver length.
+    xc = rcv_x0 + rcv_len / 2.0
+    z_in = _rail_inboard_inner_z(design, sign)
+    z_out = _rail_outboard_inner_z(design, sign)
+
+    for role, z_face, reverse_cut in (
+        ("RCV_IN", z_in, sign > 0),
+        ("RCV_OUT", z_out, sign < 0),
+    ):
+        planes = comp.constructionPlanes
+        pin = planes.createInput()
+        pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
+        pl = planes.add(pin)
+        pl.name = "PL_{}_{}".format(side, role)
+
+        sk = comp.sketches.add(pl)
+        sk.name = "SK_{}_{}".format(side, role)
+        sk.isComputeDeferred = True
+        hx = key_w / 2.0 + sc
+        hy = key_h / 2.0 + sc
+        p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, cy - hy, z_face))
+        p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, cy + hy, z_face))
+        p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, cy + hy, z_face))
+        p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, cy - hy, z_face))
+        lines = sk.sketchCurves.sketchLines
+        lines.addByTwoPoints(p00, p01)
+        lines.addByTwoPoints(p01, p11)
+        lines.addByTwoPoints(p11, p10)
+        lines.addByTwoPoints(p10, p00)
+        sk.isComputeDeferred = False
+        if sk.profiles.count < 1:
+            continue
+        prof = _largest_profile(sk)
+        extrudes = comp.features.extrudeFeatures
+        ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
+        ext_in.setDistanceExtent(reverse_cut, adsk.core.ValueInput.createByString("clip_t"))
+        try:
+            ext = extrudes.add(ext_in)
+            ext.name = "EX_{}_{}".format(side, role)
+        except Exception:
+            pass
+
+
+def _over_axle_top_y(design):
+    """Inner top of kickup rail (underside of raised top plate / XM top seat)."""
+    rb = param_cm(design, "rail_bottom")
+    th = param_cm(design, "tube_h")
+    clear = param_cm(design, "clip_clear")
+    rise = param_cm(design, "kickup_rise")
+    return rb + th + clear + rise
+
+
+def _ox_include_bottom(design):
+    try:
+        return design.userParameters.itemByName("ox_include_bottom").value >= 0.5
+    except Exception:
+        return True
+
+
+def _over_axle_underside_y(design):
+    """Lowest face of over-axle crossmember (bottom plate underside or web bottom)."""
+    y_top = _over_axle_top_y(design)
+    ox_h = param_cm(design, "ox_web_h")
+    ox_t = param_cm(design, "ox_plate_t")
+    if _ox_include_bottom(design):
+        return y_top - ox_h - ox_t
+    return y_top - ox_h
 
 
 # ---------------------------------------------------------------------------
@@ -1039,7 +1744,7 @@ def build_upper_crossmember(comp):
     tw = param_cm(design, "tube_w")
     clear = param_cm(design, "clip_clear")
 
-    # Crossmember spans between inboard faces of LH/RH rails.
+    # Frame upper 4-link crossmember spans between inboard faces of LH/RH rails.
     z0 = -(cl - (tw / 2.0 + clear))
     z1 = cl - (tw / 2.0 + clear)
     # Plate sits on XY at upper pickup, extruded clip_t along X (fore-aft thickness).
@@ -1097,14 +1802,20 @@ def _build_link_bracket(comp, design, side, sign, upper):
     tw = param_cm(design, "tube_w")
     clear = param_cm(design, "clip_clear")
     clip_t = param_cm(design, "clip_t")
+    label = "UPPER" if upper else "LOWER"
+    parallel = is_parallel_watts()
 
-    # Bracket plate keys into outboard plate from outside.
-    z_face = cl + sign * (tw / 2.0 + clear + clip_t)
+    if upper and not parallel:
+        # Triangulated: upper brackets sit inboard at frame_upper_spread_z.
+        z_pick = param_cm(design, "frame_upper_spread_z") * sign
+        z_face = z_pick + sign * (clip_t / 2.0)
+    else:
+        # Lowers always, and parallel uppers: key into outboard rail plate.
+        z_face = cl + sign * (tw / 2.0 + clear + clip_t)
 
     planes = comp.constructionPlanes
     pin = planes.createInput()
     pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
-    label = "UPPER" if upper else "LOWER"
     pl = planes.add(pin)
     pl.name = "PL_BRACKET_{}_{}".format(label, side)
 
@@ -1140,7 +1851,7 @@ def _build_link_bracket(comp, design, side, sign, upper):
 
     extrudes = comp.features.extrudeFeatures
     ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
-    # Extrude toward vehicle CL so the plate seats into the key slot.
+    # Outboard-keyed: extrude toward CL into rail key. Triangulated upper: same sense.
     reverse = sign > 0
     ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByString("clip_t"))
     ext = extrudes.add(ext_in)
@@ -1149,33 +1860,193 @@ def _build_link_bracket(comp, design, side, sign, upper):
 
 
 def _draw_link_ref(comp, design, side, sign):
-    """Construction lines for triangulated lower + upper bars (reference)."""
+    """Construction lines for lower + upper bars (reference)."""
     sk = comp.sketches.add(comp.xYConstructionPlane)
     sk.name = "SK_LINK_REF_{}".format(side)
     sk.isComputeDeferred = True
     lines = sk.sketchCurves.sketchLines
 
-    lx = param_cm(design, "lower_pickup_x")
-    ly = param_cm(design, "lower_pickup_y")
-    ux = param_cm(design, "upper_pickup_x")
-    uy = param_cm(design, "upper_pickup_y")
-    wb = param_cm(design, "wb")
-    ay = param_cm(design, "axle_cl_y")
-    az = param_cm(design, "axle_link_spread_z") * sign
-    fz = param_cm(design, "frame_link_spread_z") * sign
+    frame_l, axle_l = _link_pickup_pair(design, sign, upper=False)
+    frame_u, axle_u = _link_pickup_pair(design, sign, upper=True)
 
-    # Project to XY (ignore Z for side-view ref).
     lower = lines.addByTwoPoints(
-        sk.modelToSketchSpace(adsk.core.Point3D.create(lx, ly, fz)),
-        sk.modelToSketchSpace(adsk.core.Point3D.create(wb, ay - 2.54, az)),
+        sk.modelToSketchSpace(frame_l),
+        sk.modelToSketchSpace(axle_l),
     )
     upper = lines.addByTwoPoints(
-        sk.modelToSketchSpace(adsk.core.Point3D.create(ux, uy, fz * 0.5)),
-        sk.modelToSketchSpace(adsk.core.Point3D.create(wb, ay + 5.08, az * 0.4)),
+        sk.modelToSketchSpace(frame_u),
+        sk.modelToSketchSpace(axle_u),
     )
     lower.isConstruction = True
     upper.isConstruction = True
     sk.isComputeDeferred = False
+
+
+def _link_pickup_pair(design, sign, upper, axle_y_delta=0.0):
+    """Return (frame_point, axle_point) as Point3D for one link side.
+
+    axle_y_delta shifts the axle pickup height (cm) for bump/droop checks.
+    parallel_watts: upper laterals match lowers so bars are parallel in plan.
+    """
+    if upper:
+        fx = param_cm(design, "upper_pickup_x")
+        fy = param_cm(design, "upper_pickup_y")
+        ax = param_cm(design, "axle_upper_pickup_x")
+        ay = param_cm(design, "axle_upper_pickup_y") + axle_y_delta
+        if is_parallel_watts():
+            # Parallel in plan view: same |Z| as lowers (outboard of rails).
+            fz = param_cm(design, "frame_link_spread_z") * sign
+            az = param_cm(design, "axle_lower_spread_z") * sign
+        else:
+            fz = param_cm(design, "frame_upper_spread_z") * sign
+            az = param_cm(design, "axle_upper_spread_z") * sign
+    else:
+        fx = param_cm(design, "lower_pickup_x")
+        fy = param_cm(design, "lower_pickup_y")
+        fz = param_cm(design, "frame_link_spread_z") * sign
+        ax = param_cm(design, "axle_lower_pickup_x")
+        ay = param_cm(design, "axle_lower_pickup_y") + axle_y_delta
+        az = param_cm(design, "axle_lower_spread_z") * sign
+    return (
+        adsk.core.Point3D.create(fx, fy, fz),
+        adsk.core.Point3D.create(ax, ay, az),
+    )
+
+
+def _point_distance(p0, p1):
+    dx = p1.x - p0.x
+    dy = p1.y - p0.y
+    dz = p1.z - p0.z
+    return math.sqrt(dx * dx + dy * dy + dz * dz)
+
+
+def _point_lerp(p0, p1, t):
+    return adsk.core.Point3D.create(
+        p0.x + (p1.x - p0.x) * t,
+        p0.y + (p1.y - p0.y) * t,
+        p0.z + (p1.z - p0.z) * t,
+    )
+
+
+def _axis_orthonormal(dx, dy, dz):
+    length = math.sqrt(dx * dx + dy * dy + dz * dz)
+    if length < 1e-8:
+        return (0.0, 0.0, 1.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)
+    ax, ay, az = dx / length, dy / length, dz / length
+    if abs(ax) < 0.9:
+        hx, hy, hz = 1.0, 0.0, 0.0
+    else:
+        hx, hy, hz = 0.0, 1.0, 0.0
+    ux = hy * az - hz * ay
+    uy = hz * ax - hx * az
+    uz = hx * ay - hy * ax
+    ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+    ux, uy, uz = ux / ul, uy / ul, uz / ul
+    vx = ay * uz - az * uy
+    vy = az * ux - ax * uz
+    vz = ax * uy - ay * ux
+    return (ax, ay, az), (ux, uy, uz), (vx, vy, vz)
+
+
+def _plane_perp_at_point(comp, origin, axis_vec, name):
+    """Construction plane through origin, normal along axis_vec."""
+    dx, dy, dz = axis_vec
+    _n, u, v = _axis_orthonormal(dx, dy, dz)
+    p0 = origin
+    p1 = adsk.core.Point3D.create(origin.x + u[0], origin.y + u[1], origin.z + u[2])
+    p2 = adsk.core.Point3D.create(origin.x + v[0], origin.y + v[1], origin.z + v[2])
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByThreePoints(p0, p1, p2)
+    pl = planes.add(pin)
+    pl.name = name
+    return pl
+
+
+def _extrude_circle_along(comp, origin, axis_end, radius, dist, name, hollow_id=None):
+    """Extrude a circle (optional hollow) from origin toward axis_end by dist."""
+    if dist <= 1e-6:
+        return None
+    dx = axis_end.x - origin.x
+    dy = axis_end.y - origin.y
+    dz = axis_end.z - origin.z
+    pl = _plane_perp_at_point(comp, origin, (dx, dy, dz), "PL_{}".format(name))
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    ctr = sk.modelToSketchSpace(origin)
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, radius)
+    if hollow_id is not None and hollow_id > 0 and hollow_id < radius:
+        sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, hollow_id)
+    sk.isComputeDeferred = False
+
+    prof = None
+    if hollow_id is not None:
+        prof = _find_ring_profile(sk)
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return None
+
+    # Match extrude sense to desired axis (three-point plane winding can flip).
+    reverse = False
+    try:
+        n = pl.geometry.normal
+        reverse = (n.x * dx + n.y * dy + n.z * dz) < 0.0
+    except Exception:
+        reverse = False
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(dist))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        ext_in = extrudes.createInput(
+            prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation
+        )
+        ext_in.setDistanceExtent(not reverse, adsk.core.ValueInput.createByReal(dist))
+        ext = extrudes.add(ext_in)
+    ext.name = "EX_{}".format(name)
+    body = ext.bodies.item(0)
+    body.name = name
+    return body
+
+
+def _extrude_bolt_axis_housing(comp, center, width, od, bore, name):
+    """Simplified bushed rod-end housing: cylinder along world Z with bore."""
+    z0 = center.z - width / 2.0
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z0))
+    pl = planes.add(pin)
+    pl.name = "PL_{}".format(name)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    ctr = sk.modelToSketchSpace(
+        adsk.core.Point3D.create(center.x, center.y, z0)
+    )
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, od / 2.0)
+    if bore > 0:
+        sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, bore / 2.0)
+    sk.isComputeDeferred = False
+
+    prof = _find_ring_profile(sk)
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return None
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(width))
+    ext = extrudes.add(ext_in)
+    ext.name = "EX_{}".format(name)
+    body = ext.bodies.item(0)
+    body.name = name
+    return body
 
 
 # ---------------------------------------------------------------------------
@@ -1302,76 +2173,1532 @@ def _axle_tube(comp, design, passenger=True):
 
 
 # ---------------------------------------------------------------------------
-# Bag / coilover upper mounts
+# Axle-side keyed link tabs (plate bodies → DXF)
 # ---------------------------------------------------------------------------
 
-def build_suspension_mounts(comp):
+def build_axle_link_brackets(comp):
+    """Lower + upper link tabs on the Currie axle mockup (keyed plates)."""
     design = adsk.fusion.Design.cast(comp.parentDesign)
+    for passenger in (True, False):
+        sign = 1.0 if passenger else -1.0
+        side = "RH" if passenger else "LH"
+        _build_axle_link_tab(comp, design, side, sign, upper=False)
+        _build_axle_link_tab(comp, design, side, sign, upper=True)
+
+
+def _build_axle_link_tab(comp, design, side, sign, upper):
+    _frame, axle_pt = _link_pickup_pair(design, sign, upper=upper)
+    bw = param_cm(design, "axle_bracket_w")
+    bh = param_cm(design, "axle_bracket_h")
+    bt = param_cm(design, "axle_bracket_t")
+    hole = param_cm(design, "bracket_hole_d")
+    key_w = param_cm(design, "tab_width")
+    key_l = bt
+
+    xc, yc, zc = axle_pt.x, axle_pt.y, axle_pt.z
+    label = "UPPER" if upper else "LOWER"
+    # Plate on XY at outboard face of tab; extrude toward vehicle CL.
+    z_face = zc + sign * (bt / 2.0)
+
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
+    pl = planes.add(pin)
+    pl.name = "PL_AXLE_TAB_{}_{}".format(label, side)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_AXLE_TAB_{}_{}".format(label, side)
+    sk.isComputeDeferred = True
+    hx = bw / 2.0
+    hy = bh / 2.0
+    # Single outer loop: plate + forward key tongue (fixture / weld key).
+    # Walk CCW: key tip → up key → plate front-top → around plate → key bottom.
+    kx0 = xc - hx - key_l
+    pts = [
+        (kx0, yc - key_w / 2.0),
+        (kx0, yc + key_w / 2.0),
+        (xc - hx, yc + key_w / 2.0),
+        (xc - hx, yc + hy),
+        (xc + hx, yc + hy),
+        (xc + hx, yc - hy),
+        (xc - hx, yc - hy),
+        (xc - hx, yc - key_w / 2.0),
+    ]
+    lines = sk.sketchCurves.sketchLines
+    sp = [
+        sk.modelToSketchSpace(adsk.core.Point3D.create(px, py, z_face))
+        for px, py in pts
+    ]
+    for i in range(len(sp)):
+        lines.addByTwoPoints(sp[i], sp[(i + 1) % len(sp)])
+
+    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(xc, yc, z_face))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, hole / 2.0)
+    sk.isComputeDeferred = False
+
+    prof = None
+    for i in range(sk.profiles.count):
+        p = sk.profiles.item(i)
+        if p.profileLoops.count == 2:
+            prof = p
+            break
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    reverse = sign > 0
+    ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(bt))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return
+    ext.name = "EX_AXLE_TAB_{}_{}".format(label, side)
+    ext.bodies.item(0).name = "AXLE_TAB_{}_{}".format(label, side)
+
+
+# ---------------------------------------------------------------------------
+# Triangulated four-link bars (tube + RH/LH rod ends + bungs + jam nuts)
+# ---------------------------------------------------------------------------
+
+def build_four_link_bars(comp):
+    """Build 4 bars between frame and axle pickups; return cut-list rows."""
+    design = adsk.fusion.Design.cast(comp.parentDesign)
+    rows = []
+    for passenger in (True, False):
+        sign = 1.0 if passenger else -1.0
+        side = "RH" if passenger else "LH"
+        for upper, role in ((False, "LOWER"), (True, "UPPER")):
+            row = _build_one_link_bar(comp, design, side, sign, upper, role)
+            if row:
+                rows.append(row)
+    return rows
+
+
+def _build_one_link_bar(comp, design, side, sign, upper, role):
+    """One bar: frame RH rod end ↔ tube ↔ axle LH rod end (spin-to-adjust)."""
+    frame_pt, axle_pt = _link_pickup_pair(design, sign, upper=upper)
+    cc = _point_distance(frame_pt, axle_pt)
+    if cc < 1e-4:
+        return None
+
+    eye = param_cm(design, "rod_end_eye_to_shoulder")
+    bung_l = param_cm(design, "bung_length")
+    tube_od = param_cm(design, "link_bar_od")
+    tube_wall = param_cm(design, "link_bar_wall")
+    bung_od = param_cm(design, "bung_od")
+    shank_od = param_cm(design, "rod_end_shank_od")
+    housing_od = param_cm(design, "rod_end_housing_od")
+    housing_w = param_cm(design, "rod_end_housing_width")
+    bore = param_cm(design, "rod_end_bore")
+    jam_od = param_cm(design, "jam_nut_od")
+    jam_w = param_cm(design, "jam_nut_width")
+    adjust = param_cm(design, "rod_end_adjustable_length")
+    engage = param_cm(design, "rod_end_thread_engagement_min")
+    thread_callout = string_param("rod_end_shank_thread", "3/4-16")
+
+    # cut = C-C − eye-to-shoulder (both ends) − bung lengths (both ends)
+    tube_cut = cc - 2.0 * eye - 2.0 * bung_l
+    if tube_cut < 0:
+        tube_cut = 0.0
+
+    bar_name = "BAR_{}_{}".format(role, side)
+
+    # Stations along bar from frame (t=0) to axle (t=1), by arc length.
+    # Frame eye @ 0
+    # Frame shoulder @ eye
+    # Frame bung starts after shoulder+adjust region ≈ eye + adjust
+    #   (adjustable thread between shoulder and bung face)
+    # Tube from (eye + bung_l) ... but bung occupies bung_l into the gap after shoulder.
+    # Layout used here (symmetric):
+    #   [eye]--shank/adjust--[bung][TUBE][bung]--shank/adjust--[eye]
+    #   shoulder at eye distance; bung abuts tube; exposed adjust = (cc - tube - 2*bung - 2*eye)/2
+    # which equals 0 if cut formula is exact with no extra adjust gap.
+    # Keep adjustable_length as a documented param; geometry places bung face at
+    # distance eye from each eye center (bung starts at eye, extends bung_l toward mid).
+    t_bung0_a = eye / cc
+    t_bung0_b = (eye + bung_l) / cc
+    t_tube_a = t_bung0_b
+    t_tube_b = 1.0 - (eye + bung_l) / cc
+    t_bung1_a = t_tube_b
+    t_bung1_b = 1.0 - eye / cc
+
+    # Rod-end housings at pickups (bolt axis ≈ world Z, matches bracket plates).
+    _extrude_bolt_axis_housing(
+        comp, frame_pt, housing_w, housing_od, bore,
+        "{}_RE_RH".format(bar_name),
+    )
+    _extrude_bolt_axis_housing(
+        comp, axle_pt, housing_w, housing_od, bore,
+        "{}_RE_LH".format(bar_name),
+    )
+
+    # Shanks from eye toward tube (simplified cylinders along bar).
+    shank_len = max(eye * 0.85, engage)
+    _extrude_circle_along(
+        comp, frame_pt, axle_pt, shank_od / 2.0, shank_len,
+        "{}_SHANK_RH".format(bar_name),
+    )
+    _extrude_circle_along(
+        comp, axle_pt, frame_pt, shank_od / 2.0, shank_len,
+        "{}_SHANK_LH".format(bar_name),
+    )
+
+    # Jam nuts on shanks just outboard of each bung face.
+    jam_t0 = max(t_bung0_a - jam_w / cc, 0.01)
+    jam_frame = _point_lerp(frame_pt, axle_pt, jam_t0)
+    _extrude_circle_along(
+        comp, jam_frame, axle_pt, jam_od / 2.0, jam_w,
+        "{}_JAM_RH".format(bar_name),
+    )
+    # Axle jam sits between bung face and eye; extrude toward axle eye.
+    jam_axle = _point_lerp(frame_pt, axle_pt, t_bung1_b)
+    _extrude_circle_along(
+        comp, jam_axle, axle_pt, jam_od / 2.0, jam_w,
+        "{}_JAM_LH".format(bar_name),
+    )
+
+    # Bungs (threaded inserts) at each tube end.
+    bung0 = _point_lerp(frame_pt, axle_pt, t_bung0_a)
+    _extrude_circle_along(
+        comp, bung0, axle_pt, bung_od / 2.0, bung_l,
+        "{}_BUNG_RH".format(bar_name),
+    )
+    bung1 = _point_lerp(frame_pt, axle_pt, t_bung1_a)
+    _extrude_circle_along(
+        comp, bung1, axle_pt, bung_od / 2.0, bung_l,
+        "{}_BUNG_LH".format(bar_name),
+    )
+
+    # Tube between bung inner faces.
+    if tube_cut > 1e-4 and t_tube_b > t_tube_a:
+        tube_start = _point_lerp(frame_pt, axle_pt, t_tube_a)
+        tube_id = max(tube_od / 2.0 - tube_wall, 0.01)
+        _extrude_circle_along(
+            comp, tube_start, axle_pt, tube_od / 2.0, tube_cut,
+            "{}_TUBE".format(bar_name),
+            hollow_id=tube_id,
+        )
+
+    return {
+        "name": bar_name,
+        "side": side,
+        "role": role,
+        "cc_length_in": cc / IN_TO_CM,
+        "tube_cut_length_in": tube_cut / IN_TO_CM,
+        "rod_end_frame": "RH {}".format(thread_callout),
+        "rod_end_axle": "LH {}".format(thread_callout),
+        "eye_to_shoulder_in": eye / IN_TO_CM,
+        "bung_length_in": bung_l / IN_TO_CM,
+        "adjustable_length_in": adjust / IN_TO_CM,
+        "thread_engagement_min_in": engage / IN_TO_CM,
+        "bar_od_in": tube_od / IN_TO_CM,
+        "bar_wall_in": tube_wall / IN_TO_CM,
+        "notes": (
+            (
+                "PLACEHOLDER pickups; parallel upper (plan-parallel to lower)"
+                if is_parallel_watts()
+                else "PLACEHOLDER pickups; triangulated upper inboard"
+            )
+            if upper
+            else "PLACEHOLDER pickups; REV-B lower outboard of rails"
+        ),
+    }
+
+
+def write_bar_cut_list(path, rows):
+    """Write four-link tube cut list CSV (inches)."""
+    fields = [
+        "name",
+        "side",
+        "role",
+        "cc_length_in",
+        "tube_cut_length_in",
+        "rod_end_frame",
+        "rod_end_axle",
+        "eye_to_shoulder_in",
+        "bung_length_in",
+        "adjustable_length_in",
+        "thread_engagement_min_in",
+        "bar_od_in",
+        "bar_wall_in",
+        "notes",
+    ]
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fields)
+            writer.writeheader()
+            for row in rows:
+                out = {}
+                for key in fields:
+                    val = row.get(key, "")
+                    if isinstance(val, float):
+                        out[key] = "{:.4f}".format(val)
+                    else:
+                        out[key] = val
+                writer.writerow(out)
+    except Exception:
+        pass
+
+
+def maybe_build_lateral_locator(comp):
+    """Build Watts when parallel_watts; panhard stays TODO; else no-op.
+
+    lateral_locator string is legacy: watts is implied by rear_link_type=
+    parallel_watts. panhard remains a stub TODO.
+    """
+    if is_parallel_watts():
+        build_watts_link(comp)
+        return
+
+    loc = string_param("lateral_locator", "none").strip().lower()
+    if loc in ("", "none", "0"):
+        return
+    if loc == "watts":
+        # Prefer rear_link_type=parallel_watts so uppers are parallel too.
+        sk = comp.sketches.add(comp.xYConstructionPlane)
+        sk.name = "SK_LATERAL_TODO_WATTS_USE_parallel_watts"
+        sk.isComputeDeferred = True
+        lines = sk.sketchCurves.sketchLines
+        ln = lines.addByTwoPoints(
+            adsk.core.Point3D.create(0, 0, 0),
+            adsk.core.Point3D.create(1.0, 0, 0),
+        )
+        ln.isConstruction = True
+        sk.isComputeDeferred = False
+        return
+    # panhard (or unknown): stub TODO — not modeled.
+    sk = comp.sketches.add(comp.xYConstructionPlane)
+    sk.name = "SK_LATERAL_TODO_{}".format(loc.upper())
+    sk.isComputeDeferred = True
+    lines = sk.sketchCurves.sketchLines
+    ln = lines.addByTwoPoints(
+        adsk.core.Point3D.create(0, 0, 0),
+        adsk.core.Point3D.create(1.0, 0, 0),
+    )
+    ln.isConstruction = True
+    sk.isComputeDeferred = False
+
+
+def _watts_pivot_point(design, axle_y_delta=0.0):
+    """Center pivot on the aft face of the housing center section."""
+    px = param_cm(design, "watts_pivot_x")
+    py = param_cm(design, "watts_pivot_y") + axle_y_delta
+    pz = param_cm(design, "pinion_offset")
+    return adsk.core.Point3D.create(px, py, pz)
+
+
+def _watts_frame_pickup(design, sign):
+    """Frame-side Watts bracket pickup (inboard of rail)."""
+    fx = param_cm(design, "watts_frame_x")
+    fy = param_cm(design, "watts_frame_y")
+    # Pickup at inboard outer face (bracket keys into inboard plate from inside).
+    fz = _rail_inboard_outer_z(design) * sign
+    return adsk.core.Point3D.create(fx, fy, fz)
+
+
+def _watts_crank_tip(design, sign, axle_y_delta=0.0):
+    """Bell-crank tip — flat horizontal 180° crank (ride + bump/droop sweep).
+
+    Pivot rides with the axle (axle_y_delta). Tips stay at pivot Y, ±crank in Z
+    (PLACEHOLDER; link angle absorbs vertical travel for the clearance AABB).
+    """
+    pivot = _watts_pivot_point(design, axle_y_delta)
+    crank = param_cm(design, "watts_crank_len")
+    return adsk.core.Point3D.create(pivot.x, pivot.y, pivot.z + sign * crank)
+
+
+def build_watts_link(comp):
+    """Axle-mounted Watts: pivot mount + bell crank + 2 lateral links + frame brackets."""
+    design = adsk.fusion.Design.cast(comp.parentDesign)
+    _build_watts_pivot_mount(comp, design)
+    _build_watts_crank(comp, design)
+    for passenger in (True, False):
+        sign = 1.0 if passenger else -1.0
+        side = "RH" if passenger else "LH"
+        _build_watts_frame_bracket(comp, design, side, sign)
+        _build_watts_lateral_link(comp, design, side, sign)
+
+
+def _build_watts_pivot_mount(comp, design):
+    """Keyed plate on the aft face of the CS for the center pivot (DXF)."""
+    pivot = _watts_pivot_point(design)
+    mw = param_cm(design, "watts_pivot_mount_w")
+    mh = param_cm(design, "watts_pivot_mount_h")
+    mt = param_cm(design, "watts_crank_t")
+    hole = param_cm(design, "watts_pivot_bolt_d")
+    # Plate on YZ at aft CS face; extrude aft (+X) by mt.
+    x_face = pivot.x
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(x_face))
+    pl = planes.add(pin)
+    pl.name = "PL_WATTS_PIVOT_MOUNT"
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_WATTS_PIVOT_MOUNT"
+    sk.isComputeDeferred = True
+    cy, cz = pivot.y, pivot.z
+    hw, hh = mw / 2.0, mh / 2.0
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy - hh, cz - hw))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy + hh, cz - hw))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy + hh, cz + hw))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy - hh, cz + hw))
+    lines = sk.sketchCurves.sketchLines
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy, cz))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, hole / 2.0)
+    sk.isComputeDeferred = False
+
+    prof = None
+    for i in range(sk.profiles.count):
+        p = sk.profiles.item(i)
+        if p.profileLoops.count == 2:
+            prof = p
+            break
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(mt))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return
+    ext.name = "EX_WATTS_PIVOT_MOUNT"
+    ext.bodies.item(0).name = "WATTS_PIVOT_MOUNT"
+
+
+def _build_watts_crank(comp, design):
+    """Horizontal 180° bell crank plate (YZ) aft of the pivot mount (DXF)."""
+    pivot = _watts_pivot_point(design)
+    crank = param_cm(design, "watts_crank_len")
+    arm_w = param_cm(design, "watts_crank_arm_w")
+    mt = param_cm(design, "watts_crank_t")
+    pivot_hole = param_cm(design, "watts_pivot_bolt_d")
+    tip_hole = param_cm(design, "watts_bolt_d")
+    # Crank plane just aft of pivot mount.
+    x_face = pivot.x + mt
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(x_face))
+    pl = planes.add(pin)
+    pl.name = "PL_WATTS_CRANK"
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_WATTS_CRANK"
+    sk.isComputeDeferred = True
+    cy, cz = pivot.y, pivot.z
+    # Capsule / bar outline along Z through pivot.
+    half_z = crank + arm_w / 2.0
+    hy = arm_w / 2.0
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy - hy, cz - half_z))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy + hy, cz - half_z))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy + hy, cz + half_z))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy - hy, cz + half_z))
+    lines = sk.sketchCurves.sketchLines
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    # Center pivot + tip holes.
+    sk.sketchCurves.sketchCircles.addByCenterRadius(
+        sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy, cz)),
+        pivot_hole / 2.0,
+    )
+    sk.sketchCurves.sketchCircles.addByCenterRadius(
+        sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy, cz + crank)),
+        tip_hole / 2.0,
+    )
+    sk.sketchCurves.sketchCircles.addByCenterRadius(
+        sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy, cz - crank)),
+        tip_hole / 2.0,
+    )
+    sk.isComputeDeferred = False
+
+    # Prefer the profile with the most loops (outer + 3 holes).
+    prof = None
+    best = -1
+    for i in range(sk.profiles.count):
+        p = sk.profiles.item(i)
+        n = p.profileLoops.count
+        if n > best:
+            best = n
+            prof = p
+    if prof is None:
+        return
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(mt))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return
+    ext.name = "EX_WATTS_CRANK"
+    ext.bodies.item(0).name = "WATTS_CRANK"
+
+
+def _build_watts_frame_bracket(comp, design, side, sign):
+    """Keyed plate on inboard rail face for Watts lateral link (DXF)."""
+    pt = _watts_frame_pickup(design, sign)
+    bw = param_cm(design, "watts_bracket_w")
+    bh = param_cm(design, "watts_bracket_h")
+    hole = param_cm(design, "watts_bolt_d")
+    clip_t = param_cm(design, "clip_t")
+    # Bracket sits on inboard outer face; extrude toward CL into the key? 
+    # Keys are cut from inboard INNER face into plate. Bracket keys from bay
+    # (inboard of rail) into the plate — face at inboard outer, extrude outboard.
+    z_face = pt.z  # inboard outer
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
+    pl = planes.add(pin)
+    pl.name = "PL_BRACKET_WATTS_{}".format(side)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_BRACKET_WATTS_{}".format(side)
+    sk.isComputeDeferred = True
+    xc, yc = pt.x, pt.y
+    hx, hy = bw / 2.0, bh / 2.0
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc - hy, z_face))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc + hy, z_face))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc + hy, z_face))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc - hy, z_face))
+    lines = sk.sketchCurves.sketchLines
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(xc, yc, z_face))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, hole / 2.0)
+    sk.isComputeDeferred = False
+
+    prof = None
+    for i in range(sk.profiles.count):
+        p = sk.profiles.item(i)
+        if p.profileLoops.count == 2:
+            prof = p
+            break
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    # Extrude into the inboard plate (outboard direction into key pocket).
+    # RH inboard outer normal is −Z (toward CL); pocket is +Z into plate → reverse for RH.
+    reverse = sign < 0
+    ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(clip_t))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return
+    ext.name = "EX_BRACKET_WATTS_{}".format(side)
+    ext.bodies.item(0).name = "BRACKET_WATTS_{}".format(side)
+
+
+def _build_watts_lateral_link(comp, design, side, sign):
+    """Simple tube between crank tip and frame Watts pickup."""
+    tip = _watts_crank_tip(design, sign)
+    frame = _watts_frame_pickup(design, sign)
+    od = param_cm(design, "watts_link_od")
+    wall = param_cm(design, "watts_link_wall")
+    cc = _point_distance(tip, frame)
+    if cc < 1e-4:
+        return
+    tube_id = max(od / 2.0 - wall, 0.01)
+    _extrude_circle_along(
+        comp,
+        tip,
+        frame,
+        od / 2.0,
+        cc,
+        "WATTS_LINK_{}".format(side),
+        hollow_id=tube_id,
+    )
+    # Construction ref.
+    sk = comp.sketches.add(comp.xYConstructionPlane)
+    sk.name = "SK_WATTS_LINK_REF_{}".format(side)
+    sk.isComputeDeferred = True
+    ln = sk.sketchCurves.sketchLines.addByTwoPoints(
+        sk.modelToSketchSpace(tip),
+        sk.modelToSketchSpace(frame),
+    )
+    ln.isConstruction = True
+    sk.isComputeDeferred = False
+
+
+# ---------------------------------------------------------------------------
+# Over-axle crossmember (keyed into inboard kickup rails)
+# ---------------------------------------------------------------------------
+
+def build_over_axle_crossmember(comp):
+    """Top + front/rear webs + optional bottom; end keys into inboard rail slots."""
+    design = adsk.fusion.Design.cast(comp.parentDesign)
+    wb = param_cm(design, "wb")
+    ox_w = param_cm(design, "ox_width_x")
+    ox_t = param_cm(design, "ox_plate_t")
+    ox_h = param_cm(design, "ox_web_h")
+    key_l = param_cm(design, "clip_t")
+    y_top = _over_axle_top_y(design)
+    z_rh = _rail_inboard_inner_z(design, 1.0)
+    z_lh = _rail_inboard_inner_z(design, -1.0)
+    # Span between inboard faces; tabs protrude key_l into each rail pocket.
+    z0 = min(z_lh, z_rh) - key_l
+    z1 = max(z_lh, z_rh) + key_l
+    x0 = wb - ox_w / 2.0
+    x1 = wb + ox_w / 2.0
+
+    _ox_horizontal_plate(
+        comp, "XMEMBER_OA_TOP", x0, x1, y_top, z0, z1, ox_t, up=True
+    )
+    _ox_web_plate(comp, "XMEMBER_OA_WEB_FWD", x0, y_top, y_top - ox_h, z0, z1, ox_t)
+    _ox_web_plate(comp, "XMEMBER_OA_WEB_AFT", x1, y_top, y_top - ox_h, z0, z1, ox_t)
+    if _ox_include_bottom(design):
+        _ox_horizontal_plate(
+            comp,
+            "XMEMBER_OA_BOT",
+            x0,
+            x1,
+            y_top - ox_h,
+            z0,
+            z1,
+            ox_t,
+            up=False,
+        )
+
+
+def _ox_horizontal_plate(comp, name, x0, x1, y, z0, z1, thickness, up):
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(y))
+    pl = planes.add(pin)
+    pl.name = "PL_{}".format(name)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    lines = sk.sketchCurves.sketchLines
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, y, z0))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, y, z1))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x1, y, z1))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x1, y, z0))
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    sk.isComputeDeferred = False
+    if sk.profiles.count < 1:
+        return None
+    prof = _largest_profile(sk)
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(not up, adsk.core.ValueInput.createByReal(thickness))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return None
+    ext.name = "EX_{}".format(name)
+    body = ext.bodies.item(0)
+    body.name = name
+    return body
+
+
+def _ox_web_plate(comp, name, x_face, y_top, y_bot, z0, z1, thickness):
+    """Vertical web on YZ at x_face; extrude toward axle CL (inboard along X)."""
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(x_face))
+    pl = planes.add(pin)
+    pl.name = "PL_{}".format(name)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    lines = sk.sketchCurves.sketchLines
+    # YZ sketch: x→Z, y→Y
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, y_bot, z0))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, y_top, z0))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, y_top, z1))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, y_bot, z1))
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    sk.isComputeDeferred = False
+    if sk.profiles.count < 1:
+        return None
+    prof = _largest_profile(sk)
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    # YZ plane normal is +X. FWD web at x0 wants +X (into box); AFT at x1 wants −X.
+    wb = param_cm(adsk.fusion.Design.cast(comp.parentDesign), "wb")
+    reverse = x_face > wb
+    ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(thickness))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return None
+    ext.name = "EX_{}".format(name)
+    body = ext.bodies.item(0)
+    body.name = name
+    return body
+
+
+# ---------------------------------------------------------------------------
+# Aft receivers (square tube keyed into rail plates + rear XM + cross-bolts)
+# ---------------------------------------------------------------------------
+
+def build_receivers(comp, rail_rh, rail_lh, xmembers):
+    """Hollow square receivers LH/RH, key tabs into rails, rear XM, bolt holes."""
+    design = adsk.fusion.Design.cast(comp.parentDesign)
+    for passenger in (True, False):
+        _build_one_receiver(comp, design, passenger=passenger)
+        _build_receiver_keys(comp, design, passenger=passenger)
+        _cut_receiver_bolt_holes(comp, design, passenger=passenger)
+    build_receiver_crossmember(xmembers, design)
+    # rail_rh / rail_lh already have key pockets from build_rail_side.
+    _ = (rail_rh, rail_lh)
+
+
+def _build_one_receiver(comp, design, passenger=True):
+    """Extrude hollow square tube along +X at rail_cl / rcv_cl_y."""
+    sign = 1.0 if passenger else -1.0
+    side = "RH" if passenger else "LH"
+    x0 = param_cm(design, "rcv_front_x")
+    length = param_cm(design, "rcv_length")
+    od = param_cm(design, "rcv_od")
+    wall = param_cm(design, "rcv_wall")
+    cy = param_cm(design, "rcv_cl_y")
+    cz = param_cm(design, "rail_cl") * sign
+
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(x0))
+    pl = planes.add(pin)
+    pl.name = "PL_RCV_{}".format(side)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_RCV_{}".format(side)
+    sk.isComputeDeferred = True
+    half = od / 2.0
+    inner = half - wall
+    oc = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy, cz))
+    or_ = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + half, cz + half))
+    ir_ = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + inner, cz + inner))
+    sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, or_)
+    if inner > 0.05:
+        sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, ir_)
+    sk.isComputeDeferred = False
+
+    ring = _find_ring_profile(sk)
+    if not ring:
+        # Fall back to solid outer if ring not found.
+        if sk.profiles.count < 1:
+            return None
+        ring = _largest_profile(sk)
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(ring, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(length))
+    ext = extrudes.add(ext_in)
+    ext.name = "EX_RCV_{}".format(side)
+    body = ext.bodies.item(0)
+    body.name = "RECEIVER_{}".format(side)
+    return body
+
+
+def _build_receiver_keys(comp, design, passenger=True):
+    """Plate key tabs from receiver into inboard/outboard rail pockets (DXF)."""
+    sign = 1.0 if passenger else -1.0
+    side = "RH" if passenger else "LH"
+    x0 = param_cm(design, "rcv_front_x")
+    length = param_cm(design, "rcv_length")
+    key_w = param_cm(design, "rcv_key_w")
+    key_h = param_cm(design, "rcv_key_h")
+    cy = param_cm(design, "rcv_cl_y")
+    t = param_cm(design, "clip_t")
+    xc = x0 + length / 2.0
+    z_in = _rail_inboard_inner_z(design, sign)
+    z_out = _rail_outboard_inner_z(design, sign)
+
+    for role, z_face, toward_outboard in (
+        ("IN", z_in, False),
+        ("OUT", z_out, True),
+    ):
+        name = "RCV_KEY_{}_{}".format(side, role)
+        planes = comp.constructionPlanes
+        pin = planes.createInput()
+        pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
+        pl = planes.add(pin)
+        pl.name = "PL_{}".format(name)
+
+        sk = comp.sketches.add(pl)
+        sk.name = "SK_{}".format(name)
+        sk.isComputeDeferred = True
+        hx = key_w / 2.0
+        hy = key_h / 2.0
+        p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, cy - hy, z_face))
+        p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, cy + hy, z_face))
+        p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, cy + hy, z_face))
+        p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, cy - hy, z_face))
+        lines = sk.sketchCurves.sketchLines
+        lines.addByTwoPoints(p00, p01)
+        lines.addByTwoPoints(p01, p11)
+        lines.addByTwoPoints(p11, p10)
+        lines.addByTwoPoints(p10, p00)
+        sk.isComputeDeferred = False
+        if sk.profiles.count < 1:
+            continue
+        prof = _largest_profile(sk)
+        extrudes = comp.features.extrudeFeatures
+        ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+        # Into the plate thickness from the inner face.
+        if sign > 0:
+            reverse = toward_outboard
+        else:
+            reverse = not toward_outboard
+        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(t))
+        try:
+            ext = extrudes.add(ext_in)
+            ext.name = "EX_{}".format(name)
+            ext.bodies.item(0).name = name
+        except Exception:
+            pass
+
+
+def _rcv_bolt_count(design):
+    try:
+        return max(int(round(design.userParameters.itemByName("rcv_bolt_count").value)), 1)
+    except Exception:
+        return 2
+
+
+def _cut_receiver_bolt_holes(comp, design, passenger=True):
+    """Cross-bolt holes through receiver side walls (along Z) for module lock."""
+    sign = 1.0 if passenger else -1.0
+    side = "RH" if passenger else "LH"
+    od = param_cm(design, "rcv_od")
+    cy = param_cm(design, "rcv_cl_y")
+    cz = param_cm(design, "rail_cl") * sign
+    d = param_cm(design, "rcv_bolt_d")
+    pitch = param_cm(design, "rcv_bolt_pitch")
+    x_first = param_cm(design, "rcv_bolt_first_x")
+    n = _rcv_bolt_count(design)
+    # Sketch on XY at outboard outer face of tube; cut through full OD along −sign Z.
+    z_face = cz + sign * (od / 2.0)
+
+    for i in range(n):
+        xc = x_first + i * pitch
+        planes = comp.constructionPlanes
+        pin = planes.createInput()
+        pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
+        pl = planes.add(pin)
+        pl.name = "PL_RCV_BOLT_{}_{}".format(side, i + 1)
+
+        sk = comp.sketches.add(pl)
+        sk.name = "SK_RCV_BOLT_{}_{}".format(side, i + 1)
+        ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(xc, cy, z_face))
+        sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, d / 2.0)
+        if sk.profiles.count < 1:
+            continue
+        prof = sk.profiles.item(0)
+        extrudes = comp.features.extrudeFeatures
+        ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
+        # Cut through both walls (+ a little) toward frame CL.
+        reverse = sign > 0
+        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(od + 0.1))
+        try:
+            ext = extrudes.add(ext_in)
+            ext.name = "EX_RCV_BOLT_{}_{}".format(side, i + 1)
+        except Exception:
+            pass
+
+
+def build_receiver_crossmember(comp, design):
+    """Plate crossmember tying LH/RH receivers; ends seat on inboard tube faces."""
+    xc = param_cm(design, "rcv_xm_x")
+    # Plate thickness along X = rcv_xm_t (rcv_xm_w is layout envelope only).
+    try:
+        t = param_cm(design, "rcv_xm_t")
+    except Exception:
+        t = param_cm(design, "rcv_xm_w")
+    h = param_cm(design, "rcv_xm_h")
+    if t < 0.01:
+        t = param_cm(design, "rcv_xm_w")
+    cy = param_cm(design, "rcv_cl_y")
+    od = param_cm(design, "rcv_od")
+    cl = param_cm(design, "rail_cl")
+    # Span between inboard faces of the two receivers.
+    z0 = -(cl - od / 2.0)
+    z1 = cl - od / 2.0
+    x_face = xc - t / 2.0
+
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(x_face))
+    pl = planes.add(pin)
+    pl.name = "PL_XMEMBER_RCV"
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_XMEMBER_RCV"
+    sk.isComputeDeferred = True
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy - h / 2.0, z0))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy + h / 2.0, z0))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy + h / 2.0, z1))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy - h / 2.0, z1))
+    lines = sk.sketchCurves.sketchLines
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    sk.isComputeDeferred = False
+    if sk.profiles.count < 1:
+        return None
+    prof = _largest_profile(sk)
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(t))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return None
+    ext.name = "EX_XMEMBER_RCV"
+    body = ext.bodies.item(0)
+    body.name = "XMEMBER_RCV"
+    return body
+
+
+# ---------------------------------------------------------------------------
+# Bag / coilover mounts on over-axle XM (shared positions via suspension_mode)
+# ---------------------------------------------------------------------------
+
+def build_suspension_mounts(mounts_comp, axle_comp):
+    """Upper mounts on over-axle XM; matching lower mounts on axle housing."""
+    design = adsk.fusion.Design.cast(mounts_comp.parentDesign)
     mode = suspension_mode_value(design)
     for passenger in (True, False):
         sign = 1.0 if passenger else -1.0
         side = "RH" if passenger else "LH"
         if mode >= 0.5:
-            _build_bag_mount(comp, design, side, sign)
+            _build_bag_mount_pair(mounts_comp, axle_comp, design, side, sign)
         else:
-            _build_coilover_mount(comp, design, side, sign)
+            _build_shock_tab_pair(mounts_comp, axle_comp, design, side, sign)
 
 
-def _build_bag_mount(comp, design, side, sign):
+def _mount_xyz(design, sign):
+    """Bag/shock mount X and lateral Z. REV-B: inboard via bag_y / shock_y."""
     wb = param_cm(design, "wb")
-    rise = param_cm(design, "kickup_rise")
-    rb = param_cm(design, "rail_bottom")
-    th = param_cm(design, "tube_h")
-    clear = param_cm(design, "clip_clear")
-    t = param_cm(design, "clip_t")
+    x = wb + param_cm(design, "mount_x_off")
+    mode = suspension_mode_value(design)
+    if mode >= 0.5:
+        z = param_cm(design, "bag_y") * sign
+    else:
+        z = param_cm(design, "shock_y") * sign
+    return x, z
+
+
+def _build_shock_tab_pair(mounts_comp, axle_comp, design, side, sign):
+    """Keyed double-shear tab pairs: upper from XM, lower on axle housing."""
+    x, z = _mount_xyz(design, sign)
+    eye_y = param_cm(design, "shock_eye_y")
+    tw = param_cm(design, "shock_tab_w")
+    th = param_cm(design, "shock_tab_h")
+    gap = param_cm(design, "shock_tab_gap")
+    bore = param_cm(design, "shock_bore")
+    pt = param_cm(design, "ox_plate_t")
+    sc = param_cm(design, "slot_clear")
+    key_l = pt
+    # Key into bottom plate when present; otherwise into top plate underside.
+    if _ox_include_bottom(design):
+        y_seat = _over_axle_underside_y(design)
+    else:
+        y_seat = _over_axle_top_y(design)
+
+    # Upper pair hangs from XM; key tongue into bottom/top plate.
+    y1 = y_seat + key_l
+    for idx, z_face in enumerate((z - gap / 2.0, z + gap / 2.0)):
+        label = "A" if idx == 0 else "B"
+        # Mating slot in XM plate for the key tongue.
+        _cut_ox_shock_key_slot(
+            mounts_comp, design, side, label, x, z_face, tw, pt, sc, y_seat
+        )
+        _build_shock_tab_plate(
+            mounts_comp,
+            "SHOCK_TAB_UPPER_{}_{}".format(side, label),
+            xc=x,
+            yc=eye_y,
+            z_face=z_face,
+            sign=sign,
+            tab_w=tw,
+            tab_h=th,
+            key_l=key_l,
+            y_key_top=y1,
+            bore=bore,
+            thickness=pt,
+        )
+
+    # Lower pair on axle housing — mirror layout, eye near axle tube top.
+    ay = param_cm(design, "axle_cl_y")
+    tube_od = param_cm(design, "axle_tube_od")
+    low_eye = ay + tube_od / 2.0 + th * 0.35
+    for idx, z_face in enumerate((z - gap / 2.0, z + gap / 2.0)):
+        label = "A" if idx == 0 else "B"
+        _build_shock_tab_plate(
+            axle_comp,
+            "SHOCK_TAB_LOWER_{}_{}".format(side, label),
+            xc=x,
+            yc=low_eye,
+            z_face=z_face,
+            sign=sign,
+            tab_w=tw,
+            tab_h=th,
+            key_l=key_l,
+            y_key_top=low_eye + th / 2.0,
+            bore=bore,
+            thickness=pt,
+            key_down=True,
+        )
+
+
+def _cut_ox_shock_key_slot(comp, design, side, label, xc, z_face, tab_w, plate_t, slot_clear, y_under):
+    """Cut a key slot through the over-axle underside plate for an upper shock tab."""
+    # Slot lives on the XM component (03_CROSSMEMBERS); find it via root.
+    root = adsk.fusion.Design.cast(comp.parentDesign).rootComponent
+    xm_comp = None
+    for i in range(root.occurrences.count):
+        occ = root.occurrences.item(i)
+        if "03_CROSSMEMBERS" in occ.component.name or "03_CROSSMEMBERS" in occ.name:
+            xm_comp = occ.component
+            break
+    if xm_comp is None:
+        xm_comp = comp
+
+    planes = xm_comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(xm_comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(y_under))
+    pl = planes.add(pin)
+    name = "OA_SHOCK_SLOT_{}_{}".format(side, label)
+    pl.name = "PL_{}".format(name)
+
+    sk = xm_comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    key_half = min(tab_w * 0.25, param_cm(design, "tab_width") / 2.0) + slot_clear
+    # Slot along Z ≈ plate thickness of the shock tab + clear; along X = key width.
+    z0 = z_face - plate_t / 2.0 - slot_clear
+    z1 = z_face + plate_t / 2.0 + slot_clear
+    lines = sk.sketchCurves.sketchLines
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - key_half, y_under, min(z0, z1)))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - key_half, y_under, max(z0, z1)))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + key_half, y_under, max(z0, z1)))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + key_half, y_under, min(z0, z1)))
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    sk.isComputeDeferred = False
+    if sk.profiles.count < 1:
+        return
+    prof = _largest_profile(sk)
+    extrudes = xm_comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    # Cut upward into the underside plate.
+    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(plate_t + 2 * slot_clear))
+    try:
+        ext = extrudes.add(ext_in)
+        ext.name = "EX_{}".format(name)
+    except Exception:
+        pass
+
+
+def _build_shock_tab_plate(
+    comp, name, xc, yc, z_face, sign, tab_w, tab_h, key_l, y_key_top, bore, thickness,
+    key_down=False,
+):
+    """Single shock tab in XY (thin along Z) with key tongue and bolt bore."""
+    _ = sign  # reserved for future asymmetric keying
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xYConstructionPlane, adsk.core.ValueInput.createByReal(z_face))
+    pl = planes.add(pin)
+    pl.name = "PL_{}".format(name)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    hx = tab_w / 2.0
+    hy = tab_h / 2.0
+    y_lo = yc - hy
+    y_hi = yc + hy
+    key_half = min(hx * 0.4, tab_w * 0.25)
+
+    if key_down:
+        # Plate + key tongue below into axle housing.
+        pts = [
+            (xc - hx, y_lo),
+            (xc - hx, y_hi),
+            (xc + hx, y_hi),
+            (xc + hx, y_lo),
+            (xc + key_half, y_lo),
+            (xc + key_half, y_lo - key_l),
+            (xc - key_half, y_lo - key_l),
+            (xc - key_half, y_lo),
+        ]
+    else:
+        # Plate + key tongue up into over-axle XM slot.
+        y_top = max(y_hi, y_key_top)
+        pts = [
+            (xc - key_half, y_top),
+            (xc - hx, y_hi if y_hi < y_top else y_top),
+            (xc - hx, y_lo),
+            (xc + hx, y_lo),
+            (xc + hx, y_hi if y_hi < y_top else y_top),
+            (xc + key_half, y_top),
+        ]
+        if y_hi < y_top:
+            pts = [
+                (xc - key_half, y_top),
+                (xc - key_half, y_hi),
+                (xc - hx, y_hi),
+                (xc - hx, y_lo),
+                (xc + hx, y_lo),
+                (xc + hx, y_hi),
+                (xc + key_half, y_hi),
+                (xc + key_half, y_top),
+            ]
+
+    lines = sk.sketchCurves.sketchLines
+    sp = [
+        sk.modelToSketchSpace(adsk.core.Point3D.create(px, py, z_face))
+        for px, py in pts
+    ]
+    for i in range(len(sp)):
+        lines.addByTwoPoints(sp[i], sp[(i + 1) % len(sp)])
+
+    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(xc, yc, z_face))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, bore / 2.0)
+    sk.isComputeDeferred = False
+
+    prof = None
+    for i in range(sk.profiles.count):
+        p = sk.profiles.item(i)
+        if p.profileLoops.count == 2:
+            prof = p
+            break
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return None
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    # Extrude toward vehicle CL from the tab face.
+    reverse = z_face > 0
+    ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(thickness))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return None
+    ext.name = "EX_{}".format(name)
+    body = ext.bodies.item(0)
+    body.name = name
+    return body
+
+
+def _build_bag_mount_pair(mounts_comp, axle_comp, design, side, sign):
+    """Upper bag plate on XM underside; lower bag plate on axle (~1:1 under it)."""
+    x, z = _mount_xyz(design, sign)
     mw = param_cm(design, "bag_mount_w")
     ml = param_cm(design, "bag_mount_l")
-    z_off = param_cm(design, "bag_mount_z_off")
-    cl = param_cm(design, "rail_cl") * sign
-    tw = param_cm(design, "tube_w")
+    stud_d = param_cm(design, "bag_stud_d")
+    stud_off = param_cm(design, "bag_stud_offset")
+    air_d = param_cm(design, "bag_air_hole_d")
+    pt = param_cm(design, "ox_plate_t")
+    xm_under = _over_axle_underside_y(design)
 
-    # Sit on raised rail top near axle.
-    y = rb + th + clear + rise
-    z_out = cl + sign * (tw / 2.0 + clear + t)
-    z_inner = z_out - sign * z_off
-    z0 = min(z_inner, z_inner - sign * ml)
-    z1 = max(z_inner, z_inner - sign * ml)
-    x0 = wb - mw / 2.0
-    x1 = wb + mw / 2.0
-
-    body = _extrude_rect_plate(
-        comp, "BAG", side, x0=x0, x1=x1, y=y, z0=z0, z1=z1,
-        thickness_expr="clip_t", up=True,
+    _build_bag_plate(
+        mounts_comp,
+        "MOUNT_BAG_UPPER_{}".format(side),
+        xc=x,
+        yc=xm_under,
+        zc=z,
+        mw=mw,
+        ml=ml,
+        thickness=pt,
+        up=False,
+        stud_d=stud_d,
+        stud_off=stud_off,
+        air_d=air_d,
     )
-    if body:
-        body.name = "MOUNT_BAG_{}".format(side)
 
-
-def _build_coilover_mount(comp, design, side, sign):
-    wb = param_cm(design, "wb")
-    rise = param_cm(design, "kickup_rise")
-    rb = param_cm(design, "rail_bottom")
-    th = param_cm(design, "tube_h")
-    clear = param_cm(design, "clip_clear")
-    t = param_cm(design, "clip_t")
-    mw = param_cm(design, "coilover_mount_w")
-    ml = param_cm(design, "coilover_mount_l")
-    cl = param_cm(design, "rail_cl") * sign
-    tw = param_cm(design, "tube_w")
-
-    y = rb + th + clear + rise
-    z_out = cl + sign * (tw / 2.0 + clear + t)
-    z0 = min(z_out, z_out - sign * ml)
-    z1 = max(z_out, z_out - sign * ml)
-    x0 = wb - mw / 2.0
-    x1 = wb + mw / 2.0
-
-    body = _extrude_rect_plate(
-        comp, "COILOVER", side, x0=x0, x1=x1, y=y, z0=z0, z1=z1,
-        thickness_expr="clip_t", up=True,
+    # Lower plate sits on axle tube / CS top, directly under upper (~1:1).
+    ay = param_cm(design, "axle_cl_y")
+    tube_od = param_cm(design, "axle_tube_od")
+    csh = param_cm(design, "cs_height")
+    house_top = ay + max(tube_od / 2.0, csh / 2.0)
+    _build_bag_plate(
+        axle_comp,
+        "MOUNT_BAG_LOWER_{}".format(side),
+        xc=x,
+        yc=house_top,
+        zc=z,
+        mw=mw,
+        ml=ml,
+        thickness=pt,
+        up=True,
+        stud_d=stud_d,
+        stud_off=stud_off,
+        air_d=air_d,
     )
-    if body:
-        body.name = "MOUNT_COILOVER_{}".format(side)
+
+
+def _build_bag_plate(
+    comp, name, xc, yc, zc, mw, ml, thickness, up, stud_d, stud_off, air_d
+):
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(yc))
+    pl = planes.add(pin)
+    pl.name = "PL_{}".format(name)
+
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    hx = mw / 2.0
+    hz = ml / 2.0
+    lines = sk.sketchCurves.sketchLines
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc, zc - hz))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc - hx, yc, zc + hz))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc, zc + hz))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + hx, yc, zc - hz))
+    lines.addByTwoPoints(p00, p01)
+    lines.addByTwoPoints(p01, p11)
+    lines.addByTwoPoints(p11, p10)
+    lines.addByTwoPoints(p10, p00)
+    # Center air-fitting hole + single 3/8 stud (PLACEHOLDER pattern).
+    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(xc, yc, zc))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, air_d / 2.0)
+    stud = sk.modelToSketchSpace(adsk.core.Point3D.create(xc + stud_off, yc, zc))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(stud, stud_d / 2.0)
+    sk.isComputeDeferred = False
+
+    prof = None
+    for i in range(sk.profiles.count):
+        p = sk.profiles.item(i)
+        if p.profileLoops.count >= 2:
+            # Prefer the outer ring with holes (most loops).
+            if prof is None or p.profileLoops.count > prof.profileLoops.count:
+                prof = p
+    if prof is None and sk.profiles.count:
+        prof = _largest_profile(sk)
+    if prof is None:
+        return None
+
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(not up, adsk.core.ValueInput.createByReal(thickness))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return None
+    ext.name = "EX_{}".format(name)
+    body = ext.bodies.item(0)
+    body.name = name
+    return body
+
+
+def bump_clearance_report(design):
+    """Min gap (in) between over-axle XM underside and housing/CS at bump.
+
+    Returns (gap_inches, note). Positive = clearance; negative = interference.
+    """
+    xm_under = _over_axle_underside_y(design)
+    ay = param_cm(design, "axle_cl_y")
+    travel = param_cm(design, "axle_travel_up")
+    csh = param_cm(design, "cs_height")
+    tube_od = param_cm(design, "axle_tube_od")
+    # Highest housing feature under the XM (CS box or axle tube).
+    house_top_ride = ay + max(csh / 2.0, tube_od / 2.0)
+    house_top_bump = house_top_ride + travel
+    gap_cm = xm_under - house_top_bump
+    gap_in = gap_cm / IN_TO_CM
+    if gap_in >= 0.25:
+        note = "OK (≥0.25 in)"
+    elif gap_in >= 0.0:
+        note = "TIGHT (<0.25 in)"
+    else:
+        note = "INTERFERENCE (negative gap)"
+    return gap_in, note
+
+
+def _rail_outboard_outer_z(design):
+    """|Z| of rail outboard outer face from frame CL (cm)."""
+    return (
+        param_cm(design, "rail_cl")
+        + param_cm(design, "tube_w") / 2.0
+        + param_cm(design, "clip_clear")
+        + param_cm(design, "clip_t")
+    )
+
+
+def _rail_inboard_outer_z(design):
+    """|Z| of rail inboard outer face from frame CL (cm)."""
+    return (
+        param_cm(design, "rail_cl")
+        - param_cm(design, "tube_w") / 2.0
+        - param_cm(design, "clip_clear")
+        - param_cm(design, "clip_t")
+    )
+
+
+def _rail_bottom_y_at_x(design, x):
+    """Outer-ish rail bottom height (cm) at station X from kickup polyline."""
+    pts = _kickup_world_points(design, top=False)
+    if not pts:
+        return param_cm(design, "rail_bottom")
+    if x <= pts[0][0]:
+        return pts[0][1]
+    if x >= pts[-1][0]:
+        return pts[-1][1]
+    for i in range(len(pts) - 1):
+        x0, y0 = pts[i]
+        x1, y1 = pts[i + 1]
+        if x0 <= x <= x1 or x1 <= x <= x0:
+            if abs(x1 - x0) < 1e-9:
+                return y0
+            t = (x - x0) / (x1 - x0)
+            return y0 + t * (y1 - y0)
+    return pts[-1][1]
+
+
+def _upper_link_z_at_x(design, x):
+    """Interpolate upper-link |Z| (cm) at station X along the RH bar path."""
+    frame_pt, axle_pt = _link_pickup_pair(design, 1.0, upper=True)
+    dx = axle_pt.x - frame_pt.x
+    if abs(dx) < 1e-9:
+        return abs(frame_pt.z)
+    t = (x - frame_pt.x) / dx
+    t = max(0.0, min(1.0, t))
+    return abs(frame_pt.z + t * (axle_pt.z - frame_pt.z))
+
+
+def _clearance_note(gap_in, ok=0.25):
+    if gap_in >= ok:
+        return "OK"
+    if gap_in >= 0.0:
+        return "TIGHT"
+    return "INTERFERENCE"
+
+
+def _min_bar_to_rail_gap(design, axle_y_delta):
+    """Min gap (in) lower-bar OD to rail: lateral outboard face + vertical bottom.
+
+    Samples the RH lower bar at the given axle height shift (bump/droop).
+    """
+    frame_pt, axle_pt = _link_pickup_pair(
+        design, 1.0, upper=False, axle_y_delta=axle_y_delta
+    )
+    bar_r = param_cm(design, "link_bar_od") / 2.0
+    z_out = _rail_outboard_outer_z(design)
+    samples = 12
+    min_lat = None
+    min_vert = None
+    for i in range(samples + 1):
+        t = float(i) / float(samples)
+        p = _point_lerp(frame_pt, axle_pt, t)
+        # Lateral: bar is outboard of rail — gap = |z_bar| - rail_out - bar_r
+        lat = abs(p.z) - z_out - bar_r
+        # Vertical: bar above rail bottom outline — gap = y_bar - rail_bot - bar_r
+        rail_bot = _rail_bottom_y_at_x(design, p.x)
+        vert = p.y - rail_bot - bar_r
+        min_lat = lat if min_lat is None else min(min_lat, lat)
+        min_vert = vert if min_vert is None else min(min_vert, vert)
+    # Report the tighter of lateral vs vertical approach.
+    min_cm = min(min_lat, min_vert)
+    return min_cm / IN_TO_CM, min_lat / IN_TO_CM, min_vert / IN_TO_CM
+
+
+def layout_clearance_report(design):
+    """REV-B runtime clearance summary (inches) for the run dialog."""
+    bag_y = param_cm(design, "bag_y")
+    bag_r = param_cm(design, "bag_diameter") / 2.0
+    bar_r = param_cm(design, "link_bar_od") / 2.0
+    rail_in = _rail_inboard_outer_z(design)
+    mount_x = param_cm(design, "wb") + param_cm(design, "mount_x_off")
+    upper_z = _upper_link_z_at_x(design, mount_x)
+
+    # Bag sits inboard of rail inboard face, outboard of upper-link path.
+    gap_bag_rail = (rail_in - (bag_y + bag_r)) / IN_TO_CM
+    parallel = is_parallel_watts()
+    if parallel:
+        # Uppers are outboard with lowers — bag-to-upper-link N/A (not in bay).
+        gap_bag_upper = None
+    else:
+        gap_bag_upper = ((bag_y - bag_r) - (upper_z + bar_r)) / IN_TO_CM
+
+    bump = param_cm(design, "axle_travel_up")
+    droop = param_cm(design, "axle_travel_down")
+    gap_bump, _, _ = _min_bar_to_rail_gap(design, bump)
+    gap_droop, _, _ = _min_bar_to_rail_gap(design, -droop)
+    gap_ride, _, _ = _min_bar_to_rail_gap(design, 0.0)
+
+    lines = [
+        "REV-B clearance checks (min gap, in):",
+        "  bag-to-rail (inboard face):     {:.3f} — {}".format(
+            gap_bag_rail, _clearance_note(gap_bag_rail)
+        ),
+    ]
+    if gap_bag_upper is None:
+        lines.append("  bag-to-upper-link:               N/A (parallel_watts uppers outboard)")
+    else:
+        lines.append(
+            "  bag-to-upper-link (at mount X): {:.3f} — {}".format(
+                gap_bag_upper, _clearance_note(gap_bag_upper)
+            )
+        )
+    lines.extend(
+        [
+            "  lower-bar-to-rail @ ride:       {:.3f} — {}".format(
+                gap_ride, _clearance_note(gap_ride)
+            ),
+            "  lower-bar-to-rail @ full bump:  {:.3f} — {}".format(
+                gap_bump, _clearance_note(gap_bump)
+            ),
+            "  lower-bar-to-rail @ full droop: {:.3f} — {}".format(
+                gap_droop, _clearance_note(gap_droop)
+            ),
+            "  (bag_diameter={:.3f} in PLACEHOLDER; bag_y={:.3f}; shock_y={:.3f}; "
+            "lower_link_y={:.3f})".format(
+                param_cm(design, "bag_diameter") / IN_TO_CM,
+                bag_y / IN_TO_CM,
+                param_cm(design, "shock_y") / IN_TO_CM,
+                param_cm(design, "lower_link_y") / IN_TO_CM,
+            ),
+        ]
+    )
+    if parallel:
+        lines.append(watts_clearance_report(design))
+    return "\n".join(lines)
+
+
+def _aabb_gap(a_min, a_max, b_min, b_max):
+    """Positive gap between 1D intervals; negative = overlap depth."""
+    if a_max < b_min:
+        return b_min - a_max
+    if b_max < a_min:
+        return a_min - b_max
+    return -min(a_max, b_max) + max(a_min, b_min)
+
+
+def _watts_sweep_points(design):
+    """Sample Watts crank tips + link midpoints at ride / bump / droop (cm)."""
+    bump = param_cm(design, "axle_travel_up")
+    droop = param_cm(design, "axle_travel_down")
+    pts = []
+    for delta in (0.0, bump, -droop):
+        pivot = _watts_pivot_point(design, delta)
+        pts.append(pivot)
+        for sign in (1.0, -1.0):
+            tip = _watts_crank_tip(design, sign, delta)
+            frame = _watts_frame_pickup(design, sign)
+            pts.append(tip)
+            pts.append(frame)
+            pts.append(_point_lerp(tip, frame, 0.5))
+            # Link OD envelope: nudge tip/frame mid ± half OD in Y
+            link_r = param_cm(design, "watts_link_od") / 2.0
+            mid = _point_lerp(tip, frame, 0.5)
+            pts.append(adsk.core.Point3D.create(mid.x, mid.y + link_r, mid.z))
+            pts.append(adsk.core.Point3D.create(mid.x, mid.y - link_r, mid.z))
+        # Crank arm width envelope at tip Z
+        arm = param_cm(design, "watts_crank_arm_w") / 2.0
+        crank = param_cm(design, "watts_crank_len")
+        pts.append(adsk.core.Point3D.create(pivot.x, pivot.y + arm, pivot.z + crank))
+        pts.append(adsk.core.Point3D.create(pivot.x, pivot.y - arm, pivot.z + crank))
+        pts.append(adsk.core.Point3D.create(pivot.x, pivot.y + arm, pivot.z - crank))
+        pts.append(adsk.core.Point3D.create(pivot.x, pivot.y - arm, pivot.z - crank))
+    return pts
+
+
+def watts_clearance_report(design):
+    """Watts crank/links vs utility-module fuel tank + rear XM at bump/droop."""
+    pts = _watts_sweep_points(design)
+    xs = [p.x for p in pts]
+    ys = [p.y for p in pts]
+    zs = [p.z for p in pts]
+    w_xmin, w_xmax = min(xs), max(xs)
+    w_ymin, w_ymax = min(ys), max(ys)
+    w_zmin, w_zmax = min(zs), max(zs)
+
+    # Utility-module fuel tank AABB (mirrored PLACEHOLDER envelope).
+    fx0 = param_cm(design, "um_fuel_x")
+    fy0 = param_cm(design, "um_fuel_y")
+    fl = param_cm(design, "um_fuel_l")
+    fw = param_cm(design, "um_fuel_w")
+    fh = param_cm(design, "um_fuel_h")
+    t_xmin, t_xmax = fx0, fx0 + fl
+    t_ymin, t_ymax = fy0, fy0 + fh
+    t_zmin, t_zmax = -fw / 2.0, fw / 2.0
+
+    gap_x = _aabb_gap(w_xmin, w_xmax, t_xmin, t_xmax)
+    gap_y = _aabb_gap(w_ymin, w_ymax, t_ymin, t_ymax)
+    gap_z = _aabb_gap(w_zmin, w_zmax, t_zmin, t_zmax)
+    # Separating-axis: if any axis has positive gap, AABBs are separate;
+    # report the minimum positive sep, or most negative overlap if intersecting.
+    if gap_x > 0 or gap_y > 0 or gap_z > 0:
+        tank_gap = min(g for g in (gap_x, gap_y, gap_z) if g > 0)
+    else:
+        tank_gap = min(gap_x, gap_y, gap_z)  # overlapping — most negative axis
+    tank_gap_in = tank_gap / IN_TO_CM
+
+    # Rear receiver crossmember AABB.
+    xm_x = param_cm(design, "rcv_xm_x")
+    try:
+        xm_t = param_cm(design, "rcv_xm_t")
+    except Exception:
+        xm_t = param_cm(design, "rcv_xm_w")
+    xm_h = param_cm(design, "rcv_xm_h")
+    xm_cy = param_cm(design, "rcv_cl_y")
+    z_rh = _rail_inboard_inner_z(design, 1.0)
+    z_lh = _rail_inboard_inner_z(design, -1.0)
+    r_xmin, r_xmax = xm_x - xm_t / 2.0, xm_x + xm_t / 2.0
+    r_ymin, r_ymax = xm_cy - xm_h / 2.0, xm_cy + xm_h / 2.0
+    r_zmin, r_zmax = min(z_lh, z_rh), max(z_lh, z_rh)
+
+    rgx = _aabb_gap(w_xmin, w_xmax, r_xmin, r_xmax)
+    rgy = _aabb_gap(w_ymin, w_ymax, r_ymin, r_ymax)
+    rgz = _aabb_gap(w_zmin, w_zmax, r_zmin, r_zmax)
+    if rgx > 0 or rgy > 0 or rgz > 0:
+        rcv_gap = min(g for g in (rgx, rgy, rgz) if g > 0)
+    else:
+        rcv_gap = min(rgx, rgy, rgz)
+    rcv_gap_in = rcv_gap / IN_TO_CM
+
+    return (
+        "Watts clearance (AABB sweep ride/bump/droop, in):\n"
+        "  watts vs utility fuel tank:    {:.3f} — {} "
+        "(um_fuel_* PLACEHOLDER mirrors UtilityModule)\n"
+        "  watts vs rear XM (XMEMBER_RCV): {:.3f} — {}\n"
+        "  (watts_pivot_y={:.3f}; watts_crank_len={:.3f}; "
+        "axle_travel_up/down={:.3f}/{:.3f})".format(
+            tank_gap_in,
+            _clearance_note(tank_gap_in),
+            rcv_gap_in,
+            _clearance_note(rcv_gap_in),
+            param_cm(design, "watts_pivot_y") / IN_TO_CM,
+            param_cm(design, "watts_crank_len") / IN_TO_CM,
+            param_cm(design, "axle_travel_up") / IN_TO_CM,
+            param_cm(design, "axle_travel_down") / IN_TO_CM,
+        )
+    )
 
 
 # ---------------------------------------------------------------------------

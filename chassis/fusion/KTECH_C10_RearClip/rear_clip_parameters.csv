@@ -35,25 +35,62 @@ kickup_ahead,10,in,PLACEHOLDER. Kickup start ahead of rear axle CL
 kickup_aft,8,in,PLACEHOLDER. Kickup ends aft of rear axle CL
 kickup_rise,4,in,PLACEHOLDER. Vertical rise of rail top over axle
 kickup_ramp,4,in,PLACEHOLDER. Horizontal length of each kickup ramp
-lower_link_len,23,in,PLACEHOLDER. Triangulated lower bar length (22-24 in target)
-upper_link_len,22,in,PLACEHOLDER. Upper bar length — within ~1 in of lowers
+rear_link_type,triangulated,,triangulated|parallel_watts — string enum (default triangulated)
+lower_link_len,23,in,PLACEHOLDER. Target lower bar C-C (actual from pickups; 22-24 in target)
+upper_link_len,22,in,PLACEHOLDER. Target upper bar C-C (actual from pickups; within ~1 in of lowers)
 lower_pickup_x,cab_r_x + 2,in,PLACEHOLDER. Frame lower 4-link pickup just behind cab
 upper_pickup_x,cab_r_x + 6,in,PLACEHOLDER. Frame upper 4-link pickup
-lower_pickup_y,rail_bottom + 1,in,PLACEHOLDER. Lower pickup height at ride
-upper_pickup_y,rail_bottom + tube_h - 1,in,PLACEHOLDER. Upper pickup height at ride
-axle_link_spread_z,18,in,PLACEHOLDER. Axle-side lower link half-spread from CL
-frame_link_spread_z,rail_cl,in,Frame-side lower pickups at rail CL
-upper_xmember_w,2.000,in,PLACEHOLDER. Upper crossmember plate width (along X)
-upper_xmember_h,4.000,in,PLACEHOLDER. Upper crossmember plate height
+lower_pickup_y,rail_bottom + 1,in,PLACEHOLDER. Lower pickup height at ride (Fusion Y)
+upper_pickup_y,rail_bottom + tube_h - 1,in,PLACEHOLDER. Upper pickup height at ride (Fusion Y)
+lower_link_y,rail_cl + tube_w / 2 + clip_clear + clip_t + 0.75 in,in,PLACEHOLDER. Lower bar LATERAL from frame CL (Fusion |Z|) — outboard of rail outboard face
+axle_link_spread_z,lower_link_y,in,Legacy alias → lower_link_y (REV-B outboard lowers)
+frame_link_spread_z,lower_link_y,in,Frame lower pickups at lower_link_y (outboard of rails)
+frame_upper_spread_z,rail_cl * 0.5,in,PLACEHOLDER. Frame upper half-spread — triangulated inboard (ignored when parallel_watts)
+link_bar_od,1.25,in,Four-link bar tube OD
+link_bar_wall,0.120,in,PLACEHOLDER. Four-link bar tube wall
+rod_end_shank_thread,3/4-16,,PLACEHOLDER. Rod-end shank thread callout (string; not a Fusion length param)
+rod_end_shank_od,0.750,in,PLACEHOLDER. Shank major dia for 3/4-16 solid model
+rod_end_housing_od,1.750,in,PLACEHOLDER. Bushing housing OD
+rod_end_housing_width,0.875,in,PLACEHOLDER. Bushing housing width along bolt
+rod_end_bore,0.625,in,PLACEHOLDER. Rod-end bolt bore
+rod_end_eye_to_shoulder,2.125,in,PLACEHOLDER. Eye center to shank shoulder (each end)
+rod_end_thread_engagement_min,1.000,in,PLACEHOLDER. Min thread engagement into bung
+rod_end_adjustable_length,1.500,in,PLACEHOLDER. Spin-to-adjust range each end
+bung_length,1.500,in,PLACEHOLDER. Threaded tube insert / bung length
+bung_od,link_bar_od - 2 * link_bar_wall,in,Bung OD ≈ tube ID
+jam_nut_od,1.125,in,PLACEHOLDER. Jam nut OD (simplified cylinder)
+jam_nut_width,0.375,in,PLACEHOLDER. Jam nut width along shank
+axle_bracket_w,4.000,in,PLACEHOLDER. Axle link tab plate width along X
+axle_bracket_h,3.000,in,PLACEHOLDER. Axle link tab plate height along Y
+axle_bracket_t,clip_t,in,Axle link tab plate thickness
+lateral_locator,none,,PLACEHOLDER. none|panhard — watts implied by rear_link_type=parallel_watts; panhard TODO (string)
+upper_xmember_w,2.000,in,PLACEHOLDER. Frame upper 4-link crossmember plate width (along X)
+upper_xmember_h,4.000,in,PLACEHOLDER. Frame upper 4-link crossmember plate height
 bracket_plate_w,4.000,in,PLACEHOLDER. 4-link bracket plate width
 bracket_plate_h,3.500,in,PLACEHOLDER. 4-link bracket plate height
 bracket_hole_d,0.625,in,PLACEHOLDER. Link bolt hole diameter
-suspension_mode,1,,1 = airbag upper mount; 0 = coilover upper mount (read at run)
-bag_mount_w,6.000,in,PLACEHOLDER. Bag/shock upper mount plate width along X
-bag_mount_l,8.000,in,PLACEHOLDER. Bag/shock upper mount plate length across car (per side pad)
-bag_mount_z_off,2.000,in,PLACEHOLDER. Mount pad inset from rail outboard face
-coilover_mount_w,3.000,in,PLACEHOLDER. Coilover upper mount plate width along X
-coilover_mount_l,4.000,in,PLACEHOLDER. Coilover upper mount plate length
+suspension_mode,1,,1 = airbag mounts on over-axle XM; 0 = coilover/shock tabs (shared inboard bay)
+ox_plate_t,0.188,in,PLACEHOLDER. Over-axle crossmember laser plate thickness
+ox_width_x,6.000,in,PLACEHOLDER. Over-axle XM fore-aft overall width (centered on axle CL)
+ox_web_h,3.000,in,PLACEHOLDER. Over-axle XM front/rear web height (hangs below top plate)
+ox_include_bottom,1,,1 = include bottom plate (closed box); 0 = open channel (top + webs only)
+bag_diameter,8.000,in,PLACEHOLDER. Airbag OD for clearance checks (not solid-modeled)
+bag_y,(rail_cl - box_od_w / 2 + frame_upper_spread_z) / 2,in,PLACEHOLDER. Bag center LATERAL from CL — between rail inboard face and upper link path
+shock_y,bag_y,in,PLACEHOLDER. Shock/coilover LATERAL — same inboard bay as bag by default
+mount_z_off,bag_y,in,Legacy alias → bag_y (shared mount lateral)
+mount_x_off,0.000,in,PLACEHOLDER. Bag/shock mount fore/aft offset from axle CL (shared)
+shock_eye_y,rail_bottom + tube_h + kickup_rise - 1 in,in,PLACEHOLDER. Upper shock/coilover eye height (Fusion Y)
+shock_bore,0.500,in,PLACEHOLDER. Shock/coilover bolt bore
+shock_tab_w,2.500,in,PLACEHOLDER. Shock double-shear tab width along X
+shock_tab_h,3.500,in,PLACEHOLDER. Shock double-shear tab height along Y
+shock_tab_gap,1.000,in,PLACEHOLDER. Clear between double-shear tab pair (along Z)
+bag_mount_w,6.000,in,PLACEHOLDER. Bag mount plate width along X
+bag_mount_l,6.000,in,PLACEHOLDER. Bag mount plate length along Z
+bag_stud_d,0.375,in,PLACEHOLDER. Single 3/8 bag stud hole diameter
+bag_stud_offset,1.500,in,PLACEHOLDER. Stud offset from plate center along X
+bag_air_hole_d,0.750,in,PLACEHOLDER. Center air-fitting hole diameter
+axle_travel_up,3.000,in,PLACEHOLDER. Axle travel up at bump for XM + bar-to-rail clearance
+axle_travel_down,5.000,in,PLACEHOLDER. Axle travel down at droop for bar-to-rail clearance
 axle_wms_a,63.625,in,WMS width A — set by wheel/tire combo (user param)
 brake_space,2.500,in,Torino late big bearing brake space per side
 housing_end_b,axle_wms_a - 2 * brake_space,in,Housing end-to-end B
@@ -66,4 +103,47 @@ cs_depth,8.000,in,PLACEHOLDER UNVERIFIED — Currie center section depth along X
 tube_insert,2.500,in,PLACEHOLDER UNVERIFIED — Axle tube insertion into center section. Awaiting Currie CAD.
 axle_tube_len,(housing_end_b - cs_width) / 2 + tube_insert,in,Derived axle tube length each side
 axle_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Axle centerline height at ride — edit with bags
+axle_lower_pickup_x,wb,in,PLACEHOLDER. Axle lower link pickup X
+axle_lower_pickup_y,axle_cl_y - 1,in,PLACEHOLDER. Axle lower link pickup height
+axle_lower_spread_z,lower_link_y,in,PLACEHOLDER. Axle lower lateral — outboard of rail lines on housing tubes
+axle_upper_pickup_x,wb,in,PLACEHOLDER. Axle upper link pickup X
+axle_upper_pickup_y,axle_cl_y + 2,in,PLACEHOLDER. Axle upper link pickup height
+axle_upper_spread_z,cs_width / 2 + 1.5 in,in,PLACEHOLDER. Axle upper half-spread — triangulated (ignored when parallel_watts)
 mount_y,rail_bottom + tube_h,in,Top of straight 2x6 / slip section
+watts_pivot_x,wb + cs_depth / 2,in,PLACEHOLDER. Watts pivot X — aft face of housing center section
+watts_pivot_y,axle_cl_y,in,PLACEHOLDER. Watts center pivot height at ride (Fusion Y)
+watts_crank_len,6.000,in,PLACEHOLDER. Bell crank tip-to-pivot (half-arm length)
+watts_crank_arm_w,1.500,in,PLACEHOLDER. Bell crank arm width
+watts_crank_t,clip_t,in,PLACEHOLDER. Bell crank plate thickness along X
+watts_link_len,12.000,in,PLACEHOLDER. Target Watts lateral link C-C (actual from pickups)
+watts_link_od,0.750,in,PLACEHOLDER. Watts lateral link tube OD
+watts_link_wall,0.120,in,PLACEHOLDER. Watts lateral link tube wall
+watts_bolt_d,0.500,in,PLACEHOLDER. Watts link / frame bracket bolt diameter
+watts_pivot_bolt_d,0.625,in,PLACEHOLDER. Watts center pivot bolt diameter
+watts_bracket_w,3.000,in,PLACEHOLDER. Frame Watts bracket width along X
+watts_bracket_h,3.000,in,PLACEHOLDER. Frame Watts bracket height along Y
+watts_frame_x,watts_pivot_x,in,PLACEHOLDER. Frame Watts bracket station X (horizontal links)
+watts_frame_y,watts_pivot_y,in,PLACEHOLDER. Frame Watts pickup height (Fusion Y)
+watts_pivot_mount_w,4.000,in,PLACEHOLDER. Axle Watts pivot mount plate width along Z
+watts_pivot_mount_h,4.000,in,PLACEHOLDER. Axle Watts pivot mount plate height along Y
+rcv_od,2.500,in,PLACEHOLDER. Receiver square tube outer size (OD)
+rcv_wall,0.188,in,PLACEHOLDER. Receiver square tube wall
+rcv_length,14.000,in,PLACEHOLDER. Receiver tube length along X (aft of kickup step-down)
+rcv_front_x,wb + kickup_aft,in,PLACEHOLDER. Receiver forward face X (start of step-down aft bay)
+rcv_rear_x,rcv_front_x + rcv_length,in,Receiver aft face X
+rcv_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Receiver CL height (Fusion Y) after kickup step-down
+rcv_bolt_d,0.500,in,PLACEHOLDER. Cross-bolt hole diameter through receiver (locks slide-in module)
+rcv_bolt_count,2,,PLACEHOLDER. Number of cross-bolts per receiver
+rcv_bolt_pitch,3.000,in,PLACEHOLDER. Cross-bolt spacing along X
+rcv_bolt_first_x,rcv_front_x + 2.000 in,in,PLACEHOLDER. First cross-bolt X from receiver front
+rcv_key_w,1.500,in,PLACEHOLDER. Receiver key tab width along X into rail plates
+rcv_key_h,rcv_od,in,PLACEHOLDER. Receiver key tab height (matches tube OD)
+rcv_xm_w,2.000,in,PLACEHOLDER. Rear receiver XM fore-aft envelope (layout ref; thickness is rcv_xm_t)
+rcv_xm_h,rcv_od,in,PLACEHOLDER. Rear receiver crossmember plate height
+rcv_xm_t,clip_t,in,PLACEHOLDER. Rear receiver crossmember plate thickness along X
+rcv_xm_x,rcv_front_x + rcv_length / 2,in,PLACEHOLDER. Rear receiver crossmember center X
+um_fuel_l,28.000,in,PLACEHOLDER. Match UtilityModule fuel_l — Watts clearance
+um_fuel_w,18.000,in,PLACEHOLDER. Match UtilityModule fuel_w — Watts clearance
+um_fuel_h,10.000,in,PLACEHOLDER. Match UtilityModule fuel_h — Watts clearance
+um_fuel_x,rcv_front_x + rcv_length + 4.000 in,in,PLACEHOLDER. Match UtilityModule fuel_x — Watts clearance
+um_fuel_y,rcv_cl_y - 1.000 in + clip_t,in,PLACEHOLDER. Match UtilityModule fuel_y approx (tray top + tray_t)

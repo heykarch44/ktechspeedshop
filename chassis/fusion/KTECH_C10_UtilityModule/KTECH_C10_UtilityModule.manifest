@@ -1,0 +1,11 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "Ktech Speedshop",
+    "description": {
+        "": "Creates a parametric Ktech C10 utility module: tube-in-tube rails that slide into rear-clip receivers, keyed laser tray, fuel-tank envelope with Radium-style pump flange, air/fuel variant mounts, bulkhead service plate, and DXF plate export."
+    },
+    "version": "1.0.0",
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}
