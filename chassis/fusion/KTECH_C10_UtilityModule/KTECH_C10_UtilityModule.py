@@ -10,11 +10,31 @@
 #   Bench-built bolt-in tray. Two smaller square-tube rails (default 2.0 x
 #   0.188 PLACEHOLDER) slide INSIDE the rear-clip receivers (tube-in-tube)
 #   and cross-bolt. Tray is keyed laser-cut plate. Parametric envelopes /
-#   mounts for fuel tank (welded alum box + sump + Radium-style pump flange
-#   + fill/vent/sender/feed/return), air tank, twin compressors, valve
-#   manifold, twin batteries. Forward bulkhead service plate with AN fuel
-#   feed/return, air, battery-cable, and control pass-throughs.
-#   module_variant = air_fuel | fuel_only.
+#   mounts for fuel tank (welded alum box + Boyd 21057 sump + Radium
+#   20-0278 6x10 24-bolt weld flange / FCST-X + Usher UD3F fill + Ace Race
+#   Parts ORB feed/return/drain/vent + SAE 5-bolt sender), air tank, twin
+#   compressors, valve manifold, twin batteries. Forward bulkhead service
+#   plate with AN fuel feed/return, air, battery-cable, and control
+#   pass-throughs. module_variant = air_fuel | fuel_only.
+#
+# Fuel fittings (sourced) — see README for full URLs
+#   Radium 20-0278 6x10 24-bolt weld flange + 18-0015 FKM gasket; FCST-X
+#     https://www.radiumauto.com/products/fuel-cell-mounting-accessories
+#     https://www.radiumauto.com/products/fcst-x-fuel-cell-surge-tank
+#   Nuke Performance 6x10-24bolts.DXF (bolt / opening geometry)
+#     https://www.nukeperformance.com/dokument/6x10-24bolts.DXF
+#   Dakota Digital SEN-06-1 / Tanks Inc SAE 5-hole sender
+#     https://www.dakotadigital.com/index.cfm/page/ptype=product/product_id=112/mode=prod/prd112.htm
+#     https://www.tanksinc.com/index.cfm/page/ptype=results/category_id=159/mode=cat/cat159.htm
+#   Ace Race Parts 6061 ORB weld bungs (-6 / -8) via K2 Fabrication
+#     https://www.k2-fabrication.com/products/6an-female-weld-bung-6061-aluminum
+#     https://www.k2-fabrication.com/products/8an-female-weld-bung-6061-aluminum
+#   Usher UD3F flush aero weld-on filler
+#     https://www.fillernecksupply.com/usher-precision-manufacturing-aero-aluminum-flush-mount-fuel-filler-neck-flange-and-cap-weld-on-ud3f-us-3-f/
+#   Boyd Welding 21057 2.5 in OD weld-in sump
+#     https://fueltankparts.com/products/2-5-od-aluminum-weld-in-sump
+# PLACEHOLDER still: tank shell size, sender screw angles (SAE uneven),
+#   bung pilot holes, filler cutout, rollover valve fit.
 #
 # Coordinates (Fusion Y-up) — same as KTECH_C10_RearClip / Chassis_Setup
 #   Origin = front axle × ground × frame centerline
@@ -130,40 +150,218 @@ PARAM_ORDER = [
     ("tab_width", "0.750 in", "in", "PLACEHOLDER. Tray key tab width"),
     ("tab_length", "clip_t", "in", "Tab length = mating thickness"),
     ("slot_clear", "0.010 in", "in", "PLACEHOLDER. Slot oversize vs tab"),
-    # Fuel tank envelope
+    # Fuel tank envelope (shell PLACEHOLDER; fittings sourced)
     ("fuel_l", "28.000 in", "in", "PLACEHOLDER. Fuel tank length along X"),
     ("fuel_w", "18.000 in", "in", "PLACEHOLDER. Fuel tank width along Z"),
     ("fuel_h", "10.000 in", "in", "PLACEHOLDER. Fuel tank height"),
     ("fuel_wall", "0.125 in", "in", "PLACEHOLDER. Alum tank wall"),
     ("fuel_x", "tray_x0 + 4.000 in", "in", "PLACEHOLDER. Fuel tank forward face X"),
     ("fuel_y", "tray_y + tray_t", "in", "PLACEHOLDER. Fuel tank bottom Y"),
-    ("fuel_sump_l", "6.000 in", "in", "PLACEHOLDER. Sump length along X"),
-    ("fuel_sump_w", "8.000 in", "in", "PLACEHOLDER. Sump width along Z"),
-    ("fuel_sump_h", "2.000 in", "in", "PLACEHOLDER. Sump depth below tank"),
     (
-        "fuel_pump_flange_od",
-        "6.000 in",
+        "fuel_sump_od",
+        "2.500 in",
         "in",
-        "PLACEHOLDER. Radium-style pump module flange OD",
+        "SOURCED (Boyd Welding 21057). Weld-in sump OD",
     ),
     (
-        "fuel_pump_flange_bolt_pc",
-        "5.375 in",
+        "fuel_sump_h",
+        "0.875 in",
         "in",
-        "PLACEHOLDER. Pump flange bolt circle",
+        "SOURCED (Boyd 21057). Installed height below tank floor (+/-)",
     ),
     (
-        "fuel_pump_flange_bolt_d",
-        "0.312 in",
+        "fuel_sump_hole_d",
+        "2.250 in",
         "in",
-        "PLACEHOLDER. Pump flange bolt hole dia",
+        "SOURCED (Boyd 21057). Tank hole required. Fitting 1/4 NPT",
     ),
-    ("fuel_pump_flange_bolt_n", "6", "", "PLACEHOLDER. Pump flange bolt count"),
-    ("fuel_fill_od", "2.250 in", "in", "PLACEHOLDER. Fill bung OD"),
-    ("fuel_vent_od", "0.750 in", "in", "PLACEHOLDER. Vent/rollover bung OD"),
-    ("fuel_sender_od", "1.500 in", "in", "PLACEHOLDER. Sender flange OD"),
-    ("fuel_feed_an", "0.750 in", "in", "PLACEHOLDER. Feed bung envelope"),
-    ("fuel_return_an", "0.625 in", "in", "PLACEHOLDER. Return bung envelope"),
+    (
+        "fuel_pf_outer_l",
+        "11.575 in",
+        "in",
+        "SOURCED (Nuke Performance 6x10-24bolts.DXF). Weld flange outer obround length along X. Verify vs Radium 20-0278 in hand",
+    ),
+    (
+        "fuel_pf_outer_w",
+        "7.598 in",
+        "in",
+        "SOURCED (Nuke DXF). Weld flange outer obround width along Z. Verify vs 20-0278",
+    ),
+    (
+        "fuel_pf_open_l",
+        "10.157 in",
+        "in",
+        "SOURCED (Nuke DXF). 6x10 opening length along X (ends drawn as splines; modeled as obround)",
+    ),
+    (
+        "fuel_pf_open_w",
+        "6.181 in",
+        "in",
+        "SOURCED (Nuke DXF). 6x10 opening width along Z",
+    ),
+    (
+        "fuel_pf_bolt_r",
+        "3.445 in",
+        "in",
+        "SOURCED (Nuke DXF). Bolt-line end radius (87.5 mm)",
+    ),
+    (
+        "fuel_pf_bolt_ctr",
+        "3.976 in",
+        "in",
+        "SOURCED (Nuke DXF). Distance between bolt-line end-arc centers along X (101 mm)",
+    ),
+    (
+        "fuel_pf_bolt_d",
+        "0.315 in",
+        "in",
+        "SOURCED (Nuke DXF). Bolt hole dia in DXF (8 mm). Radium 20-0278 is tapped 1/4-28 instead",
+    ),
+    (
+        "fuel_pf_bolt_n",
+        "24",
+        "",
+        "SOURCED (Radium). Industry-standard 6x10 24-bolt pattern",
+    ),
+    (
+        "fuel_pf_t",
+        "0.240 in",
+        "in",
+        "SOURCED (Radium 20-0278). Weld flange thickness, fly-cut",
+    ),
+    (
+        "fuel_pf_gasket_t",
+        "0.0625 in",
+        "in",
+        "SOURCED (Radium 18-0015). FKM gasket thickness",
+    ),
+    (
+        "fuel_fcst_min_depth",
+        "7.700 in",
+        "in",
+        "SOURCED (Radium FCST-X). Min depth outer top face to internal floor",
+    ),
+    (
+        "fuel_fcst_max_depth",
+        "12.700 in",
+        "in",
+        "SOURCED (Radium FCST-X). Deeper tanks need Radium extension",
+    ),
+    (
+        "fuel_sender_flange_od",
+        "2.800 in",
+        "in",
+        "SOURCED (Dakota Digital SEN-06-1). Sender flange overall size",
+    ),
+    (
+        "fuel_sender_bc",
+        "2.125 in",
+        "in",
+        "SOURCED (Dakota Digital / Tanks Inc SAE 5-hole). Bolt circle",
+    ),
+    (
+        "fuel_sender_hole_d",
+        "1.700 in",
+        "in",
+        "SOURCED (Dakota Digital). Tank hole size",
+    ),
+    (
+        "fuel_sender_screw_d",
+        "0.190 in",
+        "in",
+        "SOURCED (Dakota Digital). 10-32 screws; hole = tap/nut-ring per build",
+    ),
+    ("fuel_sender_bolt_n", "5", "", "SOURCED. SAE 5-hole"),
+    (
+        "fuel_fill_flange_od",
+        "3.750 in",
+        "in",
+        "SOURCED (Usher UD3F). Flat weld flange OD",
+    ),
+    (
+        "fuel_fill_flange_t",
+        "0.090 in",
+        "in",
+        "SOURCED (UD3F). Flange thickness",
+    ),
+    (
+        "fuel_fill_cap_od",
+        "2.250 in",
+        "in",
+        "SOURCED (UD3F). Cap OD",
+    ),
+    (
+        "fuel_fill_h",
+        "0.600 in",
+        "in",
+        "SOURCED (UD3F). Overall height",
+    ),
+    (
+        "fuel_fill_hole_d",
+        "2.000 in",
+        "in",
+        "PLACEHOLDER. Tank cutout for filler neck; not published",
+    ),
+    (
+        "fuel_vent_od",
+        "0.875 in",
+        "in",
+        "SOURCED (Ace Race Parts -6AN ORB). Vent/rollover bung body; rollover valve is -6AN (e.g. Racetronix ROV-6) PLACEHOLDER fit",
+    ),
+    (
+        "fuel_feed_an",
+        "1.055 in",
+        "in",
+        "SOURCED (Ace Race Parts -8AN ORB weld bung, 3/4-16). Body dia",
+    ),
+    (
+        "fuel_return_an",
+        "1.055 in",
+        "in",
+        "SOURCED (Ace Race Parts -8AN ORB weld bung, 3/4-16). Body dia",
+    ),
+    (
+        "fuel_an8_shoulder_d",
+        "1.213 in",
+        "in",
+        "SOURCED (Ace Race Parts -8AN). Shoulder dia",
+    ),
+    (
+        "fuel_an8_h",
+        "0.563 in",
+        "in",
+        "SOURCED (Ace Race Parts -8AN). Bung height",
+    ),
+    (
+        "fuel_an6_body_d",
+        "0.875 in",
+        "in",
+        "SOURCED (Ace Race Parts -6AN ORB, 9/16-18). Body dia",
+    ),
+    (
+        "fuel_an6_shoulder_d",
+        "0.984 in",
+        "in",
+        "SOURCED (Ace Race Parts -6AN). Shoulder dia",
+    ),
+    (
+        "fuel_an6_h",
+        "0.500 in",
+        "in",
+        "SOURCED (Ace Race Parts -6AN). Bung height",
+    ),
+    (
+        "fuel_an8_hole_d",
+        "0.875 in",
+        "in",
+        "PLACEHOLDER. Tank hole for -8 bung pilot; confirm with bung in hand",
+    ),
+    (
+        "fuel_an6_hole_d",
+        "0.750 in",
+        "in",
+        "PLACEHOLDER. Tank hole for -6 bung pilot; confirm with bung in hand",
+    ),
     # Air system (air_fuel only)
     ("air_tank_l", "20.000 in", "in", "PLACEHOLDER. Air tank length along X"),
     ("air_tank_od", "6.000 in", "in", "PLACEHOLDER. Air tank OD"),
@@ -210,6 +408,10 @@ PARAM_ORDER = [
 
 DO = adsk.fusion.DimensionOrientations
 IN_TO_CM = 2.54
+
+# Nuke Performance 6x10-24bolts.DXF bolt layout (hard-coded; not user params)
+_FUEL_PF_BOLT_ARC_DEG = 20.51
+_FUEL_PF_BOLT_SIDE_X = 1.233  # in; 31.32 mm pitch along X on straight sides
 
 
 def run(_context):
@@ -288,6 +490,10 @@ def run(_context):
         dxf_dir = os.path.join(SCRIPT_DIR, "dxf_out")
         n_dxf = export_plate_dxfs(design, dxf_dir)
         fit_note = _fit_check_note(design)
+        fuel_note = _fuel_fcst_depth_note(design)
+        notes = fit_note
+        if fuel_note:
+            notes = "{}\n{}".format(fit_note, fuel_note)
 
         try:
             app.activeViewport.fit()
@@ -304,7 +510,7 @@ def run(_context):
             "Fit view if the canvas looks empty.\n"
             "Save as KTECH_C10_UTILITY_MODULE.".format(
                 variant,
-                fit_note,
+                notes,
                 n_dxf,
                 dxf_dir,
             )
@@ -409,6 +615,22 @@ def _fit_check_note(design):
         )
     except Exception:
         return "Tube-in-tube fit check unavailable."
+
+
+def _fuel_fcst_depth_note(design):
+    """Warn if tank height is outside Radium FCST-X depth range."""
+    try:
+        h = param_cm(design, "fuel_h") / IN_TO_CM
+        mn = param_cm(design, "fuel_fcst_min_depth") / IN_TO_CM
+        mx = param_cm(design, "fuel_fcst_max_depth") / IN_TO_CM
+        if h < mn or h > mx:
+            return (
+                "Fuel tank height {:.3f} in is outside FCST-X depth "
+                "{:.3f}-{:.3f} in.".format(h, mn, mx)
+            )
+        return ""
+    except Exception:
+        return ""
 
 
 # ---------------------------------------------------------------------------
@@ -701,55 +923,122 @@ def build_fuel_tank(comp):
     # Main tank box.
     _extrude_xz_plate(comp, "FUEL_TANK_BOX", x0, x0 + l, y0, z0, z1, h, up=True)
 
-    # Sump pocket below tank (centered).
-    sl = param_cm(design, "fuel_sump_l")
-    sw = param_cm(design, "fuel_sump_w")
-    sh = param_cm(design, "fuel_sump_h")
-    sx = x0 + l / 2.0 - sl / 2.0
-    _extrude_xz_plate(
-        comp,
-        "FUEL_SUMP",
-        sx,
-        sx + sl,
-        y0,
-        -sw / 2.0,
-        sw / 2.0,
-        sh,
-        up=False,
-    )
-
-    # Top features as short cylinders / discs (envelopes).
+    # Boyd 21057 weld-in sump under 6x10 flange center.
     top_y = y0 + h
     cx = x0 + l * 0.35
     _add_vertical_cylinder(
-        comp, "FUEL_PUMP_FLANGE", cx, top_y, 0.0,
-        param_cm(design, "fuel_pump_flange_od") / 2.0,
-        param_cm(design, "tray_t"),
+        comp,
+        "FUEL_SUMP",
+        cx,
+        y0,
+        0.0,
+        param_cm(design, "fuel_sump_od") / 2.0,
+        param_cm(design, "fuel_sump_h"),
+        up=False,
     )
-    _add_flange_bolt_circle(comp, design, cx, top_y)
-    _add_vertical_cylinder(
-        comp, "FUEL_FILL", x0 + l * 0.70, top_y, w * 0.25,
-        param_cm(design, "fuel_fill_od") / 2.0,
-        1.5 * IN_TO_CM,
+
+    # Radium 20-0278 / Nuke 6x10 24-bolt weld flange (obround envelope).
+    _add_obround_xz(
+        comp,
+        "FUEL_PUMP_FLANGE",
+        cx,
+        top_y,
+        0.0,
+        param_cm(design, "fuel_pf_outer_l"),
+        param_cm(design, "fuel_pf_outer_w"),
+        param_cm(design, "fuel_pf_t"),
+        up=True,
     )
+    _add_6x10_flange_sketch(comp, design, cx, top_y)
+
+    # Usher UD3F filler — shift aft if flange would overlap 6x10 at defaults.
+    fill_frac = 0.70
+    fill_x = x0 + l * fill_frac
+    pf_aft = cx + param_cm(design, "fuel_pf_outer_l") / 2.0
+    fill_fwd = fill_x - param_cm(design, "fuel_fill_flange_od") / 2.0
+    if fill_fwd < pf_aft:
+        fill_frac = 0.80
+        fill_x = x0 + l * fill_frac
+    fill_z = w * 0.25
+    flange_t = param_cm(design, "fuel_fill_flange_t")
+    cap_h = param_cm(design, "fuel_fill_h") - flange_t
     _add_vertical_cylinder(
-        comp, "FUEL_VENT", x0 + l * 0.85, top_y, -w * 0.25,
+        comp,
+        "FUEL_FILL_FLANGE",
+        fill_x,
+        top_y,
+        fill_z,
+        param_cm(design, "fuel_fill_flange_od") / 2.0,
+        flange_t,
+        up=True,
+    )
+    if cap_h > 0.0:
+        _add_vertical_cylinder(
+            comp,
+            "FUEL_FILL_CAP",
+            fill_x,
+            top_y + flange_t,
+            fill_z,
+            param_cm(design, "fuel_fill_cap_od") / 2.0,
+            cap_h,
+            up=True,
+        )
+
+    _add_vertical_cylinder(
+        comp,
+        "FUEL_VENT",
+        x0 + l * 0.85,
+        top_y,
+        -w * 0.25,
         param_cm(design, "fuel_vent_od") / 2.0,
-        1.0 * IN_TO_CM,
+        param_cm(design, "fuel_an6_h"),
+        up=True,
     )
+
+    sender_x = x0 + l * 0.55
+    sender_z = -w * 0.30
     _add_vertical_cylinder(
-        comp, "FUEL_SENDER", x0 + l * 0.55, top_y, -w * 0.30,
-        param_cm(design, "fuel_sender_od") / 2.0,
+        comp,
+        "FUEL_SENDER",
+        sender_x,
+        top_y,
+        sender_z,
+        param_cm(design, "fuel_sender_flange_od") / 2.0,
         param_cm(design, "tray_t"),
+        up=True,
     )
-    # Feed / return bungs on forward face (YZ).
+    _add_sender_cut_sketch(comp, design, sender_x, top_y, sender_z)
+
+    # Feed / return -8AN ORB bungs on forward face (YZ).
+    an8_h = param_cm(design, "fuel_an8_h")
     _add_bung_on_yz(
-        comp, "FUEL_FEED_BUNG", x0, y0 + h * 0.35, w * 0.20,
-        param_cm(design, "fuel_feed_an") / 2.0, 0.75 * IN_TO_CM,
+        comp,
+        "FUEL_FEED_BUNG",
+        x0,
+        y0 + h * 0.35,
+        w * 0.20,
+        param_cm(design, "fuel_feed_an") / 2.0,
+        an8_h,
     )
     _add_bung_on_yz(
-        comp, "FUEL_RETURN_BUNG", x0, y0 + h * 0.55, -w * 0.20,
-        param_cm(design, "fuel_return_an") / 2.0, 0.75 * IN_TO_CM,
+        comp,
+        "FUEL_RETURN_BUNG",
+        x0,
+        y0 + h * 0.55,
+        -w * 0.20,
+        param_cm(design, "fuel_return_an") / 2.0,
+        an8_h,
+    )
+    # -6AN drain bung on aft face, low on centerline, protruding aft (+X).
+    _add_bung_on_yz(
+        comp,
+        "FUEL_DRAIN_BUNG",
+        x0 + l,
+        y0 + param_cm(design, "fuel_an6_body_d"),
+        0.0,
+        param_cm(design, "fuel_an6_body_d") / 2.0,
+        param_cm(design, "fuel_an6_h"),
+        aft=True,
     )
 
     # Simple mount plates under tank (DXF).
@@ -771,26 +1060,129 @@ def build_fuel_tank(comp):
         )
 
 
-def _add_flange_bolt_circle(comp, design, cx, top_y):
-    """Sketch-only bolt circle on pump flange (reference)."""
-    n = _int_param(design, "fuel_pump_flange_bolt_n", 6)
-    pc = param_cm(design, "fuel_pump_flange_bolt_pc") / 2.0
-    d = param_cm(design, "fuel_pump_flange_bolt_d")
+def _add_6x10_flange_sketch(comp, design, cx, top_y):
+    """Sketch-only 6x10 opening + 24-bolt pattern (laser/DXF cutout ref).
+
+    Always draws the DXF 24-hole layout (even if fuel_pf_bolt_n != 24).
+    """
+    _ = _int_param(design, "fuel_pf_bolt_n", 24)  # kept user-editable; layout fixed
+    open_l = param_cm(design, "fuel_pf_open_l")
+    open_w = param_cm(design, "fuel_pf_open_w")
+    bolt_r = param_cm(design, "fuel_pf_bolt_r")
+    bolt_ctr = param_cm(design, "fuel_pf_bolt_ctr")
+    bolt_d = param_cm(design, "fuel_pf_bolt_d")
+    side_x = _FUEL_PF_BOLT_SIDE_X * IN_TO_CM
+
     planes = comp.constructionPlanes
     pin = planes.createInput()
     pin.setByOffset(comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(top_y))
     pl = planes.add(pin)
-    pl.name = "PL_FUEL_PUMP_BC"
+    pl.name = "PL_FUEL_PUMP_6X10"
     sk = comp.sketches.add(pl)
-    sk.name = "SK_FUEL_PUMP_BC"
+    sk.name = "SK_FUEL_PUMP_6X10"
     sk.isComputeDeferred = True
+
+    _sketch_obround_xz(sk, cx, top_y, 0.0, open_l, open_w)
+
+    # End-arc hole angles from outward X (Nuke DXF): 0, +/-20.51, ... +/-82.04
+    arc_mults = (0, 1, -1, 2, -2, 3, -3, 4, -4)
+    for side in (1.0, -1.0):
+        acx = cx + side * (bolt_ctr / 2.0)
+        for m in arc_mults:
+            ang = math.radians(_FUEL_PF_BOLT_ARC_DEG * m)
+            # Outward X: +side; angle measured from that direction in XZ
+            zx = acx + side * bolt_r * math.cos(ang)
+            zz = 0.0 + bolt_r * math.sin(ang)
+            ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(zx, top_y, zz))
+            sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, bolt_d / 2.0)
+
+    # Straight-side holes at z = +/- bolt_r, x = -1.233, 0, +1.233 relative to center
+    for z_sign in (1.0, -1.0):
+        for dx in (-side_x, 0.0, side_x):
+            ctr = sk.modelToSketchSpace(
+                adsk.core.Point3D.create(cx + dx, top_y, z_sign * bolt_r)
+            )
+            sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, bolt_d / 2.0)
+
+    sk.isComputeDeferred = False
+
+
+def _add_sender_cut_sketch(comp, design, cx, top_y, cz):
+    """Sketch-only SAE 5-bolt sender tank cutout + screw holes."""
+    hole_d = param_cm(design, "fuel_sender_hole_d")
+    screw_d = param_cm(design, "fuel_sender_screw_d")
+    bc = param_cm(design, "fuel_sender_bc") / 2.0
+    n = _int_param(design, "fuel_sender_bolt_n", 5)
+
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(top_y))
+    pl = planes.add(pin)
+    pl.name = "PL_FUEL_SENDER_CUT"
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_FUEL_SENDER_CUT"
+    sk.isComputeDeferred = True
+    ctr0 = sk.modelToSketchSpace(adsk.core.Point3D.create(cx, top_y, cz))
+    sk.sketchCurves.sketchCircles.addByCenterRadius(ctr0, hole_d / 2.0)
+    # PLACEHOLDER angles: SAE 5-hole pattern is NOT evenly spaced (two holes wider apart); verify against sender gasket
     for i in range(n):
         ang = 2.0 * math.pi * i / n
-        zx = cx + pc * math.cos(ang)
-        zz = 0.0 + pc * math.sin(ang)
+        zx = cx + bc * math.cos(ang)
+        zz = cz + bc * math.sin(ang)
         ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(zx, top_y, zz))
-        sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, d / 2.0)
+        sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, screw_d / 2.0)
     sk.isComputeDeferred = False
+
+
+def _sketch_obround_xz(sk, cx, y, cz, length, width):
+    """Closed obround (stadium) in an XZ sketch: length along X, width along Z."""
+    half_w = width / 2.0
+    span = length - width
+    if span <= 1.0e-6:
+        ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(cx, y, cz))
+        sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, max(half_w, 1.0e-4))
+        return
+    lc = cx - span / 2.0
+    rc = cx + span / 2.0
+    lines = sk.sketchCurves.sketchLines
+    arcs = sk.sketchCurves.sketchArcs
+    p_tl = sk.modelToSketchSpace(adsk.core.Point3D.create(lc, y, cz + half_w))
+    p_tr = sk.modelToSketchSpace(adsk.core.Point3D.create(rc, y, cz + half_w))
+    p_bl = sk.modelToSketchSpace(adsk.core.Point3D.create(lc, y, cz - half_w))
+    p_br = sk.modelToSketchSpace(adsk.core.Point3D.create(rc, y, cz - half_w))
+    lines.addByTwoPoints(p_tl, p_tr)
+    lines.addByTwoPoints(p_bl, p_br)
+    mid_r = sk.modelToSketchSpace(adsk.core.Point3D.create(rc + half_w, y, cz))
+    mid_l = sk.modelToSketchSpace(adsk.core.Point3D.create(lc - half_w, y, cz))
+    arcs.addByThreePoints(p_tr, mid_r, p_br)
+    arcs.addByThreePoints(p_bl, mid_l, p_tl)
+
+
+def _add_obround_xz(comp, name, cx, y0, cz, length, width, height, up=True):
+    """Extrude an obround envelope on an XZ plane."""
+    planes = comp.constructionPlanes
+    pin = planes.createInput()
+    pin.setByOffset(comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(y0))
+    pl = planes.add(pin)
+    pl.name = "PL_{}".format(name)
+    sk = comp.sketches.add(pl)
+    sk.name = "SK_{}".format(name)
+    sk.isComputeDeferred = True
+    _sketch_obround_xz(sk, cx, y0, cz, length, width)
+    sk.isComputeDeferred = False
+    if sk.profiles.count < 1:
+        return None
+    prof = _largest_profile(sk)
+    extrudes = comp.features.extrudeFeatures
+    ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    ext_in.setDistanceExtent(not up, adsk.core.ValueInput.createByReal(height))
+    try:
+        ext = extrudes.add(ext_in)
+    except Exception:
+        return None
+    ext.name = "EX_{}".format(name)
+    ext.bodies.item(0).name = name
+    return ext.bodies.item(0)
 
 
 # ---------------------------------------------------------------------------
@@ -1014,6 +1406,7 @@ def _find_ring_profile(sk):
     return None
 
 
+# NOTE: up=False is a symmetric extrude (isSymmetric flag); kept as-is for existing bodies
 def _extrude_xz_plate(comp, name, x0, x1, y, z0, z1, thickness, up):
     planes = comp.constructionPlanes
     pin = planes.createInput()
@@ -1050,7 +1443,8 @@ def _extrude_xz_plate(comp, name, x0, x1, y, z0, z1, thickness, up):
     return body
 
 
-def _add_vertical_cylinder(comp, name, cx, y0, cz, radius, height):
+def _add_vertical_cylinder(comp, name, cx, y0, cz, radius, height, up=True):
+    """Vertical cylinder envelope. up=True: +Y (PositiveExtent); up=False: -Y (NegativeExtent)."""
     planes = comp.constructionPlanes
     pin = planes.createInput()
     pin.setByOffset(comp.xZConstructionPlane, adsk.core.ValueInput.createByReal(y0))
@@ -1066,7 +1460,15 @@ def _add_vertical_cylinder(comp, name, cx, y0, cz, radius, height):
     ext_in = extrudes.createInput(
         sk.profiles.item(0), adsk.fusion.FeatureOperations.NewBodyFeatureOperation
     )
-    ext_in.setDistanceExtent(False, adsk.core.ValueInput.createByReal(height))
+    direction = (
+        adsk.fusion.ExtentDirections.PositiveExtentDirection
+        if up
+        else adsk.fusion.ExtentDirections.NegativeExtentDirection
+    )
+    ext_in.setOneSideExtent(
+        adsk.fusion.DistanceExtentDefinition.create(adsk.core.ValueInput.createByReal(height)),
+        direction,
+    )
     try:
         ext = extrudes.add(ext_in)
     except Exception:
@@ -1076,7 +1478,8 @@ def _add_vertical_cylinder(comp, name, cx, y0, cz, radius, height):
     return ext.bodies.item(0)
 
 
-def _add_bung_on_yz(comp, name, x_face, cy, cz, radius, length):
+def _add_bung_on_yz(comp, name, x_face, cy, cz, radius, length, aft=False):
+    """ORB bung on a YZ tank face. aft=True: +X (PositiveExtent); aft=False: -X forward (NegativeExtent)."""
     planes = comp.constructionPlanes
     pin = planes.createInput()
     pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(x_face))
@@ -1092,8 +1495,16 @@ def _add_bung_on_yz(comp, name, x_face, cy, cz, radius, length):
     ext_in = extrudes.createInput(
         sk.profiles.item(0), adsk.fusion.FeatureOperations.NewBodyFeatureOperation
     )
-    # Extrude forward (−X, out of tank) so bung protrudes ahead of tank face.
-    ext_in.setDistanceExtent(True, adsk.core.ValueInput.createByReal(length))
+    # aft=True: +X; aft=False (default): forward -X via NegativeExtentDirection
+    direction = (
+        adsk.fusion.ExtentDirections.PositiveExtentDirection
+        if aft
+        else adsk.fusion.ExtentDirections.NegativeExtentDirection
+    )
+    ext_in.setOneSideExtent(
+        adsk.fusion.DistanceExtentDefinition.create(adsk.core.ValueInput.createByReal(length)),
+        direction,
+    )
     try:
         ext = extrudes.add(ext_in)
     except Exception:

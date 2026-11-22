@@ -37,24 +37,47 @@ tray_drop,0.000,in,PLACEHOLDER. Extra tray drop below rail top (0 = flush on rai
 tab_width,0.750,in,PLACEHOLDER. Tray key tab width
 tab_length,clip_t,in,Tab protrusion = mating plate / rail wall seat
 slot_clear,0.010,in,PLACEHOLDER. Laser slot oversize vs tab
-fuel_l,28.000,in,PLACEHOLDER. Fuel tank overall length along X
-fuel_w,18.000,in,PLACEHOLDER. Fuel tank overall width along Z
-fuel_h,10.000,in,PLACEHOLDER. Fuel tank overall height along Y
-fuel_wall,0.125,in,PLACEHOLDER. Welded aluminum tank wall
+fuel_l,28.000,in,PLACEHOLDER. Fuel tank length along X
+fuel_w,18.000,in,PLACEHOLDER. Fuel tank width along Z
+fuel_h,10.000,in,PLACEHOLDER. Fuel tank height
+fuel_wall,0.125,in,PLACEHOLDER. Alum tank wall
 fuel_x,tray_x0 + 4.000 in,in,PLACEHOLDER. Fuel tank forward face X
-fuel_y,tray_y + tray_t,in,PLACEHOLDER. Fuel tank bottom Y (on tray)
-fuel_sump_l,6.000,in,PLACEHOLDER. Sump pocket length along X
-fuel_sump_w,8.000,in,PLACEHOLDER. Sump pocket width along Z
-fuel_sump_h,2.000,in,PLACEHOLDER. Sump pocket depth below tank bottom
-fuel_pump_flange_od,6.000,in,PLACEHOLDER. Radium-style in-tank pump module flange OD
-fuel_pump_flange_bolt_pc,5.375,in,PLACEHOLDER. Pump flange bolt circle
-fuel_pump_flange_bolt_d,0.312,in,PLACEHOLDER. Pump flange bolt hole dia (5/16)
-fuel_pump_flange_bolt_n,6,,PLACEHOLDER. Pump flange bolt count
-fuel_fill_od,2.250,in,PLACEHOLDER. Fill bung / neck OD
-fuel_vent_od,0.750,in,PLACEHOLDER. Vent / rollover valve bung OD
-fuel_sender_od,1.500,in,PLACEHOLDER. Fuel sender hole / flange OD
-fuel_feed_an,0.750,in,PLACEHOLDER. Feed bung major (AN-equivalent envelope)
-fuel_return_an,0.625,in,PLACEHOLDER. Return bung major (AN-equivalent envelope)
+fuel_y,tray_y + tray_t,in,PLACEHOLDER. Fuel tank bottom Y
+fuel_sump_od,2.500,in,SOURCED (Boyd Welding 21057). Weld-in sump OD
+fuel_sump_h,0.875,in,SOURCED (Boyd 21057). Installed height below tank floor (+/-)
+fuel_sump_hole_d,2.250,in,SOURCED (Boyd 21057). Tank hole required. Fitting 1/4 NPT
+fuel_pf_outer_l,11.575,in,SOURCED (Nuke Performance 6x10-24bolts.DXF). Weld flange outer obround length along X. Verify vs Radium 20-0278 in hand
+fuel_pf_outer_w,7.598,in,SOURCED (Nuke DXF). Weld flange outer obround width along Z. Verify vs 20-0278
+fuel_pf_open_l,10.157,in,SOURCED (Nuke DXF). 6x10 opening length along X (ends drawn as splines; modeled as obround)
+fuel_pf_open_w,6.181,in,SOURCED (Nuke DXF). 6x10 opening width along Z
+fuel_pf_bolt_r,3.445,in,SOURCED (Nuke DXF). Bolt-line end radius (87.5 mm)
+fuel_pf_bolt_ctr,3.976,in,SOURCED (Nuke DXF). Distance between bolt-line end-arc centers along X (101 mm)
+fuel_pf_bolt_d,0.315,in,SOURCED (Nuke DXF). Bolt hole dia in DXF (8 mm). Radium 20-0278 is tapped 1/4-28 instead
+fuel_pf_bolt_n,24,,SOURCED (Radium). Industry-standard 6x10 24-bolt pattern
+fuel_pf_t,0.240,in,SOURCED (Radium 20-0278). Weld flange thickness, fly-cut
+fuel_pf_gasket_t,0.0625,in,SOURCED (Radium 18-0015). FKM gasket thickness
+fuel_fcst_min_depth,7.700,in,SOURCED (Radium FCST-X). Min depth outer top face to internal floor
+fuel_fcst_max_depth,12.700,in,SOURCED (Radium FCST-X). Deeper tanks need Radium extension
+fuel_sender_flange_od,2.800,in,SOURCED (Dakota Digital SEN-06-1). Sender flange overall size
+fuel_sender_bc,2.125,in,SOURCED (Dakota Digital / Tanks Inc SAE 5-hole). Bolt circle
+fuel_sender_hole_d,1.700,in,SOURCED (Dakota Digital). Tank hole size
+fuel_sender_screw_d,0.190,in,SOURCED (Dakota Digital). 10-32 screws; hole = tap/nut-ring per build
+fuel_sender_bolt_n,5,,SOURCED. SAE 5-hole
+fuel_fill_flange_od,3.750,in,SOURCED (Usher UD3F). Flat weld flange OD
+fuel_fill_flange_t,0.090,in,SOURCED (UD3F). Flange thickness
+fuel_fill_cap_od,2.250,in,SOURCED (UD3F). Cap OD
+fuel_fill_h,0.600,in,SOURCED (UD3F). Overall height
+fuel_fill_hole_d,2.000,in,PLACEHOLDER. Tank cutout for filler neck; not published
+fuel_vent_od,0.875,in,SOURCED (Ace Race Parts -6AN ORB). Vent/rollover bung body; rollover valve is -6AN (e.g. Racetronix ROV-6) PLACEHOLDER fit
+fuel_feed_an,1.055,in,SOURCED (Ace Race Parts -8AN ORB weld bung, 3/4-16). Body dia
+fuel_return_an,1.055,in,SOURCED (Ace Race Parts -8AN ORB weld bung, 3/4-16). Body dia
+fuel_an8_shoulder_d,1.213,in,SOURCED (Ace Race Parts -8AN). Shoulder dia
+fuel_an8_h,0.563,in,SOURCED (Ace Race Parts -8AN). Bung height
+fuel_an6_body_d,0.875,in,SOURCED (Ace Race Parts -6AN ORB, 9/16-18). Body dia
+fuel_an6_shoulder_d,0.984,in,SOURCED (Ace Race Parts -6AN). Shoulder dia
+fuel_an6_h,0.500,in,SOURCED (Ace Race Parts -6AN). Bung height
+fuel_an8_hole_d,0.875,in,PLACEHOLDER. Tank hole for -8 bung pilot; confirm with bung in hand
+fuel_an6_hole_d,0.750,in,PLACEHOLDER. Tank hole for -6 bung pilot; confirm with bung in hand
 air_tank_l,20.000,in,PLACEHOLDER. Air tank length along X (air_fuel only)
 air_tank_od,6.000,in,PLACEHOLDER. Air tank OD
 air_tank_x,tray_x0 + 4.000 in,in,PLACEHOLDER. Air tank forward end X

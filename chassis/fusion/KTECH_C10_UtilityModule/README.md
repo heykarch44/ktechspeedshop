@@ -1,6 +1,6 @@
 # KTECH_C10_UtilityModule
 
-Fusion 360 Python script that builds a parametric **bench-built bolt-in utility tray** for the Ktech C10 rear clip: two square-tube rails that **slide inside** the rear-clip receivers (tube-in-tube) and **cross-bolt**, a keyed laser-cut tray, fuel-tank envelope (welded aluminum box + sump + Radium-style in-tank pump flange + fill / vent / sender / feed / return), optional air system (tank, twin compressors, valve manifold), twin batteries, and a forward **bulkhead service plate** with AN / air / battery-cable / control pass-throughs.
+Fusion 360 Python script that builds a parametric **bench-built bolt-in utility tray** for the Ktech C10 rear clip: two square-tube rails that **slide inside** the rear-clip receivers (tube-in-tube) and **cross-bolt**, a keyed laser-cut tray, fuel-tank envelope (welded aluminum box + Boyd 21057 sump + Radium 20-0278 6x10 24-bolt flange / FCST-X + Usher UD3F fill + Ace Race Parts ORB bungs + SAE 5-bolt sender), optional air system (tank, twin compressors, valve manifold), twin batteries, and a forward **bulkhead service plate** with AN / air / battery-cable / control pass-throughs.
 
 Mates to `../KTECH_C10_RearClip/` receivers (`rcv_*` params must match).
 
@@ -26,13 +26,46 @@ Coordinates match the chassis / rear clip: origin = front axle × ground × fram
 | `00_SKELETON` | SK_SIDE, SK_TOP layout refs |
 | `01_RAILS` | LH/RH hollow square tubes (`mod_od` × `mod_wall`) + matching cross-bolt holes |
 | `02_TRAY` | Keyed laser floor plate + rail key strips (`TRAY_FLOOR`, `TRAY_KEY_*`) |
-| `03_FUEL_TANK` | Box + sump + pump flange / fill / vent / sender / feed+return bung envelopes + mount plates |
+| `03_FUEL_TANK` | Box + Boyd sump + 6x10 flange / fill / vent / sender / feed+return+drain bung envelopes + mount plates |
 | `04_AIR` | Air tank, twin compressors, valve manifold + mounts (**air_fuel** only; omitted note when `fuel_only`) |
 | `05_BATTERY` | Twin battery envelopes + mount plates |
 | `06_BULKHEAD` | Forward service plate with AN feed/return, air, battery-cable, control holes |
 | `07_FIXTURE` | Placeholder |
 
-Plate DXFs → `dxf_out/` next to the script. Run dialog also prints a **tube-in-tube fit check** (receiver ID vs module OD + 2×`mod_slip_clear`).
+Plate DXFs → `dxf_out/` next to the script. Run dialog also prints a **tube-in-tube fit check** (receiver ID vs module OD + 2×`mod_slip_clear`) and warns if `fuel_h` is outside FCST-X depth.
+
+## Fuel fittings (sourced)
+
+| Fitting | Part / source | Notes |
+|---|---|---|
+| 6x10 24-bolt weld flange | Radium **20-0278** (accepts FCST-X or blank 6x10 plate) | Obround outer + Nuke DXF bolt/opening geometry; thickness fly-cut |
+| FKM gasket | Radium **18-0015** | `fuel_pf_gasket_t` |
+| Surge tank depth | Radium **FCST-X** | 7.7–12.7 in outer top to internal floor; deeper needs extension |
+| 6x10 bolt / opening DXF | Nuke Performance **6x10-24bolts.DXF** | Geometry source; verify flange vs 20-0278 in hand |
+| Fuel level sender | Dakota Digital **SEN-06-1** / Tanks Inc SAE 5-hole | 5-bolt flange; screw *angles* still PLACEHOLDER (SAE uneven) |
+| -8AN ORB weld bungs | Ace Race Parts (feed + return) via K2 | Body / shoulder / height; pilot hole PLACEHOLDER |
+| -6AN ORB weld bungs | Ace Race Parts (drain + vent) via K2 | Vent/rollover valve fit PLACEHOLDER |
+| Flush aero filler | Usher **UD3F** (fillernecksupply.com) | Flange + cap stack; tank cutout PLACEHOLDER |
+| Weld-in sump | Boyd Welding **21057** 2.5 in OD | Under 6x10 center; 1/4 NPT fitting |
+
+### Source URLs
+
+- https://www.radiumauto.com/products/fuel-cell-mounting-accessories (20-0278 flange, 18-0015 gasket)
+- https://www.radiumauto.com/products/fcst-x-fuel-cell-surge-tank (FCST-X depth 7.7–12.7 in, 6x10 24-bolt)
+- https://www.nukeperformance.com/dokument/6x10-24bolts.DXF (6x10 24-bolt geometry)
+- https://www.dakotadigital.com/index.cfm/page/ptype=product/product_id=112/mode=prod/prd112.htm (SAE 5-bolt sender)
+- https://www.tanksinc.com/index.cfm/page/ptype=results/category_id=159/mode=cat/cat159.htm (SAE 5-hole uneven spacing)
+- https://www.k2-fabrication.com/products/6an-female-weld-bung-6061-aluminum and https://www.k2-fabrication.com/products/8an-female-weld-bung-6061-aluminum (Ace Race Parts ORB bungs)
+- https://www.fillernecksupply.com/usher-precision-manufacturing-aero-aluminum-flush-mount-fuel-filler-neck-flange-and-cap-weld-on-ud3f-us-3-f/ (UD3F filler)
+- https://fueltankparts.com/products/2-5-od-aluminum-weld-in-sump (Boyd 21057 sump)
+
+### Still PLACEHOLDER
+
+- Tank shell size (`fuel_l` / `fuel_w` / `fuel_h` / `fuel_wall` / `fuel_x` / `fuel_y`)
+- Sender screw angles (SAE 5-hole is **not** evenly spaced)
+- Bung pilot holes (`fuel_an8_hole_d`, `fuel_an6_hole_d`)
+- Filler tank cutout (`fuel_fill_hole_d`)
+- Rollover valve fit on vent bung
 
 ## Tube-in-tube mate
 
@@ -54,7 +87,7 @@ Plate DXFs → `dxf_out/` next to the script. Run dialog also prints a **tube-in
 
 Full table: **`utility_module_parameters.csv`**. Shared names reused from rear clip / chassis setup where they apply (`wb`, `rail_cl`, `rail_bottom`, `rcv_*`, `clip_t`, …).
 
-Everything invented for layout and not yet taped or vendor-confirmed is marked **PLACEHOLDER** in the CSV `comment` column.
+Sourced fitting comments start with **SOURCED (…)**. Layout / unverified items stay **PLACEHOLDER**.
 
 ### Quick reference
 
@@ -64,7 +97,12 @@ Everything invented for layout and not yet taped or vendor-confirmed is marked *
 | `mod_od` / `mod_wall` | 2.0 / 0.188 in | PLACEHOLDER module rail |
 | `mod_slip_clear` | 0.030 in | PLACEHOLDER per side vs rcv ID |
 | `mod_tray_len` | 36 in | PLACEHOLDER exposed tray length |
-| `fuel_*` | various | PLACEHOLDER tank / sump / flange / bungs |
+| `fuel_l` / `fuel_w` / `fuel_h` | 28 / 18 / 10 in | PLACEHOLDER tank shell |
+| `fuel_pf_*` / `fuel_fcst_*` | sourced | Radium 20-0278 / Nuke DXF / FCST-X |
+| `fuel_sender_*` | sourced | SAE 5-bolt (angles PLACEHOLDER) |
+| `fuel_fill_*` | sourced | Usher UD3F (cutout PLACEHOLDER) |
+| `fuel_feed_an` / `fuel_return_an` / `fuel_an*` | sourced | Ace Race Parts -8 / -6 ORB |
+| `fuel_sump_*` | sourced | Boyd 21057 |
 | `air_tank_*` / `comp_*` / `manifold_*` | various | PLACEHOLDER — air_fuel only |
 | `batt_*` | various | PLACEHOLDER twin batteries |
 | `bh_*` | various | PLACEHOLDER bulkhead + pass-throughs |
@@ -73,7 +111,8 @@ Everything invented for layout and not yet taped or vendor-confirmed is marked *
 
 - Freeze `mod_od` / `rcv_od` / `mod_slip_clear` against purchased tube and a slip coupon
 - Confirm bolt pattern with rear-clip receivers before drilling
-- Vendor-confirm Radium (or chosen) pump flange bolt circle and bung AN sizes
+- Verify Nuke DXF flange outer vs Radium 20-0278 in hand; confirm SAE sender screw angles vs gasket
+- Confirm bung pilot holes and filler cutout with parts in hand
 - Tape tray length vs bed / bumper envelope; settle `fuel_only` vs `air_fuel` packaging
 - FEA tray keys, bulkhead, and rail insert before kits leave the shop
 
