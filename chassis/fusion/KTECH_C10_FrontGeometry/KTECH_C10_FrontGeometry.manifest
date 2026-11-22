@@ -1,0 +1,11 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "Ktech Speedshop",
+    "description": {
+        "": "Draws a parametric front-view suspension geometry layout for a lowered 73-87 C10: 22 in wheel / 28 in tire, Wilwood 831-14202 spindle, steering axis and scrub, upper and lower arms, arched straight rail, crossmember, ride-height lines, instant center and roll center. Edit fg_* user parameters and re-run."
+    },
+    "version": "1.0.0",
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}
