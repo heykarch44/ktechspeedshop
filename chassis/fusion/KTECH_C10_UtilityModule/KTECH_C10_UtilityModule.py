@@ -9,13 +9,16 @@
 # Design intent
 #   Bench-built bolt-in tray. Two smaller square-tube rails (default 2.0 x
 #   0.188 PLACEHOLDER) slide INSIDE the rear-clip receivers (tube-in-tube)
-#   and cross-bolt. Tray is keyed laser-cut plate. Parametric envelopes /
-#   mounts for fuel tank (welded alum box + Boyd 21057 sump + Radium
-#   20-0278 6x10 24-bolt weld flange / FCST-X + Usher UD3F fill + Ace Race
-#   Parts ORB feed/return/drain/vent + SAE 5-bolt sender), air tank, twin
-#   compressors, valve manifold, twin batteries. Forward bulkhead service
-#   plate with AN fuel feed/return, air, battery-cable, and control
-#   pass-throughs. module_variant = air_fuel | fuel_only.
+#   by mod_insert_depth (default 6 in) and cross-bolt. mod_front_x =
+#   rcv_rear_x - mod_insert_depth; receiver length on the clip is shortened
+#   to key bay + end cap + tip clear + insert (match rear-clip expressions).
+#   Tray is keyed laser-cut plate. Parametric envelopes / mounts for fuel
+#   tank (welded alum box + Boyd 21057 sump + Radium 20-0278 6x10 24-bolt
+#   weld flange / FCST-X + Usher UD3F fill + Ace Race Parts ORB
+#   feed/return/drain/vent + SAE 5-bolt sender), air tank, twin compressors,
+#   valve manifold, twin batteries. Forward bulkhead service plate with AN
+#   fuel feed/return, air, battery-cable, and control pass-throughs.
+#   module_variant = air_fuel | fuel_only.
 #
 # Fuel fittings (sourced) — see README for full URLs
 #   Radium 20-0278 6x10 24-bolt weld flange + 18-0015 FKM gasket; FCST-X
@@ -96,14 +99,6 @@ PARAM_ORDER = [
     ("rcv_od", "2.500 in", "in", "PLACEHOLDER. Match rear clip receiver OD"),
     ("rcv_wall", "0.188 in", "in", "PLACEHOLDER. Match rear clip receiver wall"),
     ("rcv_front_x", "wb + kickup_aft", "in", "PLACEHOLDER. Match rear clip rcv_front_x"),
-    ("rcv_length", "14.000 in", "in", "PLACEHOLDER. Match rear clip rcv_length"),
-    (
-        "rcv_rear_x",
-        "rcv_front_x + rcv_length",
-        "in",
-        "Match rear clip — receiver aft mouth X",
-    ),
-    ("rcv_cl_y", "rail_bottom + tube_h / 2", "in", "PLACEHOLDER. Match rear clip rcv_cl_y"),
     (
         "rcv_key_w",
         "1.500 in",
@@ -111,6 +106,25 @@ PARAM_ORDER = [
         "PLACEHOLDER. Match rear clip — forward lap of key tab onto rail "
         "side plate ahead of rcv_front_x (also key-bay length)",
     ),
+    (
+        "mod_insert_depth",
+        "6.000 in",
+        "in",
+        "PLACEHOLDER. Match rear clip — module rail insert depth into receiver",
+    ),
+    (
+        "rcv_length",
+        "rcv_key_w + clip_t + 0.125 in + mod_insert_depth",
+        "in",
+        "Match rear clip — key bay + end cap + tip clear + insert depth",
+    ),
+    (
+        "rcv_rear_x",
+        "rcv_front_x + rcv_length",
+        "in",
+        "Match rear clip — receiver aft mouth X",
+    ),
+    ("rcv_cl_y", "rail_bottom + tube_h / 2", "in", "PLACEHOLDER. Match rear clip rcv_cl_y"),
     (
         "rail_end_x",
         "rcv_front_x + rcv_key_w",
@@ -128,9 +142,10 @@ PARAM_ORDER = [
     ("rcv_bolt_pitch", "3.000 in", "in", "PLACEHOLDER. Match rear clip bolt pitch"),
     (
         "rcv_bolt_first_x",
-        "rail_end_x + clip_t + 0.750 in",
+        "(rcv_rear_x - mod_insert_depth) + "
+        "(mod_insert_depth - rcv_bolt_pitch) / 2",
         "in",
-        "PLACEHOLDER. Match rear clip first bolt X (aft of end-cap aft face)",
+        "PLACEHOLDER. Match rear clip — first bolt centered in insert",
     ),
     # Module rails (tube-in-tube)
     ("mod_od", "2.000 in", "in", "PLACEHOLDER. Module rail square tube OD"),
@@ -143,17 +158,17 @@ PARAM_ORDER = [
     ),
     (
         "mod_insert_len",
-        "rcv_length - 0.250 in",
+        "mod_insert_depth",
         "in",
-        "PLACEHOLDER. Insert length into receiver (stops short of rcv_front)",
+        "Insert length into receiver (= mod_insert_depth)",
     ),
     ("mod_tray_len", "36.000 in", "in", "PLACEHOLDER. Exposed tray / rail length aft"),
     ("mod_rail_len", "mod_insert_len + mod_tray_len", "in", "Total module rail length"),
     (
         "mod_front_x",
-        "rcv_front_x + 0.125 in",
+        "rcv_rear_x - mod_insert_depth",
         "in",
-        "PLACEHOLDER. Module rail forward tip inside receiver (fwd of end-cap key bay)",
+        "Module rail forward tip = mouth − insert depth (aft of end cap)",
     ),
     ("mod_rear_x", "mod_front_x + mod_rail_len", "in", "Module rail aft tip X"),
     # Tray
@@ -649,30 +664,75 @@ def _fit_check_note(design):
         # Packaging stations vs rear clip.
         rcv_front = param_cm(design, "rcv_front_x") / IN_TO_CM
         rail_end = param_cm(design, "rail_end_x") / IN_TO_CM
+        clip_t = param_cm(design, "clip_t") / IN_TO_CM
+        cap_aft = rail_end + clip_t
         rcv_rear = param_cm(design, "rcv_rear_x") / IN_TO_CM
         mod_front = param_cm(design, "mod_front_x") / IN_TO_CM
         mod_rear = param_cm(design, "mod_rear_x") / IN_TO_CM
         tray_x0 = param_cm(design, "tray_x0") / IN_TO_CM
+        insert = param_cm(design, "mod_insert_depth") / IN_TO_CM
+        bolt0 = param_cm(design, "rcv_bolt_first_x") / IN_TO_CM
+        bolt_d = param_cm(design, "rcv_bolt_d") / IN_TO_CM
+        pitch = param_cm(design, "rcv_bolt_pitch") / IN_TO_CM
+        n = _int_param(design, "rcv_bolt_count", 2)
         body_end = (
             param_cm(design, "wb") + param_cm(design, "rear_overhang")
         ) / IN_TO_CM
+        expect_front = rcv_rear - insert
+        bolt1 = bolt0
+        bolt2 = bolt0 + pitch if n > 1 else bolt0
         lines.append(
-            "Stations (in): mod_front={:.3f} (rcv_front={:.3f}, rail_end={:.3f}); "
-            "tray_x0={:.3f} (rcv_rear={:.3f}); mod_rear={:.3f} "
-            "(wb+rear_overhang={:.3f}).".format(
-                mod_front,
+            "Stations (in): rcv_front={:.3f} rail_end={:.3f} cap_aft={:.3f} "
+            "mod_front={:.3f} (expect {:.3f}) insert={:.3f} "
+            "bolt1={:.3f} bolt2={:.3f} rcv_rear={:.3f} tray_x0={:.3f} "
+            "mod_rear={:.3f} (wb+rear_overhang={:.3f}).".format(
                 rcv_front,
                 rail_end,
-                tray_x0,
+                cap_aft,
+                mod_front,
+                expect_front,
+                insert,
+                bolt1,
+                bolt2,
                 rcv_rear,
+                tray_x0,
                 mod_rear,
                 body_end,
             )
         )
+        if abs(mod_front - expect_front) > 0.01:
+            lines.append(
+                "WARN: mod_front_x is not rcv_rear_x − mod_insert_depth "
+                "({:.3f} vs {:.3f}).".format(mod_front, expect_front)
+            )
+        if mod_front < cap_aft + 0.001:
+            lines.append(
+                "WARN: module tip at/forward of end-cap aft face "
+                "(mod_front={:.3f}, cap_aft={:.3f}).".format(mod_front, cap_aft)
+            )
         if mod_front < rcv_front - 0.01:
             lines.append("WARN: mod_front_x forward of rcv_front_x.")
         if tray_x0 + 0.01 < rcv_rear:
             lines.append("WARN: tray/bulkhead forward of receiver mouth (rcv_rear_x).")
+        for i in range(n):
+            bx = bolt0 + i * pitch
+            if bx < mod_front - 0.01 or bx > rcv_rear + 0.01:
+                lines.append(
+                    "WARN: bolt {} at X={:.3f} outside insert "
+                    "[{:.3f}, {:.3f}].".format(i + 1, bx, mod_front, rcv_rear)
+                )
+            edge0 = bx - bolt_d / 2.0
+            edge1 = bx + bolt_d / 2.0
+            if edge0 < mod_front - 0.01 or edge1 > rcv_rear + 0.01:
+                lines.append(
+                    "WARN: bolt {} hole edges [{:.3f},{:.3f}] do not clear "
+                    "insert ends.".format(i + 1, edge0, edge1)
+                )
+            if edge0 < cap_aft - 0.01:
+                lines.append(
+                    "WARN: bolt {} hole edge overlaps end cap "
+                    "(edge={:.3f}, cap_aft={:.3f}).".format(i + 1, edge0, cap_aft)
+                )
         if abs(mod_rear - body_end) > 6.0:
             lines.append(
                 "NOTE: mod_rear_x is >6 in from wb+rear_overhang — "

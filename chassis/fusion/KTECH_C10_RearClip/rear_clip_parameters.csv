@@ -127,11 +127,12 @@ watts_pivot_mount_w,4.000,in,PLACEHOLDER. Axle Watts pivot mount plate width alo
 watts_pivot_mount_h,4.000,in,PLACEHOLDER. Axle Watts pivot mount plate height along Y
 rcv_od,2.500,in,PLACEHOLDER. Receiver square tube outer size (OD)
 rcv_wall,0.188,in,PLACEHOLDER. Receiver square tube wall
-rcv_length,14.000,in,PLACEHOLDER. Receiver tube length along X (aft of kickup step-down)
 rcv_front_x,wb + kickup_aft,in,PLACEHOLDER. Receiver forward face X (start of step-down aft bay)
+rcv_key_w,1.500,in,PLACEHOLDER. Forward lap of key tab onto rail side plate ahead of rcv_front_x (also sets key-bay length via rail_end_x)
+mod_insert_depth,6.000,in,PLACEHOLDER. Module rail insert depth into receiver (match UtilityModule; drives rcv_length + bolt stations)
+rcv_length,rcv_key_w + clip_t + 0.125 in + mod_insert_depth,in,Receiver tube length = key bay + end cap + tip clear + insert depth
 rcv_rear_x,rcv_front_x + rcv_length,in,Receiver aft face X (open mouth — aft-most clip feature)
 rcv_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Receiver CL height (Fusion Y) after kickup step-down
-rcv_key_w,1.500,in,PLACEHOLDER. Forward lap of key tab onto rail side plate ahead of rcv_front_x (also sets key-bay length via rail_end_x)
 rcv_key_h,rcv_od,in,PLACEHOLDER. Receiver key tab height (matches tube OD)
 rcv_weld_clear,0.030,in,PLACEHOLDER. Extra cutout clear around rcv_od at rail end cap
 rail_end_x,rcv_front_x + rcv_key_w,in,Aft end of plate-box rails (key bay); receivers continue aft
@@ -139,7 +140,7 @@ clip_rear_x,rcv_rear_x,in,Aft end of rear clip (= receiver mouths)
 rcv_bolt_d,0.500,in,PLACEHOLDER. Cross-bolt hole diameter through receiver (locks slide-in module)
 rcv_bolt_count,2,,PLACEHOLDER. Number of cross-bolts per receiver
 rcv_bolt_pitch,3.000,in,PLACEHOLDER. Cross-bolt spacing along X
-rcv_bolt_first_x,rail_end_x + clip_t + 0.750 in,in,PLACEHOLDER. First cross-bolt X — aft of end-cap aft face (rail_end_x + clip_t)
+rcv_bolt_first_x,(rcv_rear_x - mod_insert_depth) + (mod_insert_depth - rcv_bolt_pitch) / 2,in,PLACEHOLDER. First cross-bolt X — centered in insert with equal end distance (match UtilityModule)
 rcv_xm_w,2.000,in,PLACEHOLDER. Rear receiver XM fore-aft envelope (layout ref; thickness is rcv_xm_t)
 rcv_xm_h,rcv_od,in,PLACEHOLDER. Rear receiver crossmember plate height
 rcv_xm_t,clip_t,in,PLACEHOLDER. Rear receiver crossmember plate thickness along X

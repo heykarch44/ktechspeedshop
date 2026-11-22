@@ -62,24 +62,30 @@ For 67–72 short, set the `wb` expression to `wb_67_72_short` in User Parameter
 
 ## Aft receivers (slide-in utility module)
 
-Default X stations with `wb=117.5`, `kickup_aft=8`, `rcv_length=14`, `rcv_key_w=1.5`:
+Receiver length is sized to the insert, not a long empty stub. With `wb=117.5`, `kickup_aft=8`, `rcv_key_w=1.5`, `clip_t=0.188`, `mod_insert_depth=6`, and **0.125 in** tip clear between end-cap aft face and module tip:
+
+`rcv_length = rcv_key_w + clip_t + 0.125 in + mod_insert_depth` → **7.813 in** (a bare 7.5 in would put the 6 in insert into the end cap).
 
 | Station | Expression | Default (in) |
 |---|---|---|
 | `rcv_front_x` | `wb + kickup_aft` | **125.5** |
 | `rail_end_x` | `rcv_front_x + rcv_key_w` | **127.0** |
-| `rcv_rear_x` | `rcv_front_x + rcv_length` | **139.5** |
-| `clip_rear_x` | `rcv_rear_x` | **139.5** |
+| end-cap aft | `rail_end_x + clip_t` | **127.188** |
+| `mod_front` (equiv.) | `rcv_rear_x - mod_insert_depth` | **127.313** |
+| bolt 1 | `rcv_bolt_first_x` | **128.813** |
+| bolt 2 | `+ rcv_bolt_pitch` | **131.813** |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **133.313** |
 | `wb + rear_overhang` | body/module envelope ref | **159.5** (not rail length) |
 
 - Square tube per side: `rcv_od` / `rcv_wall` (default **2.5 × 0.188 PLACEHOLDER**), height `rcv_cl_y`
 - Plate-box rails stop at `rail_end_x`; open receiver mouths at `rcv_rear_x` are the **aft-most** clip feature (`clip_rear_x = rcv_rear_x`)
 - **End cap** (`RAIL_*_END_CAP`) welds onto the box aft face at `rail_end_x` and extrudes **aft** by `clip_t` (occupies `[rail_end_x, rail_end_x + clip_t]`); square cutout = `rcv_od + 2*rcv_weld_clear`; receiver passes through the cap
+- **Insert depth** `mod_insert_depth` (default **6 in**, shared with UtilityModule) drives `rcv_length` and bolt stations; tip stays **0.125 in** aft of the end-cap aft face
 - **Width clash:** `rcv_od` (2.5) > `slip_id_w` (≈2.06) / `box_od_w` (≈2.44). Key-bay **side** plates get a clearance window (top/bottom only cut if the receiver Y span reaches them — defaults skip). `RCV_KEY_*` tabs seat on the **receiver OD** faces and lap the rail side-plate outer faces forward of the window (`rcv_key_w` = forward lap ahead of `rcv_front_x`; weld/shim gap ≈ `rcv_od/2 − box_od_w/2` = 0.032 in)
 - Rear plate crossmember `XMEMBER_RCV` at `rcv_xm_x` (mid of free tube aft of `rail_end_x`; clear of end cap + bolts)
-- Cross-bolts (`rcv_bolt_first_x = rail_end_x + clip_t + 0.750`, …) lie on the free tube aft of the end-cap aft face
+- Cross-bolts sit **inside the inserted span** with equal ~1.5 in end distance: `rcv_bolt_first_x = (rcv_rear_x - mod_insert_depth) + (mod_insert_depth - rcv_bolt_pitch) / 2` (pitch **3.000** default)
 - `rear_overhang` remains a body/module envelope reference for `KTECH_C10_UtilityModule` and no longer drives rail length
-- Runtime: math packaging report + best-effort Fusion interference on rails/end caps/keys/receivers/XM
+- Runtime: math packaging report (insert span / bolt / tip-clear checks) + best-effort Fusion interference on rails/end caps/keys/receivers/XM
 - Plate DXFs: `XMEMBER_RCV`, `RCV_KEY_*`, `*_TAIL`, `*_END_CAP`
 
 ## Suspension (REV-B layout)
@@ -171,13 +177,15 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `axle_*_pickup_*` / `axle_*_spread_z` | various | PLACEHOLDER axle pickups |
 | `lateral_locator` | none | none\|panhard — watts via parallel_watts; panhard TODO |
 | `rcv_od` / `rcv_wall` | 2.5 / 0.188 in | PLACEHOLDER receiver square tube |
-| `rcv_length` / `rcv_front_x` | 14 in / `wb + kickup_aft` | PLACEHOLDER aft bay |
+| `mod_insert_depth` | 6.000 in | Shared with UtilityModule — slip depth into receiver |
+| `rcv_length` | `rcv_key_w + clip_t + 0.125 + mod_insert_depth` | ≈7.813 in — key bay + cap + tip clear + insert |
+| `rcv_front_x` | `wb + kickup_aft` | Receiver forward face |
 | `rcv_key_w` | 1.5 in | Forward lap of key tab onto rail side plate (also key-bay length) |
 | `rail_end_x` | `rcv_front_x + rcv_key_w` | Plate-box aft end (key bay); end cap welds aft |
-| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | Receiver mouths = clip aft end |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | Receiver mouths = clip aft end (≈133.313) |
 | `rcv_weld_clear` | 0.030 in | PLACEHOLDER end-cap cutout oversize |
-| `rcv_bolt_d` / `rcv_bolt_count` | 0.5 in / 2 | PLACEHOLDER cross-bolts (aft of end cap) |
-| `rcv_bolt_first_x` | `rail_end_x + clip_t + 0.750` | First bolt clear of end-cap aft face |
+| `rcv_bolt_d` / `rcv_bolt_count` | 0.5 in / 2 | PLACEHOLDER cross-bolts (inside insert) |
+| `rcv_bolt_first_x` | centered in insert (see above) | Equal ~1.5 in end distance; pitch 3.000 |
 | `rcv_xm_w` / `rcv_xm_t` | 2 / `clip_t` in | PLACEHOLDER rear receiver XM |
 | `rear_overhang` | 42 in | Body/module envelope — **not** rail length |
 | `axle_wms_a` | 63.625 in | Set from wheel/tire combo |

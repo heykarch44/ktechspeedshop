@@ -23,11 +23,13 @@
 #   receiver OD. Square RECEIVER tubes pass through the cap; RCV_KEY tabs
 #   seat on the receiver OD faces and lap the rail side-plate outer faces
 #   forward of the key-bay window (rcv_od > box_od_w — weld/shim gap, no
-#   interior tube-in-box). Receivers continue aft to rcv_rear_x
-#   (= clip_rear_x); open mouths are the aft-most clip feature. Cross-bolts
-#   lock the slide-in utility module (see KTECH_C10_UtilityModule).
-#   rear_overhang remains a body/module envelope reference and no longer
-#   drives rail length.
+#   interior tube-in-box). Receiver length is parametric: key bay + end cap
+#   + 0.125 in tip clear + mod_insert_depth (default 6 in slip) so the tube
+#   is just long enough for the insert — not a long empty stub. Open mouths
+#   at rcv_rear_x (= clip_rear_x) are the aft-most clip feature. Cross-bolts
+#   sit inside the inserted span and lock the slide-in utility module
+#   (see KTECH_C10_UtilityModule). rear_overhang remains a body/module
+#   envelope reference and no longer drives rail length.
 #
 # Coordinates (Fusion Y-up) — same as KTECH_C10_Chassis_Setup
 #   Origin = front axle × ground × frame centerline
@@ -429,16 +431,30 @@ PARAM_ORDER = [
         "PLACEHOLDER. Receiver square tube wall",
     ),
     (
-        "rcv_length",
-        "14.000 in",
-        "in",
-        "PLACEHOLDER. Receiver tube length along X (aft of kickup step-down)",
-    ),
-    (
         "rcv_front_x",
         "wb + kickup_aft",
         "in",
         "PLACEHOLDER. Receiver forward face X (start of step-down aft bay)",
+    ),
+    (
+        "rcv_key_w",
+        "1.500 in",
+        "in",
+        "PLACEHOLDER. Forward lap of key tab onto rail side plate ahead of "
+        "rcv_front_x (also sets key-bay length via rail_end_x)",
+    ),
+    (
+        "mod_insert_depth",
+        "6.000 in",
+        "in",
+        "PLACEHOLDER. Module rail insert depth into receiver "
+        "(match UtilityModule; drives rcv_length + bolt stations)",
+    ),
+    (
+        "rcv_length",
+        "rcv_key_w + clip_t + 0.125 in + mod_insert_depth",
+        "in",
+        "Receiver tube length = key bay + end cap + tip clear + insert depth",
     ),
     (
         "rcv_rear_x",
@@ -451,13 +467,6 @@ PARAM_ORDER = [
         "rail_bottom + tube_h / 2",
         "in",
         "PLACEHOLDER. Receiver CL height (Fusion Y) after kickup step-down",
-    ),
-    (
-        "rcv_key_w",
-        "1.500 in",
-        "in",
-        "PLACEHOLDER. Forward lap of key tab onto rail side plate ahead of "
-        "rcv_front_x (also sets key-bay length via rail_end_x)",
     ),
     (
         "rcv_key_h",
@@ -503,10 +512,11 @@ PARAM_ORDER = [
     ),
     (
         "rcv_bolt_first_x",
-        "rail_end_x + clip_t + 0.750 in",
+        "(rcv_rear_x - mod_insert_depth) + "
+        "(mod_insert_depth - rcv_bolt_pitch) / 2",
         "in",
-        "PLACEHOLDER. First cross-bolt X — aft of end-cap aft face "
-        "(rail_end_x + clip_t)",
+        "PLACEHOLDER. First cross-bolt X — centered in insert with equal "
+        "end distance (match UtilityModule)",
     ),
     (
         "rcv_xm_w",
@@ -3642,6 +3652,7 @@ def receiver_packaging_report(design):
         rail_end = param_cm(design, "rail_end_x")
         rcv_front = param_cm(design, "rcv_front_x")
         rcv_rear = param_cm(design, "rcv_rear_x")
+        rcv_len = param_cm(design, "rcv_length")
         clip_rear = param_cm(design, "clip_rear_x")
         bolt0 = param_cm(design, "rcv_bolt_first_x")
         bolt_d = param_cm(design, "rcv_bolt_d")
@@ -3655,7 +3666,18 @@ def receiver_packaging_report(design):
         key_w = param_cm(design, "rcv_key_w")
         overhang = param_cm(design, "rear_overhang")
         wb = param_cm(design, "wb")
+        tip_clear = 0.125 * IN_TO_CM
+        try:
+            insert = param_cm(design, "mod_insert_depth")
+        except Exception:
+            insert = None
         cap_aft = rail_end + clip_t
+        if insert is not None:
+            mod_front = rcv_rear - insert
+            insert_aft = rcv_rear
+        else:
+            mod_front = None
+            insert_aft = None
 
         # Width math: OD vs box — key tabs on OD with weld gap to plate.
         od_in = rcv_od / IN_TO_CM
@@ -3697,19 +3719,37 @@ def receiver_packaging_report(design):
 
         # X stations
         key_x0 = rcv_front - key_w
-        lines.append(
-            "  X stations (in): key_tab=[{:.3f},{:.3f}]  rcv_front={:.3f}  "
-            "rail_end={:.3f}  cap_aft={:.3f}  "
-            "rcv_rear=clip_rear={:.3f}  wb+rear_overhang={:.3f}".format(
-                key_x0 / IN_TO_CM,
-                rail_end / IN_TO_CM,
-                rcv_front / IN_TO_CM,
-                rail_end / IN_TO_CM,
-                cap_aft / IN_TO_CM,
-                rcv_rear / IN_TO_CM,
-                (wb + overhang) / IN_TO_CM,
+        if insert is not None and mod_front is not None:
+            lines.append(
+                "  X stations (in): key_tab=[{:.3f},{:.3f}]  rcv_front={:.3f}  "
+                "rail_end={:.3f}  cap_aft={:.3f}  mod_front={:.3f}  "
+                "insert={:.3f}  rcv_rear=clip_rear={:.3f}  "
+                "wb+rear_overhang={:.3f}".format(
+                    key_x0 / IN_TO_CM,
+                    rail_end / IN_TO_CM,
+                    rcv_front / IN_TO_CM,
+                    rail_end / IN_TO_CM,
+                    cap_aft / IN_TO_CM,
+                    mod_front / IN_TO_CM,
+                    insert / IN_TO_CM,
+                    rcv_rear / IN_TO_CM,
+                    (wb + overhang) / IN_TO_CM,
+                )
             )
-        )
+        else:
+            lines.append(
+                "  X stations (in): key_tab=[{:.3f},{:.3f}]  rcv_front={:.3f}  "
+                "rail_end={:.3f}  cap_aft={:.3f}  "
+                "rcv_rear=clip_rear={:.3f}  wb+rear_overhang={:.3f}".format(
+                    key_x0 / IN_TO_CM,
+                    rail_end / IN_TO_CM,
+                    rcv_front / IN_TO_CM,
+                    rail_end / IN_TO_CM,
+                    cap_aft / IN_TO_CM,
+                    rcv_rear / IN_TO_CM,
+                    (wb + overhang) / IN_TO_CM,
+                )
+            )
         if abs(clip_rear - rcv_rear) > 0.01 * IN_TO_CM:
             lines.append("  WARN: clip_rear_x != rcv_rear_x")
         if rail_end < rcv_front - 0.01 * IN_TO_CM:
@@ -3724,7 +3764,26 @@ def receiver_packaging_report(design):
                 "aft of cap; receiver bore open rcv_rear → rcv_front."
             )
 
-        # Bolts must clear the end-cap aft face and lie on the free tube.
+        need_len = key_w + clip_t + tip_clear
+        if insert is not None:
+            need_len = need_len + insert
+        if rcv_len + 0.01 * IN_TO_CM < need_len:
+            lines.append(
+                "  WARN: rcv_length={:.3f} in shorter than key bay + end cap "
+                "+ tip clear + insert ({:.3f} in).".format(
+                    rcv_len / IN_TO_CM, need_len / IN_TO_CM
+                )
+            )
+        if insert is not None and mod_front is not None:
+            if mod_front < cap_aft - 0.01 * IN_TO_CM:
+                lines.append(
+                    "  WARN: mod_front={:.3f} at/forward of end-cap aft face "
+                    "{:.3f} — insert collides with end cap.".format(
+                        mod_front / IN_TO_CM, cap_aft / IN_TO_CM
+                    )
+                )
+
+        # Bolts must lie in the inserted span and clear end cap + insert ends.
         bolt_ok = True
         bolt_edge0 = bolt0 - bolt_d / 2.0
         if bolt_edge0 < cap_aft - 0.01 * IN_TO_CM:
@@ -3737,22 +3796,50 @@ def receiver_packaging_report(design):
                     cap_aft / IN_TO_CM,
                 )
             )
+        span0 = mod_front if mod_front is not None else cap_aft
+        span1 = insert_aft if insert_aft is not None else rcv_rear
         for i in range(n):
             bx = bolt0 + i * pitch
-            if bx < cap_aft - 0.01 * IN_TO_CM or bx > rcv_rear + 0.01 * IN_TO_CM:
+            b0 = bx - bolt_d / 2.0
+            b1 = bx + bolt_d / 2.0
+            if bx < span0 - 0.01 * IN_TO_CM or bx > span1 + 0.01 * IN_TO_CM:
                 bolt_ok = False
                 lines.append(
-                    "  WARN: bolt {} at X={:.3f} in outside free receiver "
-                    "[cap_aft, rcv_rear].".format(i + 1, bx / IN_TO_CM)
+                    "  WARN: bolt {} at X={:.3f} in outside inserted span "
+                    "[{:.3f}, {:.3f}].".format(
+                        i + 1,
+                        bx / IN_TO_CM,
+                        span0 / IN_TO_CM,
+                        span1 / IN_TO_CM,
+                    )
+                )
+            if b0 < span0 - 0.01 * IN_TO_CM or b1 > span1 + 0.01 * IN_TO_CM:
+                bolt_ok = False
+                lines.append(
+                    "  WARN: bolt {} hole edges [{:.3f},{:.3f}] do not clear "
+                    "insert ends [{:.3f},{:.3f}].".format(
+                        i + 1,
+                        b0 / IN_TO_CM,
+                        b1 / IN_TO_CM,
+                        span0 / IN_TO_CM,
+                        span1 / IN_TO_CM,
+                    )
+                )
+            if b0 < cap_aft - 0.01 * IN_TO_CM:
+                bolt_ok = False
+                lines.append(
+                    "  WARN: bolt {} hole edge X={:.3f} overlaps end cap "
+                    "(cap_aft={:.3f}).".format(
+                        i + 1, b0 / IN_TO_CM, cap_aft / IN_TO_CM
+                    )
                 )
         if bolt_ok:
             lines.append(
                 "  Cross-bolts OK: first={:.3f} in, count={}, pitch={:.3f} in "
-                "(first hole edge ≥ cap_aft={:.3f}).".format(
+                "(inside insert; hole edges clear end cap + insert ends).".format(
                     bolt0 / IN_TO_CM,
                     n,
                     pitch / IN_TO_CM,
-                    cap_aft / IN_TO_CM,
                 )
             )
 
