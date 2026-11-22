@@ -86,20 +86,51 @@ PARAM_ORDER = [
     ("clip_t", "0.188 in", "in", "Laser plate thickness"),
     ("clip_clear", "0.030 in", "in", "Shared slip-clear name"),
     ("kickup_aft", "8 in", "in", "PLACEHOLDER. Match rear clip kickup_aft"),
-    # Mate to rear-clip receivers
+    (
+        "rear_overhang",
+        "42 in",
+        "in",
+        "PLACEHOLDER. Match rear clip — body/module envelope aft of axle",
+    ),
+    # Mate to rear-clip receivers (expressions/defaults must match KTECH_C10_RearClip)
     ("rcv_od", "2.500 in", "in", "PLACEHOLDER. Match rear clip receiver OD"),
     ("rcv_wall", "0.188 in", "in", "PLACEHOLDER. Match rear clip receiver wall"),
     ("rcv_front_x", "wb + kickup_aft", "in", "PLACEHOLDER. Match rear clip rcv_front_x"),
     ("rcv_length", "14.000 in", "in", "PLACEHOLDER. Match rear clip rcv_length"),
+    (
+        "rcv_rear_x",
+        "rcv_front_x + rcv_length",
+        "in",
+        "Match rear clip — receiver aft mouth X",
+    ),
     ("rcv_cl_y", "rail_bottom + tube_h / 2", "in", "PLACEHOLDER. Match rear clip rcv_cl_y"),
+    (
+        "rcv_key_w",
+        "1.500 in",
+        "in",
+        "PLACEHOLDER. Match rear clip — forward lap of key tab onto rail "
+        "side plate ahead of rcv_front_x (also key-bay length)",
+    ),
+    (
+        "rail_end_x",
+        "rcv_front_x + rcv_key_w",
+        "in",
+        "Match rear clip — aft end of plate-box rails / end cap",
+    ),
+    (
+        "clip_rear_x",
+        "rcv_rear_x",
+        "in",
+        "Match rear clip — aft end of clip (= receiver mouths)",
+    ),
     ("rcv_bolt_d", "0.500 in", "in", "PLACEHOLDER. Match rear clip cross-bolt dia"),
     ("rcv_bolt_count", "2", "", "PLACEHOLDER. Match rear clip bolt count"),
     ("rcv_bolt_pitch", "3.000 in", "in", "PLACEHOLDER. Match rear clip bolt pitch"),
     (
         "rcv_bolt_first_x",
-        "rcv_front_x + 2.000 in",
+        "rail_end_x + clip_t + 0.750 in",
         "in",
-        "PLACEHOLDER. Match rear clip first bolt X",
+        "PLACEHOLDER. Match rear clip first bolt X (aft of end-cap aft face)",
     ),
     # Module rails (tube-in-tube)
     ("mod_od", "2.000 in", "in", "PLACEHOLDER. Module rail square tube OD"),
@@ -114,7 +145,7 @@ PARAM_ORDER = [
         "mod_insert_len",
         "rcv_length - 0.250 in",
         "in",
-        "PLACEHOLDER. Insert length into receiver",
+        "PLACEHOLDER. Insert length into receiver (stops short of rcv_front)",
     ),
     ("mod_tray_len", "36.000 in", "in", "PLACEHOLDER. Exposed tray / rail length aft"),
     ("mod_rail_len", "mod_insert_len + mod_tray_len", "in", "Total module rail length"),
@@ -122,7 +153,7 @@ PARAM_ORDER = [
         "mod_front_x",
         "rcv_front_x + 0.125 in",
         "in",
-        "PLACEHOLDER. Module rail forward tip inside receiver",
+        "PLACEHOLDER. Module rail forward tip inside receiver (fwd of end-cap key bay)",
     ),
     ("mod_rear_x", "mod_front_x + mod_rail_len", "in", "Module rail aft tip X"),
     # Tray
@@ -136,9 +167,9 @@ PARAM_ORDER = [
     ("tray_length", "mod_tray_len", "in", "PLACEHOLDER. Tray length along X"),
     (
         "tray_x0",
-        "rcv_front_x + rcv_length",
+        "rcv_rear_x",
         "in",
-        "PLACEHOLDER. Tray forward edge at receiver mouth",
+        "PLACEHOLDER. Tray forward edge at receiver mouth (rcv_rear_x)",
     ),
     (
         "tray_y",
@@ -610,9 +641,44 @@ def _fit_check_note(design):
         need = param_cm(design, "mod_od") + 2.0 * param_cm(design, "mod_slip_clear")
         gap = (rcv_id - need) / IN_TO_CM
         ok = "OK" if gap >= -0.001 else "TIGHT/INTERFERENCE — adjust PLACEHOLDER dims"
-        return "Tube-in-tube fit (rcv ID − mod OD − 2*clear): {:.3f} in — {}.".format(
-            gap, ok
+        lines = [
+            "Tube-in-tube fit (rcv ID − mod OD − 2*clear): {:.3f} in — {}.".format(
+                gap, ok
+            )
+        ]
+        # Packaging stations vs rear clip.
+        rcv_front = param_cm(design, "rcv_front_x") / IN_TO_CM
+        rail_end = param_cm(design, "rail_end_x") / IN_TO_CM
+        rcv_rear = param_cm(design, "rcv_rear_x") / IN_TO_CM
+        mod_front = param_cm(design, "mod_front_x") / IN_TO_CM
+        mod_rear = param_cm(design, "mod_rear_x") / IN_TO_CM
+        tray_x0 = param_cm(design, "tray_x0") / IN_TO_CM
+        body_end = (
+            param_cm(design, "wb") + param_cm(design, "rear_overhang")
+        ) / IN_TO_CM
+        lines.append(
+            "Stations (in): mod_front={:.3f} (rcv_front={:.3f}, rail_end={:.3f}); "
+            "tray_x0={:.3f} (rcv_rear={:.3f}); mod_rear={:.3f} "
+            "(wb+rear_overhang={:.3f}).".format(
+                mod_front,
+                rcv_front,
+                rail_end,
+                tray_x0,
+                rcv_rear,
+                mod_rear,
+                body_end,
+            )
         )
+        if mod_front < rcv_front - 0.01:
+            lines.append("WARN: mod_front_x forward of rcv_front_x.")
+        if tray_x0 + 0.01 < rcv_rear:
+            lines.append("WARN: tray/bulkhead forward of receiver mouth (rcv_rear_x).")
+        if abs(mod_rear - body_end) > 6.0:
+            lines.append(
+                "NOTE: mod_rear_x is >6 in from wb+rear_overhang — "
+                "adjust mod_tray_len PLACEHOLDER if packaging to body end."
+            )
+        return "\n".join(lines)
     except Exception:
         return "Tube-in-tube fit check unavailable."
 

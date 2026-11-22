@@ -28,13 +28,13 @@ Coordinates match the chassis setup script: origin = front axle × ground × fra
 | `00_ORIGIN` | 6" marker cube |
 | `00_SKELETON` | SK_SIDE, SK_TOP, SK_KICKUP_REF |
 | `01_CENTER_TUBE` | Semi-transparent **reference** A500 2×6 through the slip region only — not plate |
-| `02_RAIL_RH` / `02_RAIL_LH` | Top / bottom / inboard / outboard plates, tabs, slots, bracket + over-axle key pockets |
+| `02_RAIL_RH` / `02_RAIL_LH` | Top / bottom / inboard / outboard plates, tabs, slots, bracket + over-axle key pockets, tail plates, end caps with receiver cutouts |
 | `03_CROSSMEMBERS` | Frame upper 4-link crossmember + **over-axle** keyed plate XM (top, webs, optional bottom) |
 | `04_FOUR_LINK` | Frame-side upper & lower bracket plates, 4 link bars (tube + RH/LH rod ends + bungs/jam nuts), link refs; Watts pivot/crank/links/brackets when `parallel_watts` |
 | `05_AXLE_REF` | Parametric Currie 9" mockup (CS box + tubes + WMS markers) + keyed axle link tabs + lower bag/shock mounts |
 | `06_BAG_SHOCK` | Airbag **or** coilover upper mounts on the over-axle XM (`suspension_mode`) at `bag_y` / `shock_y` |
 | `07_FIXTURE` | Placeholder; DXF sketches land here when possible |
-| `08_RECEIVERS` | LH/RH square receiver tubes + key tabs; cross-bolt holes; rear XM lives on `03_CROSSMEMBERS` as `XMEMBER_RCV` |
+| `08_RECEIVERS` | LH/RH square receiver tubes + OD-face key tabs; cross-bolt holes; rear XM lives on `03_CROSSMEMBERS` as `XMEMBER_RCV` |
 
 Plate DXFs are written to `dxf_out/` next to the script (top-face profile sketch per named plate body), including Watts plates when `parallel_watts`. Bar tube cut lengths are written to `four_link_bar_cut_list.csv` (C–C from pickups minus rod-end eye-to-shoulder and bung lengths). On run, the dialog reports **over-axle XM bump clearance**, **REV-B layout clearances** (bag-to-rail, bag-to-upper-link when triangulated, lower-bar-to-rail at ride / bump / droop), and when `parallel_watts` a **Watts vs utility fuel-tank / rear XM** AABB clearance sweep at ride / full bump / full droop.
 
@@ -57,17 +57,30 @@ For 67–72 short, set the `wb` expression to `wb_67_72_short` in User Parameter
 - Tab-and-slot: `tab_width`, `tab_length` (= `clip_t`), `slot_clear`, `tab_pitch`
 - Lower-bracket key pockets in the **outboard** plates (REV-B outboard lowers); rails fixture those brackets
 - Over-axle XM key pockets in the **inboard** plates so rails fixture the kickup crossmember
-- Kickup **steps back down** aft of `wb + kickup_aft` (REV-B C10-style); tail top/bottom plates (`*_TOP_TAIL` / `*_BOT_TAIL`) at normal rail height
-- Receiver key pockets in **inboard + outboard** plates in the step-down bay
+- Kickup **steps back down** aft of `wb + kickup_aft` (REV-B C10-style); plate-box rails **end** at `rail_end_x` (not at body overhang)
+- Tail top/bottom plates (`*_TOP_TAIL` / `*_BOT_TAIL`) + `*_END_CAP` at normal rail height in the short key bay
 
 ## Aft receivers (slide-in utility module)
 
-- Square tube per side: `rcv_od` / `rcv_wall` (default **2.5 × 0.188 PLACEHOLDER**)
-- Length / station: `rcv_length`, `rcv_front_x` (= `wb + kickup_aft`), height `rcv_cl_y`
-- Key tabs (`RCV_KEY_*`) weld into rail plate pockets; rails fixture the receivers
-- Rear plate crossmember `XMEMBER_RCV` ties LH↔RH receivers (`rcv_xm_*`)
-- Cross-bolt holes through each receiver (`rcv_bolt_d`, `rcv_bolt_count`, `rcv_bolt_pitch`, `rcv_bolt_first_x`) lock the slide-in module rails (tube-in-tube — see `../KTECH_C10_UtilityModule/`)
-- Plate DXFs: `XMEMBER_RCV`, `RCV_KEY_*`, plus new rail `*_TAIL` caps
+Default X stations with `wb=117.5`, `kickup_aft=8`, `rcv_length=14`, `rcv_key_w=1.5`:
+
+| Station | Expression | Default (in) |
+|---|---|---|
+| `rcv_front_x` | `wb + kickup_aft` | **125.5** |
+| `rail_end_x` | `rcv_front_x + rcv_key_w` | **127.0** |
+| `rcv_rear_x` | `rcv_front_x + rcv_length` | **139.5** |
+| `clip_rear_x` | `rcv_rear_x` | **139.5** |
+| `wb + rear_overhang` | body/module envelope ref | **159.5** (not rail length) |
+
+- Square tube per side: `rcv_od` / `rcv_wall` (default **2.5 × 0.188 PLACEHOLDER**), height `rcv_cl_y`
+- Plate-box rails stop at `rail_end_x`; open receiver mouths at `rcv_rear_x` are the **aft-most** clip feature (`clip_rear_x = rcv_rear_x`)
+- **End cap** (`RAIL_*_END_CAP`) welds onto the box aft face at `rail_end_x` and extrudes **aft** by `clip_t` (occupies `[rail_end_x, rail_end_x + clip_t]`); square cutout = `rcv_od + 2*rcv_weld_clear`; receiver passes through the cap
+- **Width clash:** `rcv_od` (2.5) > `slip_id_w` (≈2.06) / `box_od_w` (≈2.44). Key-bay **side** plates get a clearance window (top/bottom only cut if the receiver Y span reaches them — defaults skip). `RCV_KEY_*` tabs seat on the **receiver OD** faces and lap the rail side-plate outer faces forward of the window (`rcv_key_w` = forward lap ahead of `rcv_front_x`; weld/shim gap ≈ `rcv_od/2 − box_od_w/2` = 0.032 in)
+- Rear plate crossmember `XMEMBER_RCV` at `rcv_xm_x` (mid of free tube aft of `rail_end_x`; clear of end cap + bolts)
+- Cross-bolts (`rcv_bolt_first_x = rail_end_x + clip_t + 0.750`, …) lie on the free tube aft of the end-cap aft face
+- `rear_overhang` remains a body/module envelope reference for `KTECH_C10_UtilityModule` and no longer drives rail length
+- Runtime: math packaging report + best-effort Fusion interference on rails/end caps/keys/receivers/XM
+- Plate DXFs: `XMEMBER_RCV`, `RCV_KEY_*`, `*_TAIL`, `*_END_CAP`
 
 ## Suspension (REV-B layout)
 
@@ -159,8 +172,14 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `lateral_locator` | none | none\|panhard — watts via parallel_watts; panhard TODO |
 | `rcv_od` / `rcv_wall` | 2.5 / 0.188 in | PLACEHOLDER receiver square tube |
 | `rcv_length` / `rcv_front_x` | 14 in / `wb + kickup_aft` | PLACEHOLDER aft bay |
-| `rcv_bolt_d` / `rcv_bolt_count` | 0.5 in / 2 | PLACEHOLDER cross-bolts |
+| `rcv_key_w` | 1.5 in | Forward lap of key tab onto rail side plate (also key-bay length) |
+| `rail_end_x` | `rcv_front_x + rcv_key_w` | Plate-box aft end (key bay); end cap welds aft |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | Receiver mouths = clip aft end |
+| `rcv_weld_clear` | 0.030 in | PLACEHOLDER end-cap cutout oversize |
+| `rcv_bolt_d` / `rcv_bolt_count` | 0.5 in / 2 | PLACEHOLDER cross-bolts (aft of end cap) |
+| `rcv_bolt_first_x` | `rail_end_x + clip_t + 0.750` | First bolt clear of end-cap aft face |
 | `rcv_xm_w` / `rcv_xm_t` | 2 / `clip_t` in | PLACEHOLDER rear receiver XM |
+| `rear_overhang` | 42 in | Body/module envelope — **not** rail length |
 | `axle_wms_a` | 63.625 in | Set from wheel/tire combo |
 | `cs_width` / `cs_height` / `cs_depth` / `tube_insert` | — | PLACEHOLDER UNVERIFIED — Currie |
 
@@ -176,8 +195,10 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 - Confirm bump/droop travel (`axle_travel_up` / `axle_travel_down`) and printed clearance gaps against tire/bag stroke and third-member envelope
 - Optional panhard (`lateral_locator=panhard`) — TODO stub; Watts ships with `parallel_watts`
 - Confirm Watts PLACEHOLDERs (`watts_pivot_*`, crank length, link OD/bolts) and `um_fuel_*` vs live UtilityModule tank package
-- Confirm receiver OD/wall vs module tube + slip (`KTECH_C10_UtilityModule`), bolt pattern, and key sizes before cutting
-- FEA splice, over-axle XM, receiver XM, frame upper xmember, 4-link brackets, and Watts mount before kits leave the shop
+- Confirm receiver OD/wall vs module tube + slip (`KTECH_C10_UtilityModule`), bolt pattern, OD-key / end-cap weld clear, and key sizes before cutting
+- Confirm `rail_end_x` key-bay length vs weld practice; freeze `rcv_weld_clear` with a coupon
+- FEA splice, over-axle XM, receiver XM, end caps, frame upper xmember, 4-link brackets, and Watts mount before kits leave the shop
+- Remaining PLACEHOLDERs: Currie CS dims, Watts stack, bag/shock hardware, rod-end/bung stack, `um_fuel_*` mirrors, kickup/splice tape values (see CSV `comment` column)
 
 ## Related
 

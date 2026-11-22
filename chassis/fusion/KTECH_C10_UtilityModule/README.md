@@ -69,10 +69,22 @@ Plate DXFs → `dxf_out/` next to the script. Run dialog also prints a **tube-in
 
 ## Tube-in-tube mate
 
-- Rear clip receivers: `rcv_od` / `rcv_wall` (default **2.5 × 0.188 PLACEHOLDER**) — must match `KTECH_C10_RearClip`
-- Module rails: `mod_od` / `mod_wall` (default **2.0 × 0.188 PLACEHOLDER**)
+Mirrors `KTECH_C10_RearClip` receiver packaging (rails end at `rail_end_x`; open mouths at `rcv_rear_x`):
+
+| Station | Expression | Default (in) @ wb=117.5 |
+|---|---|---|
+| `rcv_front_x` | `wb + kickup_aft` | **125.5** |
+| `rail_end_x` | `rcv_front_x + rcv_key_w` | **127.0** |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **139.5** |
+| `mod_front_x` | `rcv_front_x + 0.125` | **125.625** (inside receiver, fwd of end-cap key bay) |
+| `tray_x0` / `bh_x` | `rcv_rear_x` | **139.5** (at receiver mouths) |
+| `wb + rear_overhang` | body envelope ref | **159.5** (`mod_rear_x` ≈ this when `mod_tray_len` is dialed in) |
+
+- Rear clip receivers: `rcv_od` / `rcv_wall` (default **2.5 × 0.188 PLACEHOLDER**) — must match rear clip exactly
+- Module rails: `mod_od` / `mod_wall` (default **2.0 × 0.188 PLACEHOLDER**) slide in from `rcv_rear_x` forward
 - Per-side slip: `mod_slip_clear` (default **0.030 PLACEHOLDER**)
-- Insert length / stations: `mod_insert_len`, `mod_front_x`, bolt pattern mirrors `rcv_bolt_*`
+- Insert length / bolts: `mod_insert_len`, `rcv_bolt_*` (first bolt `rail_end_x + clip_t + 0.750`, aft of end-cap aft face)
+- End-cap cutout on the clip is sized for `rcv_od`; module OD fits through the receiver bore and the cap opening
 
 ## Variant
 
@@ -94,8 +106,12 @@ Sourced fitting comments start with **SOURCED (…)**. Layout / unverified items
 | Param | Default | Notes |
 |---|---|---|
 | `module_variant` | air_fuel | air_fuel\|fuel_only |
+| `rcv_*` / `rail_end_x` / `clip_rear_x` | match rear clip | Mirror expressions/defaults exactly |
+| `rear_overhang` | 42 in | Match rear clip body/module envelope |
 | `mod_od` / `mod_wall` | 2.0 / 0.188 in | PLACEHOLDER module rail |
 | `mod_slip_clear` | 0.030 in | PLACEHOLDER per side vs rcv ID |
+| `mod_front_x` | `rcv_front_x + 0.125` | Tip inside receiver |
+| `tray_x0` | `rcv_rear_x` | Tray/bulkhead at receiver mouths |
 | `mod_tray_len` | 36 in | PLACEHOLDER exposed tray length |
 | `fuel_l` / `fuel_w` / `fuel_h` | 28 / 18 / 10 in | PLACEHOLDER tank shell |
 | `fuel_pf_*` / `fuel_fcst_*` | sourced | Radium 20-0278 / Nuke DXF / FCST-X |

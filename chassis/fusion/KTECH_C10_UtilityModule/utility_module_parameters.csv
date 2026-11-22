@@ -10,15 +10,20 @@ rail_cl,core_width / 2,in,Rail / receiver CL from vehicle CL (match rear clip)
 clip_t,0.188,in,Laser plate thickness for tray / bulkhead / keys
 clip_clear,0.030,in,Shared slip clear name (module uses mod_slip_clear)
 kickup_aft,8,in,PLACEHOLDER. Match rear clip — kickup ends aft of axle
+rear_overhang,42,in,PLACEHOLDER. Match rear clip — body/module envelope aft of axle
 rcv_od,2.500,in,PLACEHOLDER. Match rear clip receiver outer size
 rcv_wall,0.188,in,PLACEHOLDER. Match rear clip receiver wall
 rcv_front_x,wb + kickup_aft,in,PLACEHOLDER. Match rear clip — receiver forward face
 rcv_length,14.000,in,PLACEHOLDER. Match rear clip receiver length
+rcv_rear_x,rcv_front_x + rcv_length,in,Match rear clip — receiver aft mouth X
 rcv_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Match rear clip receiver CL height
+rcv_key_w,1.500,in,PLACEHOLDER. Match rear clip — forward lap of key tab onto rail side plate ahead of rcv_front_x (also key-bay length)
+rail_end_x,rcv_front_x + rcv_key_w,in,Match rear clip — aft end of plate-box rails / end cap
+clip_rear_x,rcv_rear_x,in,Match rear clip — aft end of clip (= receiver mouths)
 rcv_bolt_d,0.500,in,PLACEHOLDER. Match rear clip cross-bolt diameter
 rcv_bolt_count,2,,PLACEHOLDER. Match rear clip cross-bolt count
 rcv_bolt_pitch,3.000,in,PLACEHOLDER. Match rear clip cross-bolt pitch
-rcv_bolt_first_x,rcv_front_x + 2.000 in,in,PLACEHOLDER. Match rear clip first bolt X
+rcv_bolt_first_x,rail_end_x + clip_t + 0.750 in,in,PLACEHOLDER. Match rear clip first bolt X (aft of end-cap aft face)
 module_variant,air_fuel,,PLACEHOLDER. air_fuel|fuel_only — string enum (not Fusion length)
 mod_od,2.000,in,PLACEHOLDER. Module rail square tube outer size (slides inside receiver)
 mod_wall,0.188,in,PLACEHOLDER. Module rail square tube wall
@@ -26,12 +31,12 @@ mod_slip_clear,0.030,in,PLACEHOLDER. Per-side clearance vs receiver ID (tube-in-
 mod_insert_len,rcv_length - 0.250 in,in,PLACEHOLDER. Length of module rail inserted into receiver
 mod_tray_len,36.000,in,PLACEHOLDER. Tray / exposed rail length aft of receiver mouth
 mod_rail_len,mod_insert_len + mod_tray_len,in,Total module rail length
-mod_front_x,rcv_front_x + 0.125 in,in,PLACEHOLDER. Module rail forward tip X (inside receiver)
+mod_front_x,rcv_front_x + 0.125 in,in,PLACEHOLDER. Module rail forward tip X (inside receiver; fwd of end-cap key bay)
 mod_rear_x,mod_front_x + mod_rail_len,in,Module rail aft tip X
 tray_t,clip_t,in,PLACEHOLDER. Tray plate thickness
 tray_width,2 * rail_cl - mod_od,in,PLACEHOLDER. Tray plate width (spans between rail inboard faces)
 tray_length,mod_tray_len,in,PLACEHOLDER. Tray plate length along X
-tray_x0,rcv_front_x + rcv_length,in,PLACEHOLDER. Tray forward edge at receiver mouth
+tray_x0,rcv_rear_x,in,PLACEHOLDER. Tray forward edge at receiver mouth (rcv_rear_x)
 tray_y,rcv_cl_y - mod_od / 2,in,PLACEHOLDER. Tray top face height (sits on rail top)
 tray_drop,0.000,in,PLACEHOLDER. Extra tray drop below rail top (0 = flush on rails)
 tab_width,0.750,in,PLACEHOLDER. Tray key tab width

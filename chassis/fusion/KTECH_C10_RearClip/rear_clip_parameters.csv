@@ -6,7 +6,7 @@ rail_bottom,8,in,Bottom of 2x6 off the ground at ride height. CHANGE with bags.
 wb_73_87_short,117.5,in,73-87 C10 shortbed wheelbase — first prototype
 wb_67_72_short,115.0,in,67-72 C10 shortbed wheelbase — switch wb expression to this
 wb,wb_73_87_short,in,Active wheelbase. Proto = wb_73_87_short; set to wb_67_72_short for 67-72
-rear_overhang,42,in,Tube/clip behind rear axle. Raised bed — PLACEHOLDER estimate
+rear_overhang,42,in,PLACEHOLDER. Body/module envelope aft of axle — NOT rail length
 core_width,33.5,in,TAPED. Core support C-C. 2x6 follows this.
 rail_cl,core_width / 2,in,2x6 CL from vehicle CL
 core_x,-33,in,Core vs front axle. PLACEHOLDER until IFS lands.
@@ -20,7 +20,6 @@ clip_t,0.188,in,Laser plate thickness for clip rails and keyed mounts
 clip_clear,0.030,in,Per-side slip-fit clearance. Inside = tube OD + 2*clip_clear
 center_tube_end_x,cab_r_x + splice_aft,in,Aft end of purchased 2x6 center tube
 clip_front_x,center_tube_end_x - slip_overlap,in,Forward end of plate box (starts over tube)
-clip_rear_x,wb + rear_overhang,in,Aft end of rear clip
 slip_id_w,tube_w + 2 * clip_clear,in,Slip-fit inside width
 slip_id_h,tube_h + 2 * clip_clear,in,Slip-fit inside height
 box_od_w,slip_id_w + 2 * clip_t,in,Assembled box outer width
@@ -130,20 +129,23 @@ rcv_od,2.500,in,PLACEHOLDER. Receiver square tube outer size (OD)
 rcv_wall,0.188,in,PLACEHOLDER. Receiver square tube wall
 rcv_length,14.000,in,PLACEHOLDER. Receiver tube length along X (aft of kickup step-down)
 rcv_front_x,wb + kickup_aft,in,PLACEHOLDER. Receiver forward face X (start of step-down aft bay)
-rcv_rear_x,rcv_front_x + rcv_length,in,Receiver aft face X
+rcv_rear_x,rcv_front_x + rcv_length,in,Receiver aft face X (open mouth — aft-most clip feature)
 rcv_cl_y,rail_bottom + tube_h / 2,in,PLACEHOLDER. Receiver CL height (Fusion Y) after kickup step-down
+rcv_key_w,1.500,in,PLACEHOLDER. Forward lap of key tab onto rail side plate ahead of rcv_front_x (also sets key-bay length via rail_end_x)
+rcv_key_h,rcv_od,in,PLACEHOLDER. Receiver key tab height (matches tube OD)
+rcv_weld_clear,0.030,in,PLACEHOLDER. Extra cutout clear around rcv_od at rail end cap
+rail_end_x,rcv_front_x + rcv_key_w,in,Aft end of plate-box rails (key bay); receivers continue aft
+clip_rear_x,rcv_rear_x,in,Aft end of rear clip (= receiver mouths)
 rcv_bolt_d,0.500,in,PLACEHOLDER. Cross-bolt hole diameter through receiver (locks slide-in module)
 rcv_bolt_count,2,,PLACEHOLDER. Number of cross-bolts per receiver
 rcv_bolt_pitch,3.000,in,PLACEHOLDER. Cross-bolt spacing along X
-rcv_bolt_first_x,rcv_front_x + 2.000 in,in,PLACEHOLDER. First cross-bolt X from receiver front
-rcv_key_w,1.500,in,PLACEHOLDER. Receiver key tab width along X into rail plates
-rcv_key_h,rcv_od,in,PLACEHOLDER. Receiver key tab height (matches tube OD)
+rcv_bolt_first_x,rail_end_x + clip_t + 0.750 in,in,PLACEHOLDER. First cross-bolt X — aft of end-cap aft face (rail_end_x + clip_t)
 rcv_xm_w,2.000,in,PLACEHOLDER. Rear receiver XM fore-aft envelope (layout ref; thickness is rcv_xm_t)
 rcv_xm_h,rcv_od,in,PLACEHOLDER. Rear receiver crossmember plate height
 rcv_xm_t,clip_t,in,PLACEHOLDER. Rear receiver crossmember plate thickness along X
-rcv_xm_x,rcv_front_x + rcv_length / 2,in,PLACEHOLDER. Rear receiver crossmember center X
+rcv_xm_x,rail_end_x + (rcv_rear_x - rail_end_x) / 2,in,PLACEHOLDER. Rear receiver crossmember center X (mid of free tube)
 um_fuel_l,28.000,in,PLACEHOLDER. Match UtilityModule fuel_l — Watts clearance
 um_fuel_w,18.000,in,PLACEHOLDER. Match UtilityModule fuel_w — Watts clearance
 um_fuel_h,10.000,in,PLACEHOLDER. Match UtilityModule fuel_h — Watts clearance
-um_fuel_x,rcv_front_x + rcv_length + 4.000 in,in,PLACEHOLDER. Match UtilityModule fuel_x — Watts clearance
+um_fuel_x,rcv_rear_x + 4.000 in,in,PLACEHOLDER. Match UtilityModule fuel_x — Watts clearance
 um_fuel_y,rcv_cl_y - 1.000 in + clip_t,in,PLACEHOLDER. Match UtilityModule fuel_y approx (tray top + tray_t)
