@@ -1,24 +1,31 @@
 name,expression,unit,comment
 plate_t,0.1875,in,Specified. Plate thickness — 3/16 in
-overall_length,4.90,in,PHOTO EST. ±1/8 in. Overall length; left of tab to right end
 wide_end_height,2.40,in,PHOTO EST. ±1/8 in. Right / wide end height
 corner_r,0.06,in,PHOTO EST. Right-end outside corner radius
-tab_r,0.875,in,PHOTO EST. ±1/8 in. Left ear / tab radius
-tab_cx,0.875,in,PHOTO EST. Tab arc center X (left tip at tab_cx - tab_r)
-tab_cy,2.00,in,PHOTO EST. Tab arc center Y (tab top at tab_cy + tab_r)
-tab_arc_start_deg,240,,PHOTO EST. Tab arc start angle; deg from +X CCW; bottom blend meets here
-tab_arc_end_deg,80,,PHOTO EST. Tab arc end angle; deg from +X CCW; top spline starts here
-bottom_blend_x,1.50,in,PHOTO EST. X where the straight bottom starts curving up into the tab
-bottom_handle,0.80,in,PHOTO EST. Bottom blend Bezier handle length
-top_straight_x,4.00,in,PHOTO EST. X where the top S-curve meets the wide-end top
-top_handle,1.00,in,PHOTO EST. Top S-curve Bezier handle length
-hole_half_d,0.500,in,Specified. Single 1/2 in hole in the left tab
-hole_half_x,0.90,in,PHOTO EST. ±1/8 in. 1/2 in hole center X
-hole_half_y,2.15,in,PHOTO EST. ±1/8 in. 1/2 in hole center Y
+tab_r,0.875,in,SKETCH EST. Left ear / tab radius, centered on the 1/2 in hole
+wide_end_right_body,4.90,in,PHOTO EST. Right-end X in the body frame (original 1:1 print origin)
+hole_half_d,0.500,in,Specified. Single 1/2 in hole in the kicked-out tab
+hole_half_x_body,0.10,in,SKETCH EST. 1/2 in hole center X in the body frame (1:1 print coords)
+hole_half_y,3.60,in,SKETCH EST. 1/2 in hole center Y (same in body and flat-pattern frames)
+tab_cx_body,hole_half_x_body,in,SKETCH EST. Tab arc center X in the body frame; default = hole center
+tab_cy,hole_half_y,in,SKETCH EST. Tab arc center Y; default = hole center
+tab_arc_start_deg,260,,SKETCH EST. Tab arc start angle; deg from +X CCW; lower gooseneck meets here
+tab_arc_end_deg,90,,SKETCH EST. Tab arc end angle; deg from +X CCW; upper curve starts at the top
+bottom_blend_x_body,1.20,in,SKETCH EST. Body-frame X where the gooseneck meets the straight bottom
+bottom_handle,1.60,in,SKETCH EST. Lower gooseneck Bezier handle length
+top_straight_x_body,2.85,in,SKETCH EST. Body-frame X where the upper curve meets the wide-end top
+top_handle,1.40,in,SKETCH EST. Upper gooseneck Bezier handle length
 hole_58_d,0.65625,in,MEASURED mate ~0.66 in; set to 21/32 (0.65625) clearance for 5/8 bolt
 hole_58_y,1.05,in,PHOTO EST. ±1/8 in. Bolt-hole pair center Y (both holes)
-hole_58_mid_x,3.33125,in,PHOTO EST. Bolt-hole pair midpoint X (held from the original photo-trace pair)
+hole_58_mid_x_body,3.33125,in,PHOTO EST. Bolt-hole pair midpoint X in the body frame (held from the original pair)
 hole_58_spacing,1.000,in,MEASURED. Mate hole C-C from 0.66 dia, 0.322 edge gap, 1.666 outside
+origin_shift_x,tab_r - tab_cx_body,in,Computed. Re-zero so the left ear tip is X=0; shifts the body together
+hole_half_x,hole_half_x_body + origin_shift_x,in,Computed. 1/2 in hole center X in the flat-pattern frame
+tab_cx,tab_cx_body + origin_shift_x,in,Computed. Tab arc center X in the flat-pattern frame
+overall_length,wide_end_right_body + origin_shift_x,in,Computed. Overall length; left ear tip to right end
+bottom_blend_x,bottom_blend_x_body + origin_shift_x,in,Computed. Flat-pattern X where the gooseneck meets the straight bottom
+top_straight_x,top_straight_x_body + origin_shift_x,in,Computed. Flat-pattern X where the upper curve meets the wide-end top
+hole_58_mid_x,hole_58_mid_x_body + origin_shift_x,in,Computed. Bolt-hole pair midpoint X in the flat-pattern frame
 hole_58_left_x,hole_58_mid_x - hole_58_spacing / 2,in,Computed. Left 21/32 hole center X
 hole_58_right_x,hole_58_mid_x + hole_58_spacing / 2,in,Computed. Right 21/32 hole center X
 tab_top_y,tab_cy + tab_r,in,Computed. Top of left tab

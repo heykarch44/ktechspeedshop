@@ -7,25 +7,28 @@
 #   4. Run it. It opens / uses a Design document. Save as KTECH_TEMPLATE_BRACKET.
 #
 # What it builds
-#   A 3/16 in laser / waterjet plate traced from a paper template:
-#   boot / bottle-opener outline, rounded left tab with one 1/2 in hole,
-#   two 21/32 in clearance holes (for 5/8 bolts) in the wide end. Exports a flat DXF of the face to
-#   dxf_out/ next to the script.
+#   A 3/16 in laser / waterjet plate: kicked-out gooseneck tab with one
+#   1/2 in hole, two 21/32 in clearance holes (for 5/8 bolts) in the wide
+#   end. Exports a flat DXF of the face to dxf_out/ next to the script.
 #
 # Source of the numbers
-#   plate_t and the 1/2 in hole are as specified. The two large holes are
-#   21/32 in (0.65625) clearance for 5/8 bolts, 1.000 in C-C MEASURED from
-#   the mating bracket (0.66 dia, 0.322 edge gap, 1.666 outside). The pair
-#   stays centered on the original photo-trace midpoint (X 3.33125, Y 1.05).
-#   Remaining outline and the 1/2 in hole location are PHOTO ESTIMATES from
-#   a paper template photographed with a tape in frame, roughly +/- 1/8 in. Caliper the
-#   paper (or a first article), edit the named user parameters or the CSV,
-#   then New Design and re-run before a production cut. Kerf is not
-#   compensated.
+#   plate_t and the 1/2 in hole diameter are as specified. The two large
+#   holes are 21/32 in (0.65625) clearance for 5/8 bolts, 1.000 in C-C
+#   MEASURED from the mating bracket (0.66 dia, 0.322 edge gap, 1.666
+#   outside). The 1/2 in hole and ear were kicked up/out from a pencil
+#   sketch on the 1:1 print (body-frame hole ~0.10, 3.60; ear R 0.875
+#   centered on the hole). The 21/32 pair and the 2.40 in wide end stay
+#   fixed relative to each other in the body frame; origin_shift_x
+#   re-zeros the flat pattern so the left ear tip is X=0.
+#   Gooseneck outline and remaining locations are SKETCH/PHOTO ESTIMATES.
+#   Caliper, edit the named user parameters or the CSV, then New Design
+#   and re-run before a production cut. Kerf is not compensated.
 #
 # Coordinates (standalone flat pattern — not chassis coordinates)
 #   Origin = far left of the rounded tab × straight bottom edge
 #   +X = toward the wide end    +Y = up the plate    +Z = thickness
+#   Body-frame params (*_body) match the 1:1 print the user sketched on
+#   (old X=0 was the original tab left). Flat-pattern X = body X + origin_shift_x.
 
 import csv
 import math
@@ -50,12 +53,6 @@ BEZIER_SEGMENTS = 24
 PARAM_ORDER = [
     ("plate_t", "0.1875 in", "in", "Specified. Plate thickness — 3/16 in"),
     (
-        "overall_length",
-        "4.90 in",
-        "in",
-        "PHOTO EST. +/- 1/8 in. Overall length; left of tab to right end",
-    ),
-    (
         "wide_end_height",
         "2.40 in",
         "in",
@@ -66,73 +63,79 @@ PARAM_ORDER = [
         "tab_r",
         "0.875 in",
         "in",
-        "PHOTO EST. +/- 1/8 in. Left ear / tab radius",
+        "SKETCH EST. Left ear / tab radius, centered on the 1/2 in hole",
     ),
     (
-        "tab_cx",
-        "0.875 in",
+        "wide_end_right_body",
+        "4.90 in",
         "in",
-        "PHOTO EST. Tab arc center X (left tip at tab_cx - tab_r)",
-    ),
-    (
-        "tab_cy",
-        "2.00 in",
-        "in",
-        "PHOTO EST. Tab arc center Y (tab top at tab_cy + tab_r)",
-    ),
-    (
-        "tab_arc_start_deg",
-        "240",
-        "",
-        "PHOTO EST. Tab arc start angle; deg from +X CCW; bottom blend meets here",
-    ),
-    (
-        "tab_arc_end_deg",
-        "80",
-        "",
-        "PHOTO EST. Tab arc end angle; deg from +X CCW; top spline starts here",
-    ),
-    (
-        "bottom_blend_x",
-        "1.50 in",
-        "in",
-        "PHOTO EST. X where the straight bottom starts curving up into the tab",
-    ),
-    (
-        "bottom_handle",
-        "0.80 in",
-        "in",
-        "PHOTO EST. Bottom blend Bezier handle length",
-    ),
-    (
-        "top_straight_x",
-        "4.00 in",
-        "in",
-        "PHOTO EST. X where the top S-curve meets the wide-end top",
-    ),
-    (
-        "top_handle",
-        "1.00 in",
-        "in",
-        "PHOTO EST. Top S-curve Bezier handle length",
+        "PHOTO EST. Right-end X in the body frame (original 1:1 print origin)",
     ),
     (
         "hole_half_d",
         "0.500 in",
         "in",
-        "Specified. Single 1/2 in hole in the left tab",
+        "Specified. Single 1/2 in hole in the kicked-out tab",
     ),
     (
-        "hole_half_x",
-        "0.90 in",
+        "hole_half_x_body",
+        "0.10 in",
         "in",
-        "PHOTO EST. +/- 1/8 in. 1/2 in hole center X",
+        "SKETCH EST. 1/2 in hole center X in the body frame (1:1 print coords)",
     ),
     (
         "hole_half_y",
-        "2.15 in",
+        "3.60 in",
         "in",
-        "PHOTO EST. +/- 1/8 in. 1/2 in hole center Y",
+        "SKETCH EST. 1/2 in hole center Y (same in body and flat-pattern frames)",
+    ),
+    (
+        "tab_cx_body",
+        "hole_half_x_body",
+        "in",
+        "SKETCH EST. Tab arc center X in the body frame; default = hole center",
+    ),
+    (
+        "tab_cy",
+        "hole_half_y",
+        "in",
+        "SKETCH EST. Tab arc center Y; default = hole center",
+    ),
+    (
+        "tab_arc_start_deg",
+        "260",
+        "",
+        "SKETCH EST. Tab arc start angle; deg from +X CCW; lower gooseneck meets here",
+    ),
+    (
+        "tab_arc_end_deg",
+        "90",
+        "",
+        "SKETCH EST. Tab arc end angle; deg from +X CCW; upper curve starts at the top",
+    ),
+    (
+        "bottom_blend_x_body",
+        "1.20 in",
+        "in",
+        "SKETCH EST. Body-frame X where the gooseneck meets the straight bottom",
+    ),
+    (
+        "bottom_handle",
+        "1.60 in",
+        "in",
+        "SKETCH EST. Lower gooseneck Bezier handle length",
+    ),
+    (
+        "top_straight_x_body",
+        "2.85 in",
+        "in",
+        "SKETCH EST. Body-frame X where the upper curve meets the wide-end top",
+    ),
+    (
+        "top_handle",
+        "1.40 in",
+        "in",
+        "SKETCH EST. Upper gooseneck Bezier handle length",
     ),
     (
         "hole_58_d",
@@ -147,16 +150,58 @@ PARAM_ORDER = [
         "PHOTO EST. +/- 1/8 in. Bolt-hole pair center Y (both holes)",
     ),
     (
-        "hole_58_mid_x",
+        "hole_58_mid_x_body",
         "3.33125 in",
         "in",
-        "PHOTO EST. Bolt-hole pair midpoint X (held from the original photo-trace pair)",
+        "PHOTO EST. Bolt-hole pair midpoint X in the body frame (held from the original pair)",
     ),
     (
         "hole_58_spacing",
         "1.000 in",
         "in",
         "MEASURED. Mate hole C-C from 0.66 dia, 0.322 edge gap, 1.666 outside",
+    ),
+    (
+        "origin_shift_x",
+        "tab_r - tab_cx_body",
+        "in",
+        "Computed. Re-zero so the left ear tip is X=0; shifts the body together",
+    ),
+    (
+        "hole_half_x",
+        "hole_half_x_body + origin_shift_x",
+        "in",
+        "Computed. 1/2 in hole center X in the flat-pattern frame",
+    ),
+    (
+        "tab_cx",
+        "tab_cx_body + origin_shift_x",
+        "in",
+        "Computed. Tab arc center X in the flat-pattern frame",
+    ),
+    (
+        "overall_length",
+        "wide_end_right_body + origin_shift_x",
+        "in",
+        "Computed. Overall length; left ear tip to right end",
+    ),
+    (
+        "bottom_blend_x",
+        "bottom_blend_x_body + origin_shift_x",
+        "in",
+        "Computed. Flat-pattern X where the gooseneck meets the straight bottom",
+    ),
+    (
+        "top_straight_x",
+        "top_straight_x_body + origin_shift_x",
+        "in",
+        "Computed. Flat-pattern X where the upper curve meets the wide-end top",
+    ),
+    (
+        "hole_58_mid_x",
+        "hole_58_mid_x_body + origin_shift_x",
+        "in",
+        "Computed. Bolt-hole pair midpoint X in the flat-pattern frame",
     ),
     (
         "hole_58_left_x",
@@ -246,12 +291,13 @@ def run(_context):
             "3/16 in plate (plate_t = {:.4f} in)\n"
             "Holes: one 1/2 in at ({:.3f}, {:.3f}), "
             "two 21/32 in (5/8 bolt clearance) at ({:.3f}, {:.3f}) and ({:.3f}, {:.3f})\n"
-            "Overall {:.3f} in long × {:.3f} in wide-end / {:.3f} in tab top\n\n"
+            "Overall {:.3f} in long × {:.3f} in wide-end / {:.3f} in tab top\n"
+            "origin_shift_x = {:.3f} in (body re-zeroed so the left ear tip is X=0)\n\n"
             "Exported {} plate DXF(s) to:\n{}\n\n"
-            "OUTLINE AND HOLE LOCATIONS ARE PHOTO ESTIMATES (about +/- 1/8 in) "
-            "from a paper template. Caliper the paper, edit the named user "
-            "parameters (or the CSV), then New Design and re-run before a "
-            "production cut. Kerf is not compensated.\n\n"
+            "The 1/2 in hole and gooseneck tab are SKETCH ESTIMATES from pencil "
+            "on the 1:1 print. The 21/32 pair and wide end stay fixed relative "
+            "to each other. Caliper, edit the named user parameters (or the CSV), "
+            "then New Design and re-run before a production cut. Kerf is not compensated.\n\n"
             "Save as KTECH_TEMPLATE_BRACKET.".format(
                 _in("plate_t"),
                 _in("hole_half_x"),
@@ -263,6 +309,7 @@ def run(_context):
                 _in("overall_length"),
                 _in("wide_end_height"),
                 _in("tab_top_y"),
+                _in("origin_shift_x"),
                 n_dxf,
                 dxf_dir,
             )

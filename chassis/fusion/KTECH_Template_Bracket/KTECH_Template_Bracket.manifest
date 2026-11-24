@@ -3,7 +3,7 @@
     "type": "script",
     "author": "Ktech Speedshop",
     "description": {
-        "": "Creates a parametric 3/16 in Ktech template bracket from a paper-template trace: boot-shaped plate, two 21/32 in clearance holes (for 5/8 bolts, 1.000 in C-C measured from the mating bracket) and one 1/2 in hole, with DXF face export for laser or waterjet. Outline and some hole locations are photo estimates (about +/- 1/8 in) — caliper the outline and edit the named user parameters before a production cut."
+        "": "Creates a parametric 3/16 in Ktech template bracket: kicked-out gooseneck tab with one 1/2 in hole, two 21/32 in clearance holes (for 5/8 bolts, 1.000 in C-C measured from the mating bracket), and DXF face export for laser or waterjet. Tab location is a sketch estimate from pencil on the 1:1 print."
     },
     "version": "1.0.0",
     "supportedOS": "windows|mac",
