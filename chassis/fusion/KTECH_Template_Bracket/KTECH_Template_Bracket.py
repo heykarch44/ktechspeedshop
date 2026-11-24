@@ -103,9 +103,9 @@ PARAM_ORDER = [
     ),
     (
         "tab_arc_start_deg",
-        "260",
+        "182",
         "",
-        "SKETCH EST. Tab arc start angle; deg from +X CCW; lower gooseneck meets here",
+        "SKETCH EST. Tab arc start angle; deg from +X CCW; lower convex sweep meets the ear here (near the left tip)",
     ),
     (
         "tab_arc_end_deg",
@@ -114,16 +114,22 @@ PARAM_ORDER = [
         "SKETCH EST. Tab arc end angle; deg from +X CCW; upper curve starts at the top",
     ),
     (
-        "bottom_blend_x_body",
-        "1.20 in",
+        "bottom_blend_x",
+        "1.85 in",
         "in",
-        "SKETCH EST. Body-frame X where the gooseneck meets the straight bottom",
+        "SKETCH EST. Flat-pattern X where the lower convex sweep meets the straight bottom",
     ),
     (
         "bottom_handle",
-        "1.60 in",
+        "0.80 in",
         "in",
-        "SKETCH EST. Lower gooseneck Bezier handle length",
+        "SKETCH EST. Lower-sweep Bezier handle length at the floor (horizontal)",
+    ),
+    (
+        "bottom_handle_ear",
+        "2.40 in",
+        "in",
+        "SKETCH EST. Lower-sweep Bezier handle length at the ear (keeps the left side full and convex)",
     ),
     (
         "top_straight_x_body",
@@ -184,12 +190,6 @@ PARAM_ORDER = [
         "wide_end_right_body + origin_shift_x",
         "in",
         "Computed. Overall length; left ear tip to right end",
-    ),
-    (
-        "bottom_blend_x",
-        "bottom_blend_x_body + origin_shift_x",
-        "in",
-        "Computed. Flat-pattern X where the gooseneck meets the straight bottom",
     ),
     (
         "top_straight_x",
@@ -477,6 +477,7 @@ def _draw_outline(sk, design):
 
     bottom_blend_x = param_in(design, "bottom_blend_x")
     bottom_handle = param_in(design, "bottom_handle")
+    bottom_handle_ear = param_in(design, "bottom_handle_ear")
     top_straight_x = param_in(design, "top_straight_x")
     top_handle = param_in(design, "top_handle")
 
@@ -484,12 +485,13 @@ def _draw_outline(sk, design):
     tab_end = _polar(tab_cx, tab_cy, tab_r, end_deg)
 
     # Bottom Bezier: (bottom_blend_x, 0) heading left, into tab_start along CW tangent.
+    # Separate floor / ear handles keep the left side a full convex sweep (no pinched neck).
     t0 = (-1.0, 0.0)
     t3 = _cw_tangent(start_deg)
     p0 = (bottom_blend_x, 0.0)
     p3 = tab_start
     p1 = (p0[0] + bottom_handle * t0[0], p0[1] + bottom_handle * t0[1])
-    p2 = (p3[0] - bottom_handle * t3[0], p3[1] - bottom_handle * t3[1])
+    p2 = (p3[0] - bottom_handle_ear * t3[0], p3[1] - bottom_handle_ear * t3[1])
     _add_fitted_spline(sk, _bezier(p0, p1, p2, p3, BEZIER_SEGMENTS))
 
     # Tab arc, clockwise from start_deg to end_deg.

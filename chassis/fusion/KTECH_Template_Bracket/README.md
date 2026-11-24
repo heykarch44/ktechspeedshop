@@ -28,7 +28,7 @@ Plate DXF → `dxf_out/TEMPLATE_BRACKET.dxf` next to the script. Cut from the DX
 
 ## Source of the numbers
 
-The user photographed a paper template, then printed a 1:1 PDF and sketched “kick out more” in pencil. The 1/2 in hole moves from body (0.90, 2.15) to about **(0.10, 3.60)**, with the same **0.875 in** ear centered on the hole. The two large holes were sized from a caliper check of the **mating** bracket: 0.66 in dia, 0.322 in edge-to-edge, 1.666 in outside-to-outside → **1.000 in** centers, cut as **21/32 in** (0.65625) clearance for 5/8 bolts. The pair and the 2.40 in wide end stay fixed relative to each other.
+The user photographed a paper template, then printed a 1:1 PDF and sketched “kick out more” in pencil. The 1/2 in hole moves from body (0.90, 2.15) to about **(0.10, 3.60)**, with the same **0.875 in** ear centered on the hole. The two large holes were sized from a caliper check of the **mating** bracket: 0.66 in dia, 0.322 in edge-to-edge, 1.666 in outside-to-outside → **1.000 in** centers, cut as **21/32 in** (0.65625) clearance for 5/8 bolts. The pair and the 2.40 in wide end stay fixed relative to each other. The lower-left outline is one full convex cubic from the ear (near 182°) down and gently right, staying near X 0–0.3 through Y~2, then tangent into the straight bottom at X 1.85 (flat-pattern frame).
 
 | Item | Default | Status |
 |---|---|---|
@@ -39,7 +39,7 @@ The user photographed a paper template, then printed a 1:1 PDF and sketched “k
 | `hole_58_d` | 0.65625 in | **MEASURED** mate ~0.66 in; 21/32 clearance for 5/8 bolt |
 | `hole_58_spacing` | 1.000 in | **MEASURED** from mating-bracket C-C |
 | `hole_58_mid_x_body` / `hole_58_y` | 3.33125 / 1.05 in | mid X held from the original photo-trace pair (body frame); Y PHOTO EST. |
-| Gooseneck blends, wide-end height / corners | see CSV | **SKETCH/PHOTO EST.** |
+| Lower convex / upper concave blends, wide-end height / corners | see CSV | **SKETCH/PHOTO EST.** |
 
 Kerf is **not** compensated; the shop should apply their kerf to finished sizes.
 
@@ -60,8 +60,10 @@ Full table: **`KTECH_Template_Bracket_parameters.csv`**.
 | `hole_58_spacing` | 1.000 in | MEASURED C-C from mating bracket |
 | `hole_58_mid_x_body` / `hole_58_y` | 3.33125 / 1.05 in | body mid held from original pair; Y PHOTO EST. |
 | `hole_58_mid_x` / left / right | mid_body + shift ± spacing/2 | Computed (4.10625 / 3.60625 / 4.60625 in) |
-| `bottom_blend_x_body` / `top_straight_x_body` | 1.20 / 2.85 in | SKETCH EST. gooseneck meet points (body frame) |
-| `tab_arc_start_deg` / `tab_arc_end_deg` | 260 / 90 | SKETCH EST. ear sweep, deg from +X; travel is clockwise |
+| `bottom_blend_x` | 1.85 in | SKETCH EST. flat-pattern X; lower convex sweep meets Y=0 here |
+| `bottom_handle` / `bottom_handle_ear` | 0.80 / 2.40 in | SKETCH EST. lower-sweep Bezier handles (floor / ear) |
+| `top_straight_x_body` | 2.85 in | SKETCH EST. upper concave curve meets the wide-end top (body frame) |
+| `tab_arc_start_deg` / `tab_arc_end_deg` | 182 / 90 | SKETCH EST. ear sweep, deg from +X; travel is clockwise; lower sweep meets the ear near the left tip |
 | `tab_top_y` | `tab_cy + tab_r` | Computed (4.475 in at defaults) |
 
 ## Open items
