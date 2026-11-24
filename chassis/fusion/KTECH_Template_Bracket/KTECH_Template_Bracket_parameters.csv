@@ -1,0 +1,23 @@
+name,expression,unit,comment
+plate_t,0.1875,in,Specified. Plate thickness — 3/16 in
+overall_length,4.90,in,PHOTO EST. ±1/8 in. Overall length; left of tab to right end
+wide_end_height,2.40,in,PHOTO EST. ±1/8 in. Right / wide end height
+corner_r,0.06,in,PHOTO EST. Right-end outside corner radius
+tab_r,0.875,in,PHOTO EST. ±1/8 in. Left ear / tab radius
+tab_cx,0.875,in,PHOTO EST. Tab arc center X (left tip at tab_cx - tab_r)
+tab_cy,2.00,in,PHOTO EST. Tab arc center Y (tab top at tab_cy + tab_r)
+tab_arc_start_deg,240,,PHOTO EST. Tab arc start angle; deg from +X CCW; bottom blend meets here
+tab_arc_end_deg,80,,PHOTO EST. Tab arc end angle; deg from +X CCW; top spline starts here
+bottom_blend_x,1.50,in,PHOTO EST. X where the straight bottom starts curving up into the tab
+bottom_handle,0.80,in,PHOTO EST. Bottom blend Bezier handle length
+top_straight_x,4.00,in,PHOTO EST. X where the top S-curve meets the wide-end top
+top_handle,1.00,in,PHOTO EST. Top S-curve Bezier handle length
+hole_half_d,0.500,in,Specified. Single 1/2 in hole in the left tab
+hole_half_x,0.90,in,PHOTO EST. ±1/8 in. 1/2 in hole center X
+hole_half_y,2.15,in,PHOTO EST. ±1/8 in. 1/2 in hole center Y
+hole_58_d,0.625,in,Specified. Each 5/8 in hole in the wide end
+hole_58_y,1.05,in,PHOTO EST. ±1/8 in. 5/8 in hole center Y (both holes)
+hole_58_left_x,2.80,in,PHOTO EST. ±1/8 in. Left 5/8 in hole center X
+hole_58_spacing,1.0625,in,PHOTO EST. ±1/8 in. 5/8 in hole center spacing (1-1/16 in)
+hole_58_right_x,hole_58_left_x + hole_58_spacing,in,Computed. Right 5/8 in hole center X
+tab_top_y,tab_cy + tab_r,in,Computed. Top of left tab

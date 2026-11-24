@@ -1,0 +1,11 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "Ktech Speedshop",
+    "description": {
+        "": "Creates a parametric 3/16 in Ktech template bracket from a paper-template trace: boot-shaped plate, two 5/8 in holes and one 1/2 in hole, with DXF face export for laser or waterjet. Outline and hole locations are photo estimates (about +/- 1/8 in) — caliper and edit the named user parameters before a production cut."
+    },
+    "version": "1.0.0",
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}
