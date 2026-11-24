@@ -15,9 +15,10 @@ top_handle,1.00,in,PHOTO EST. Top S-curve Bezier handle length
 hole_half_d,0.500,in,Specified. Single 1/2 in hole in the left tab
 hole_half_x,0.90,in,PHOTO EST. ±1/8 in. 1/2 in hole center X
 hole_half_y,2.15,in,PHOTO EST. ±1/8 in. 1/2 in hole center Y
-hole_58_d,0.625,in,Specified. Each 5/8 in hole in the wide end
-hole_58_y,1.05,in,PHOTO EST. ±1/8 in. 5/8 in hole center Y (both holes)
-hole_58_left_x,2.80,in,PHOTO EST. ±1/8 in. Left 5/8 in hole center X
-hole_58_spacing,1.0625,in,PHOTO EST. ±1/8 in. 5/8 in hole center spacing (1-1/16 in)
-hole_58_right_x,hole_58_left_x + hole_58_spacing,in,Computed. Right 5/8 in hole center X
+hole_58_d,0.65625,in,MEASURED mate ~0.66 in; set to 21/32 (0.65625) clearance for 5/8 bolt
+hole_58_y,1.05,in,PHOTO EST. ±1/8 in. Bolt-hole pair center Y (both holes)
+hole_58_mid_x,3.33125,in,PHOTO EST. Bolt-hole pair midpoint X (held from the original photo-trace pair)
+hole_58_spacing,1.000,in,MEASURED. Mate hole C-C from 0.66 dia, 0.322 edge gap, 1.666 outside
+hole_58_left_x,hole_58_mid_x - hole_58_spacing / 2,in,Computed. Left 21/32 hole center X
+hole_58_right_x,hole_58_mid_x + hole_58_spacing / 2,in,Computed. Right 21/32 hole center X
 tab_top_y,tab_cy + tab_r,in,Computed. Top of left tab

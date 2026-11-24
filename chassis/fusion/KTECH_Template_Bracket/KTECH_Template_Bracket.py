@@ -9,13 +9,16 @@
 # What it builds
 #   A 3/16 in laser / waterjet plate traced from a paper template:
 #   boot / bottle-opener outline, rounded left tab with one 1/2 in hole,
-#   two 5/8 in holes in the wide end. Exports a flat DXF of the face to
+#   two 21/32 in clearance holes (for 5/8 bolts) in the wide end. Exports a flat DXF of the face to
 #   dxf_out/ next to the script.
 #
 # Source of the numbers
-#   Hole diameters and plate_t are as specified by the user. All outline
-#   and hole-location dimensions are PHOTO ESTIMATES from a paper template
-#   photographed with a tape in frame, roughly +/- 1/8 in. Caliper the
+#   plate_t and the 1/2 in hole are as specified. The two large holes are
+#   21/32 in (0.65625) clearance for 5/8 bolts, 1.000 in C-C MEASURED from
+#   the mating bracket (0.66 dia, 0.322 edge gap, 1.666 outside). The pair
+#   stays centered on the original photo-trace midpoint (X 3.33125, Y 1.05).
+#   Remaining outline and the 1/2 in hole location are PHOTO ESTIMATES from
+#   a paper template photographed with a tape in frame, roughly +/- 1/8 in. Caliper the
 #   paper (or a first article), edit the named user parameters or the CSV,
 #   then New Design and re-run before a production cut. Kerf is not
 #   compensated.
@@ -133,33 +136,39 @@ PARAM_ORDER = [
     ),
     (
         "hole_58_d",
-        "0.625 in",
+        "0.65625 in",
         "in",
-        "Specified. Each 5/8 in hole in the wide end",
+        "MEASURED mate ~0.66 in; set to 21/32 (0.65625) clearance for 5/8 bolt",
     ),
     (
         "hole_58_y",
         "1.05 in",
         "in",
-        "PHOTO EST. +/- 1/8 in. 5/8 in hole center Y (both holes)",
+        "PHOTO EST. +/- 1/8 in. Bolt-hole pair center Y (both holes)",
     ),
     (
-        "hole_58_left_x",
-        "2.80 in",
+        "hole_58_mid_x",
+        "3.33125 in",
         "in",
-        "PHOTO EST. +/- 1/8 in. Left 5/8 in hole center X",
+        "PHOTO EST. Bolt-hole pair midpoint X (held from the original photo-trace pair)",
     ),
     (
         "hole_58_spacing",
-        "1.0625 in",
+        "1.000 in",
         "in",
-        "PHOTO EST. +/- 1/8 in. 5/8 in hole center spacing (1-1/16 in)",
+        "MEASURED. Mate hole C-C from 0.66 dia, 0.322 edge gap, 1.666 outside",
+    ),
+    (
+        "hole_58_left_x",
+        "hole_58_mid_x - hole_58_spacing / 2",
+        "in",
+        "Computed. Left 21/32 hole center X",
     ),
     (
         "hole_58_right_x",
-        "hole_58_left_x + hole_58_spacing",
+        "hole_58_mid_x + hole_58_spacing / 2",
         "in",
-        "Computed. Right 5/8 in hole center X",
+        "Computed. Right 21/32 hole center X",
     ),
     ("tab_top_y", "tab_cy + tab_r", "in", "Computed. Top of left tab"),
 ]
@@ -236,7 +245,7 @@ def run(_context):
             "Template bracket is in this document.\n\n"
             "3/16 in plate (plate_t = {:.4f} in)\n"
             "Holes: one 1/2 in at ({:.3f}, {:.3f}), "
-            "two 5/8 in at ({:.3f}, {:.3f}) and ({:.3f}, {:.3f})\n"
+            "two 21/32 in (5/8 bolt clearance) at ({:.3f}, {:.3f}) and ({:.3f}, {:.3f})\n"
             "Overall {:.3f} in long × {:.3f} in wide-end / {:.3f} in tab top\n\n"
             "Exported {} plate DXF(s) to:\n{}\n\n"
             "OUTLINE AND HOLE LOCATIONS ARE PHOTO ESTIMATES (about +/- 1/8 in) "
