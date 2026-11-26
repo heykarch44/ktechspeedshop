@@ -1,0 +1,11 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "Ktech Speedshop",
+    "description": {
+        "": "Parametric Ktech C10 front clip: 28x4 in nose with 23 deg plan kick, flat 6 in / 34 in OD rail through arms, angular cab drop, keyed slip over 2x5 center tube (FLAG: was 2x6), core pads, hanging LCA mount and UCA tower stubs."
+    },
+    "version": "1.0.0",
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}

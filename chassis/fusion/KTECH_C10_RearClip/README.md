@@ -14,7 +14,7 @@ Owner design intent for this script **overrides** the older open-C socket notes 
 3. Next to **My Scripts**, click **+** and select the `KTECH_C10_RearClip` folder
 4. Preferences → Design → Default design type → **Hybrid** (chassis is Hybrid, not Part)
 5. **File → New Design**, then **Run** `KTECH_C10_RearClip`
-6. Fit view if the canvas looks empty (rails sit at `rail_cl` ≈ 16.75" off centerline)
+6. Fit view if the canvas looks empty (rails sit at `rail_cl`; chassis front now uses literal **16.0** / 34 in OD — this script still defaults `rail_cl = core_width/2` until a follow-up)
 7. Save as `KTECH_C10_REAR_CLIP`
 
 Edit numbers in **Modify → Change Parameters** (or in `rear_clip_parameters.csv` before run). Geometry is generated at run time from those values — after big layout changes, use a **New Design** and run again (same rule as `KTECH_C10_Chassis_Setup`).
@@ -188,11 +188,12 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `rcv_bolt_first_x` | centered in insert (see above) | Equal ~1.5 in end distance; pitch 3.000 |
 | `rcv_xm_w` / `rcv_xm_t` | 2 / `clip_t` in | PLACEHOLDER rear receiver XM |
 | `rear_overhang` | 42 in | Body/module envelope — **not** rail length |
-| `axle_wms_a` | 63.625 in | Set from wheel/tire combo |
+| `axle_wms_a` | **58.0 in** | PLACEHOLDER — tire TBD (was 63.625) |
 | `cs_width` / `cs_height` / `cs_depth` / `tube_insert` | — | PLACEHOLDER UNVERIFIED — Currie |
 
 ## Open items
 
+- **FLAG — center slip mismatch:** purchased center spine is now **2×5** (`cab_rail_h = 5` in Chassis_Setup / FrontClip). This rear clip still uses `tube_h = 6` and `slip_id_h` from that — temporary mismatch until a follow-up pass retargets the rear slip to 2×5. Do not change `tube_h` here without updating the whole rear box.
 - **Currie 9-inch CAD** requested **2026-11-15** — replace `cs_width`, `cs_height`, `cs_depth`, `tube_insert` placeholders
 - **Wilwood CAD** requested **2026-11-15** — front/related; rear brake package still TBD against WMS / housing ends
 - Freeze `slot_clear` with a laser coupon

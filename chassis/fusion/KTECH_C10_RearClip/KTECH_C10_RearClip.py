@@ -115,7 +115,12 @@ STRING_PARAMS = {
 PARAM_ORDER = [
     # Shared spine / tape names (match KTECH_C10_Chassis_Setup)
     ("tube_w", "2 in", "in", "A500 width across the car"),
-    ("tube_h", "6 in", "in", "A500 height"),
+    (
+        "tube_h",
+        "6 in",
+        "in",
+        "A500 height — FLAG: center spine now 2x5; slip_id_h still from tube_h=6 until follow-up",
+    ),
     ("wall", "0.188 in", "in", "A500 wall"),
     ("rail_bottom", "8 in", "in", "Bottom of tube off ground"),
     ("wb_73_87_short", "117.5 in", "in", "73-87 shortbed WB — first prototype"),
@@ -266,7 +271,7 @@ PARAM_ORDER = [
         "PLACEHOLDER. Axle droop travel down for bar-to-rail clearance",
     ),
     # Currie 9-inch axle mockup
-    ("axle_wms_a", "63.625 in", "in", "WMS width A — set by wheel/tire combo"),
+    ("axle_wms_a", "58.0 in", "in", "PLACEHOLDER. WMS width A — tire TBD (was 63.625)"),
     ("brake_space", "2.500 in", "in", "Torino late big bearing space per side"),
     ("housing_end_b", "axle_wms_a - 2 * brake_space", "in", "Housing end-to-end B"),
     ("axle_tube_od", "3.000 in", "in", "Axle tube OD"),

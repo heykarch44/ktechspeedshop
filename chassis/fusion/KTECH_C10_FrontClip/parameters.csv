@@ -1,0 +1,50 @@
+name,expression,unit,comment
+tube_w,2,in,A500 / slip tube width across the car
+cab_rail_h,5,in,FLAG: purchased center spine is now 2x5 (was 2x6). FrontClip aft slip must match
+cab_rail_bottom,3.5,in,Cab/center section bottom at design ride
+rail_bottom,cab_rail_bottom,in,COMPAT alias → cab_rail_bottom
+front_rail_bottom,10.07,in,Front-clip rail bottom at the arms (design ride)
+front_rail_h,6,in,Flat 6 in rail through steering / A-arms / engine (no arch)
+nose_rail_h,4,in,Nose height ahead of kick (top ramps down 2 in over kick; bottom stays level)
+cab_drop,front_rail_bottom - cab_rail_bottom,in,Angular drop amount (6.57 at defaults)
+wall,0.188,in,A500 wall (center tube ref)
+clip_t,0.188,in,Laser plate thickness for four-piece box
+clip_clear,0.030,in,Per-side slip-fit clearance
+box_od_w,tube_w + 2 * clip_clear + 2 * clip_t,in,Constant plate-box outer width (~2.44) through kick
+slip_id_w,tube_w + 2 * clip_clear,in,Slip inside width over center tube
+slip_id_h,cab_rail_h + 2 * clip_clear,in,Slip inside height — sized to 2x5 center (NOT rear 2x6)
+box_od_h_front,front_rail_h + 2 * clip_clear + 2 * clip_t,in,Box outer height on raised front section
+box_od_h_cab,slip_id_h + 2 * clip_t,in,Box outer height on cab/slip section
+rail_cl,16.0,in,Literal. 34 in OD through arms/engine (2*rail_cl + tube_w). Uncoupled from core_width
+rail_cl_nose,13.0,in,28 in OD nose (2*rail_cl_nose + tube_w)
+core_width,33.5,in,TAPED. Core-mount C-C = 28 in nose OD + 2*core_pad_outboard — NOT rail spacing
+core_pad_outboard,2.75,in,Outboard core-support pad per side from 28 in nose outside face
+core_x,-33,in,PLACEHOLDER. Core vs front axle
+core_to_mid,55,in,TAPED. Core to cab-front along rail
+cab_f_x,core_x + core_to_mid,in,Cab front mount X (=22 at defaults). Drop must finish before this
+nose_tip_x,-34,in,PLACEHOLDER. Forward tip of nose / horn envelope
+kick_start_x,-8,in,Plan-view kick start (ahead of rack). Fits between core and axle
+kick_len,7,in,Single faceted plan-view kick length
+kick_end_x,kick_start_x + kick_len,in,Kick ends just ahead of steering/rack / front axle
+kick_angle_deg,23,deg,Plan-view kick angle (deg). 23 deg over 7 in ≈ 3 in inset
+kick_inset,3,in,Inward per side through kick (rail_cl - rail_cl_nose)
+drop_start_x,8,in,Side-view angular drop start (aft of arms / bellhousing)
+drop_end_x,20,in,Drop finished (cab height) BEFORE cab_f_x
+slip_overlap,8,in,Slip-fit overlap of plate box over 2x5 center tube
+center_tube_front_x,drop_end_x,in,Forward end of purchased 2x5 center tube (at finished drop)
+clip_aft_x,center_tube_front_x + slip_overlap,in,Aft end of front-clip plate box (over tube)
+tab_width,0.750,in,PLACEHOLDER. Tab width along plate edge
+tab_length,clip_t,in,Tab protrusion = mating plate thickness
+slot_clear,0.010,in,PLACEHOLDER. Laser slot oversize vs tab
+tab_pitch,4.000,in,PLACEHOLDER. Tab pitch along long edges
+lca_pivot_z,13.50,in,Lower inner pivot lateral off CL (level arm at ride)
+lca_pivot_y,8.07,in,Lower inner pivot height (= LBJ height). 2.00 hang below front_rail_bottom
+lca_hang,front_rail_bottom - lca_pivot_y,in,Hanging drop-mount below rail bottom (2.00 at defaults)
+uca_pivot_z,15.50,in,Upper inner pivot lateral off CL
+uca_pivot_y,17.88,in,Upper inner pivot height. ~1.81 above front rail top (tower; no arch)
+uca_tower,uca_pivot_y - (front_rail_bottom + front_rail_h),in,Upper tower above rail top (~1.81)
+pivot_stub_t,0.375,in,PLACEHOLDER. Solid stub plate thickness for pivot construction
+pivot_stub_w,2.500,in,PLACEHOLDER. Solid stub width along X
+core_pad_t,0.250,in,PLACEHOLDER. Core-support pad plate thickness
+core_pad_w,3.000,in,PLACEHOLDER. Core pad fore-aft width
+core_pad_l,2.750,in,Core pad lateral length (= core_pad_outboard)

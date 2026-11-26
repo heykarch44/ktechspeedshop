@@ -1,6 +1,6 @@
 name,expression,unit,comment
 tube_w,2,in,A500 tube width across the car (2x6 standing tall)
-tube_h,6,in,A500 tube height
+tube_h,6,in,A500 tube height — FLAG: center spine is now 2x5 (cab_rail_h=5); rear-clip slip_id_h still derived from tube_h=6 until follow-up (temporary mismatch)
 wall,0.188,in,A500 wall. Use 0.250 for heavier
 rail_bottom,8,in,Bottom of 2x6 off the ground at ride height. CHANGE with bags.
 wb_73_87_short,117.5,in,73-87 C10 shortbed wheelbase — first prototype
@@ -90,7 +90,7 @@ bag_stud_offset,1.500,in,PLACEHOLDER. Stud offset from plate center along X
 bag_air_hole_d,0.750,in,PLACEHOLDER. Center air-fitting hole diameter
 axle_travel_up,3.000,in,PLACEHOLDER. Axle travel up at bump for XM + bar-to-rail clearance
 axle_travel_down,5.000,in,PLACEHOLDER. Axle travel down at droop for bar-to-rail clearance
-axle_wms_a,63.625,in,WMS width A — set by wheel/tire combo (user param)
+axle_wms_a,58.0,in,PLACEHOLDER. WMS width A — tire TBD (was 63.625)
 brake_space,2.500,in,Torino late big bearing brake space per side
 housing_end_b,axle_wms_a - 2 * brake_space,in,Housing end-to-end B
 axle_tube_od,3.000,in,Axle tube OD

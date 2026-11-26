@@ -16,7 +16,7 @@ New Fusion defaults to **Part Design** (one component). A chassis is **Hybrid**.
 
 Not one universal 67–87 weldment. One rail architecture, generation-specific body hats, wheelbase on the rear clip.
 
-- **Buy:** A500 2×6 × 0.188 (or 0.250) tube, two sticks.
+- **Buy:** A500 **2×5** × 0.188 (or 0.250) center/cab tube (FLAG: was 2×6), two sticks.
 - **Laser:** front clip and rear clip from 3/16 plate, tab-and-slot.
 - **Weld-on hats:** core / cab (and later engine, trans). 67–72 vs 73–87 are different hats on the same spine.
 - **Slip-fit is a jig.** Clips are a 12–16 in open **C** that drop over the tube (A500 will not telescope through a sharp square hole). Clocking key on the tube top. Through-bolts, then weld the strap and perimeter. Ships as a fully welded chassis (RevB bar).
@@ -37,7 +37,7 @@ Prototype: **73–87 C10 short (117.5")**. Same clips cover 67–72 once the sec
 | Brakes | Wilwood kit for this spindle, 12–14" when the wheel is picked |
 | Rear | Triangulated or parallel 4-link, **22–24" lowers** (20" floor) |
 | Tire / bags | 32" OD lay-out target, ~11" bag stroke |
-| Rail | 2×6 × 3/16 A500, 6" tall, 2" across the car |
+| Rail | Cab/center **2×5**; front clip flat 6" / 34" OD; nose 28×4 (FLAG: spine was 2×6) |
 
 CPP X10 was considered (same modern hub idea) then dropped because Wilwood published the print. Drawing: `KTECH_C10_Chassis_Setup/wilwood-831-14202.png`.
 
@@ -62,7 +62,7 @@ Center-to-center. Three stations, two spans. **Not** one cab width.
 
 Core to cab-rear = **98"**.
 
-**2×6 follows the core** (16.75" off vehicle CL each side). Mid pads are ~4.5" outboard (hats). Cab-rear pads are ~5" inboard (hats). Do not dogleg the tube to hit those holes.
+**Straight rails:** `rail_cl = 16.0` (34 in OD through arms/engine). `core_width = 33.5` is core-mount C-C (28 in nose + 2.75 pads/side), not rail spacing. Mid/cab-rear mounts stay weld-on hats — do not dogleg the tube.
 
 Still open: **core vs front axle** (`core_x`). Set when the Wilwood and IFS land. Placeholder is −33".
 
@@ -80,7 +80,7 @@ Wheelbases to hit later (rear clip / splice, not cab hats):
 ## Architecture
 
 ```
-[ front clip — plate ]==== 2x6 tube spine ==== [ rear clip + step ]
+[ front clip — plate ]==== 2x5 tube spine ==== [ rear clip + step ]
       IFS, horns, K-member              4-link, bags, bumper
       C-socket 14"                      C-socket 14"
 ```
@@ -91,7 +91,7 @@ Split 2–4" behind rear cab mount, in the straight rail. Not at the engine, kic
 
 **Split by generation:** cab/core hole pattern, core support / horns vs OEM clip, engine-to-firewall. Do not share cab holes.
 
-Track vs rails: keep one rail spacing. Big wheels are housing width and backspacing, not pinching the 2×6s. Narrowing the front triangle shortens the lowers and wrecks bump steer.
+Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack. Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes before `cab_f_x`. Rear `axle_wms_a = 58.0` PLACEHOLDER.
 
 ---
 
@@ -130,8 +130,8 @@ A500 corner radii: clip is a 3-sided C + closing strap, ~0.030" per side clearan
 |---|---|
 | 00_ORIGIN | 6" cube so a good run is obvious |
 | 00_SKELETON | SK_SIDE, SK_TOP |
-| 01_SPINE_2x6 | Two mirrored tubes |
-| 02_CLIP_FRONT | Empty — next CAD |
+| 01_SPINE_2x5 | Two mirrored cab/center tubes (2×5 at 3.5 bottom) |
+| 02_CLIP_FRONT | Empty browser slot — run `KTECH_C10_FrontClip` |
 | 03_CLIP_REAR | Empty — next CAD |
 | 04_MOUNTS_73_87 | CORE / CAB_F / CAB_R construction points |
 | 04_MOUNTS_67_72 | Empty hat |
@@ -141,7 +141,7 @@ A500 corner radii: clip is a 3-sided C + closing strap, ~0.030" per side clearan
 
 Coordinates: origin = front axle × ground × frame CL. **+X rear, +Y up, +Z passenger.**
 
-If the canvas looks empty after Run: Fit view. Rails are 16.75" off center, not on the origin.
+If the canvas looks empty after Run: Fit view. Rails are at `rail_cl = 16.0` (34 in OD), not on the origin.
 
 Do not run the Fusion-generated hello script named `C10` — it only pops “Untitled”.
 

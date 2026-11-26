@@ -10,9 +10,9 @@
 #   Ground, ride-height lines (0 / 3 / 3.5 design / 4 / 7), vehicle CL, hub CL,
 #   tire + wheel outlines, wheel CL, hub mounting face, spindle CL, Wilwood
 #   831-14202 ball joints and steering axis extended to ground (scrub), tie-rod
-#   height guide, upper + lower arms to inner pivots, arched rail (upper pivots on
-#   top, inboard half) and the straight rail behind it, lower crossmember + oil pan
-#   guide, instant-center and roll-center construction lines. Both sides.
+#   height guide, upper + lower arms to locked inner pivots, flat 6 in front
+#   rail at 10.07–16.07 (no arch) with ~1.8 in UCA tower + hanging LCA, cab
+#   2x5 at 3.5 bottom, lower crossmember + oil pan guide, IC / RC lines.
 #
 # Workflow
 #   Every number is an fg_* user parameter (Modify -> Change Parameters).
@@ -316,12 +316,16 @@ def draw_side(pen, v, g, s):
     pen.point(*up)
     pen.point(*lp)
 
-    # rails: straight rail at ride height (construction, behind axle) and arched rail at axle
+    # rails: flat front clip at arms (10.07–16.07) + cab/center 2x5 at 3.5 (construction)
     rz, tw, th = s * v["fg_rail_cl"], v["fg_tube_w"], v["fg_tube_h"]
-    pen.rect(rz - tw / 2, v["fg_rh_design"], rz + tw / 2, v["fg_rh_design"] + th, True)
-    yb = v["fg_rh_design"] + v["fg_arch_rise"]
+    yb = v["fg_front_rail_bottom"]
     pen.rect(rz - tw / 2, yb, rz + tw / 2, yb + th)
-    pen.line((up[0], yb + th), up, True)  # pivot bracket
+    cab_h = v.get("fg_cab_rail_h", 5.0)
+    cab_b = v.get("fg_cab_rail_bottom", v["fg_rh_design"])
+    pen.rect(rz - tw / 2, cab_b, rz + tw / 2, cab_b + cab_h, True)
+    # UCA tower (no arch) + hanging LCA drop
+    pen.line((up[0], yb + th), up, True)
+    pen.line((lp[0], yb), lp, True)
 
     # stock-length reference arcs (where a stock-length arm's inner pivot would land)
     a0 = 150 if s > 0 else -30
@@ -345,4 +349,8 @@ def draw_side(pen, v, g, s):
         pen.text(fz + 0.4, hub_y + 3.4, "HUB FACE")
         pen.text(s * 20, g["tre"][1] - 0.7, "TIE ROD HT {:.2f}".format(g["tre"][1]), 0.3)
         pen.text(ag[0] - 1, -2.4, "SCRUB {:+.2f}".format(g["scrub"]), 0.45)
-        pen.text(rz + tw / 2 + 0.4, yb + th / 2, "ARCH +{:.2f}".format(v["fg_arch_rise"]), 0.3)
+        tower = v.get("fg_uca_tower", up[1] - (yb + th))
+        hang = v.get("fg_lca_hang", yb - lp[1])
+        pen.text(rz + tw / 2 + 0.4, yb + th / 2, "FLAT RAIL 10.07-16.07", 0.3)
+        pen.text(rz + tw / 2 + 0.4, yb + th + 0.4, "TOWER +{:.2f}".format(tower), 0.3)
+        pen.text(rz + tw / 2 + 0.4, yb - 0.8, "HANG {:.2f}".format(hang), 0.3)

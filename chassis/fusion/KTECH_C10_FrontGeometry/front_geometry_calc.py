@@ -4,6 +4,13 @@
 #
 # 2D front view, inches. z = lateral from vehicle centerline (+ = outboard),
 # y = height above ground. One side is computed; the other is a mirror.
+#
+# Design pose locked to 2026-11-25 box sketches:
+#   29.0 OD tire, rail_cl 16.0 (34 in OD flat rail, no arch),
+#   LCA pivot (13.50, 8.07), UCA pivot (15.50, 17.88),
+#   UBJ (26.56, 19.04) / LBJ (28.10, 8.07) from Wilwood 831-14202 math,
+#   front rail 10.07–16.07, hanging LCA 2 in below rail, ~1.8 in UCA tower,
+#   cab/center bottom 3.5 at design ride.
 
 import math
 
@@ -11,8 +18,8 @@ import math
 # "ESTIMATE" in a comment = not measured on the truck or not printed on a drawing.
 PARAMS = [
     # --- Tire / wheel --------------------------------------------------------
-    ("fg_tire_od", "28.0 in", "in", "255/30R22 = 28.0 in tall (245=27.8, 265=28.3, 275=28.5)"),
-    ("fg_tire_w", "10.0 in", "in", "255/30R22 section width ~10.0 in"),
+    ("fg_tire_od", "29.0 in", "in", "Design tire OD (hub height = OD/2 = 14.5). 2026-11-25 sketch"),
+    ("fg_tire_w", "10.0 in", "in", "Section width ~10.0 in on 22x9"),
     ("fg_wheel_dia", "22 in", "in", "Wheel diameter"),
     ("fg_wheel_w", "9 in", "in", "Wheel width (bead seat)"),
     ("fg_hub_y", "fg_tire_od / 2", "in", "Hub centerline above ground = tire OD / 2"),
@@ -21,8 +28,8 @@ PARAMS = [
     # --- Track / hub face location ----------------------------------------
     ("fg_track_ref", "65.8 in", "in", "ESTIMATE. Stock 73-87 C10 front track 65.8 in (GM spec, HAMB thread 911283, center of tread). Wilwood says 14202 keeps OE track"),
     ("fg_ref_offset", "0 in", "in", "ESTIMATE. Offset of the stock wheel that the 65.8 track was measured on (assumed zero)"),
-    ("fg_hub_face_z", "fg_track_ref / 2 + fg_ref_offset", "in", "Computed. Hub mounting face from vehicle CL (fixed by spindle + arms)"),
-    ("fg_track", "2 * (fg_hub_face_z - fg_offset)", "in", "Computed. Track width with the chosen backspacing"),
+    ("fg_hub_face_z", "fg_track_ref / 2 + fg_ref_offset", "in", "Computed. Hub mounting face from vehicle CL (fixed by spindle + arms). 32.90 with defaults"),
+    ("fg_track", "2 * (fg_hub_face_z - fg_offset)", "in", "Computed. Track width with the chosen backspacing (61.80 at 7.0 BS)"),
     # --- Wilwood 831-14202 spindle ----------------------------------------
     ("fg_kpi", "8 deg", "deg", "Steering axis 82 deg to spindle axis on 14202 and 15932 prints = 8 deg KPI"),
     ("fg_bj_spread", "9.06 in", "in", "14202 print: taper large-end face to face along steering axis"),
@@ -32,23 +39,27 @@ PARAMS = [
     ("fg_lbj_ball", "1.0 in", "in", "ESTIMATE. Lower ball-joint ball center beyond the taper large end, along axis (73-87 lower BJ)"),
     ("fg_axis_to_face", "5.7 in", "in", "Per Wilwood (Bryan 11/20): LBJ 1.23 in inboard of caliper lug + 3.68 lug-to-hub face + 8 deg KPI over drop. Same for 14202 and iron 15932"),
     ("fg_tre_drop", "2.35 in", "in", "14202 print: tie-rod hole below spindle CL"),
-    # --- Ride heights (frame bottom to ground) ----------------------------
-    ("fg_rh_design", "3.5 in", "in", "Design ride height, frame bottom to ground. Sketch is drawn here"),
-    ("fg_rh_lay", "0 in", "in", "Laid out (frame on ground)"),
+    # --- Ride heights (cab / frame bottom to ground) ----------------------
+    ("fg_rh_design", "3.5 in", "in", "Design ride: cab/center rail bottom to ground. Sketch is drawn here"),
+    ("fg_rh_lay", "0 in", "in", "Laid out (frame down 3.5 so cab rails sit on the ground)"),
     ("fg_rh_a", "3 in", "in", "Ride-height guide line"),
     ("fg_rh_b", "4 in", "in", "Ride-height guide line"),
-    ("fg_rh_air", "7 in", "in", "Aired up"),
-    # --- Frame ------------------------------------------------------------
-    ("fg_tube_w", "2 in", "in", "2x6 A500 width across the car (parameters.csv tube_w)"),
-    ("fg_tube_h", "6 in", "in", "2x6 A500 height (parameters.csv tube_h)"),
-    ("fg_rail_cl", "16.75 in", "in", "Rail CL from vehicle CL, straight past engine (parameters.csv rail_cl = core_width / 2)"),
-    ("fg_uca_pivot_y", "17.5 in", "in", "Upper inner pivot height at design ride (target 17-18)"),
-    ("fg_uca_pivot_z", "fg_rail_cl - fg_tube_w / 4", "in", "Upper inner pivot lateral: middle of inboard half of rail top"),
-    ("fg_uca_bracket", "1.0 in", "in", "ESTIMATE. Pivot bolt CL above top of arched rail"),
-    ("fg_arch_rise", "fg_uca_pivot_y - fg_uca_bracket - fg_rh_design - fg_tube_h", "in", "Computed. How far the arch lifts the rail at the axle"),
-    # --- Lower arm / crossmember -------------------------------------------
-    ("fg_lca_pivot_y", "fg_hub_y - fg_lbj_face_below - fg_lbj_ball * cos(fg_kpi)", "in", "Lower inner pivot height. Default = lower BJ height (arm level at design ride)"),
-    ("fg_lca_pivot_z", "13.5 in", "in", "ESTIMATE. Lower inner pivot from vehicle CL, on the new crossmember"),
+    ("fg_rh_air", "7 in", "in", "Aired up (cab bottom ~7; front rail 13.57–19.57)"),
+    # --- Frame (flat front clip + 2x5 cab; no arch) -----------------------
+    ("fg_tube_w", "2 in", "in", "Rail / tube width across the car"),
+    ("fg_tube_h", "6 in", "in", "Front-clip rail height at the arms (flat 6 in; no arch)"),
+    ("fg_cab_rail_h", "5 in", "in", "FLAG: purchased center spine is now 2x5 (was 2x6)"),
+    ("fg_front_rail_bottom", "10.07 in", "in", "Front-clip rail bottom at arms (design ride). Top = 16.07"),
+    ("fg_cab_rail_bottom", "3.5 in", "in", "Cab/center section bottom at design ride (= fg_rh_design)"),
+    ("fg_rail_cl", "16.0 in", "in", "Rail CL from vehicle CL through arms/engine (34 in OD). Literal — NOT core_width/2"),
+    # --- Inner pivots (locked) + derived hang / tower -----------------------
+    ("fg_lca_pivot_y", "8.07 in", "in", "Lower inner pivot height (locked; = LBJ height, arm level at ride)"),
+    ("fg_lca_pivot_z", "13.50 in", "in", "Lower inner pivot from vehicle CL (locked)"),
+    ("fg_uca_pivot_y", "17.88 in", "in", "Upper inner pivot height at design ride (locked; ~1.81 tower above rail top)"),
+    ("fg_uca_pivot_z", "15.50 in", "in", "Upper inner pivot lateral off CL (locked; not rail_cl - tube_w/4)"),
+    ("fg_uca_tower", "fg_uca_pivot_y - (fg_front_rail_bottom + fg_tube_h)", "in", "Upper tower above flat rail top (~1.81). Replaces arch"),
+    ("fg_lca_hang", "fg_front_rail_bottom - fg_lca_pivot_y", "in", "Hanging lower mount below rail bottom (2.00 at defaults)"),
+    # --- Lower crossmember / pan guide --------------------------------------
     ("fg_xm_bottom_y", "5.0 in", "in", "ESTIMATE. Crossmember bottom above ground at design ride"),
     ("fg_xm_h", "3.5 in", "in", "ESTIMATE. Crossmember depth"),
     ("fg_pan_clear", "0.75 in", "in", "ESTIMATE. Oil pan bottom above crossmember bottom"),
@@ -82,7 +93,10 @@ def default_values():
 
 
 def design_geometry(v):
-    """Points at design ride height. z outboard (+), y up. Inches."""
+    """Points at design ride height. z outboard (+), y up. Inches.
+
+    With fg_tire_od=29 and Wilwood defaults, UBJ≈(26.56, 19.04), LBJ≈(28.10, 8.07).
+    """
     k = math.radians(v["fg_kpi"])
     hub_y = v["fg_hub_y"]
     face_z = v["fg_hub_face_z"]
@@ -108,7 +122,11 @@ def design_geometry(v):
     g["rc_y"] = _roll_center(contact, g["ic"])
     g["bj_center_spread"] = math.dist(ubj, lbj)
     g["camber"] = 0.0
-    g["rail_top_arch"] = v["fg_uca_pivot_y"] - v["fg_uca_bracket"]
+    # Flat rail top at the arms (no arch). Tower is above this.
+    g["rail_top"] = v["fg_front_rail_bottom"] + v["fg_tube_h"]
+    g["rail_bottom_front"] = v["fg_front_rail_bottom"]
+    g["uca_tower"] = v.get("fg_uca_tower", g["uca_pivot"][1] - g["rail_top"])
+    g["lca_hang"] = v.get("fg_lca_hang", v["fg_front_rail_bottom"] - v["fg_lca_pivot_y"])
     return g
 
 
@@ -162,7 +180,7 @@ def solve_ride_height(v, rh):
         return dict(lbj=lbj, ubj=ubj, contact=tf(body["contact"]), hub=tf(body["hub"]),
                     camber=math.degrees(rot))  # + rot (CCW, top moves inboard on +z side) = negative camber
 
-    # frame bottom height above ground = rail_bottom(frame coords) - contact_y
+    # frame bottom height above ground = cab_rail_bottom(frame coords) - contact_y
     target = rh
     rail_b = v["fg_rh_design"]
 

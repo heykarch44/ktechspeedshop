@@ -8,6 +8,9 @@
 #
 # After it runs
 #   Tape is in mount_points.csv: three widths + two spans (measured 2026-09-01).
+#   FLAG: purchased center spine is now 2x5 (cab_rail_h), not 2x6.
+#   rail_cl = 16.0 literal (34 in OD). core_width 33.5 is core-mount C-C, not rail spacing.
+#   Front clip solids live in KTECH_C10_FrontClip (fills 02_CLIP_FRONT).
 #
 # Front knuckle (locked)
 #   Wilwood ProSpindle 831-14202, 2.5" drop, 1971-1987 C10
@@ -32,9 +35,27 @@ except Exception:
 
 PARAM_ORDER = [
     ("tube_w", "2 in", "in", "A500 width across the car"),
-    ("tube_h", "6 in", "in", "A500 height"),
+    (
+        "cab_rail_h",
+        "5 in",
+        "in",
+        "FLAG: purchased center was 2x6; now 2x5 / 5 in box under the cab",
+    ),
+    ("tube_h", "cab_rail_h", "in", "Alias → cab_rail_h (was 6 for 2x6)"),
     ("wall", "0.188 in", "in", "A500 wall"),
-    ("rail_bottom", "8 in", "in", "Bottom of tube off ground"),
+    (
+        "rail_bottom",
+        "3.5 in",
+        "in",
+        "COMPAT: cab/center bottom at design ride. Prefer cab_rail_bottom",
+    ),
+    ("cab_rail_bottom", "3.5 in", "in", "Cab/center section bottom at design ride"),
+    (
+        "front_rail_bottom",
+        "10.07 in",
+        "in",
+        "Front-clip rail bottom at the arms (design ride)",
+    ),
     ("front_overhang", "34 in", "in", "Tube ahead of front axle"),
     ("wb", "117.5 in", "in", "Wheelbase"),
     ("rear_overhang", "42 in", "in", "Tube behind rear axle"),
@@ -50,16 +71,31 @@ PARAM_ORDER = [
     ("tre_reach", "4.09 in", "in", "Hub center to tie-rod hole, plan"),
     ("tre_drop", "2.35 in", "in", "Tie-rod hole below spindle CL"),
     ("spine_length", "front_overhang + wb + rear_overhang", "in", "Computed"),
-    ("core_width", "33.5 in", "in", "TAPED. Core support C-C"),
+    (
+        "core_width",
+        "33.5 in",
+        "in",
+        "TAPED. Core-mount C-C (28 in nose + 2.75 pads/side) — NOT rail spacing",
+    ),
     ("mid_width", "42.5 in", "in", "TAPED. Mid / cab-front mount C-C"),
     ("rear_cab_width", "23.5 in", "in", "TAPED. Back of cab mount C-C"),
     ("core_to_mid", "55 in", "in", "TAPED. Core to mid mount along the rail"),
     ("mid_to_rear", "43 in", "in", "TAPED. Mid to back-of-cab along the rail"),
-    ("mount_y", "rail_bottom + tube_h", "in", "Mounts on top of rail"),
+    (
+        "mount_y",
+        "cab_rail_bottom + cab_rail_h",
+        "in",
+        "Cab mounts on top of the 2x5 cab rail",
+    ),
     ("core_half", "core_width / 2", "in", "Computed"),
     ("mid_half", "mid_width / 2", "in", "Computed"),
     ("rear_half", "rear_cab_width / 2", "in", "Computed"),
-    ("rail_cl", "core_width / 2", "in", "2x6 follows core. Mid/rear mounts are hats."),
+    (
+        "rail_cl",
+        "16.0 in",
+        "in",
+        "Literal. 34 in OD through arms/engine (2*rail_cl+tube_w). Uncoupled from core_width",
+    ),
     ("core_x", "-33 in", "in", "Core vs front axle. Set when IFS is placed."),
     ("cab_f_x", "core_x + core_to_mid", "in", "Computed"),
     ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed"),
@@ -111,7 +147,8 @@ def run(_context):
 
         already = False
         for i in range(root.occurrences.count):
-            if "01_SPINE_2x6" in root.occurrences.item(i).name:
+            n = root.occurrences.item(i).name
+            if "01_SPINE_2x5" in n or "01_SPINE_2x6" in n:
                 already = True
                 break
         if already:
@@ -125,7 +162,8 @@ def run(_context):
         mark_origin(mark)
 
         skel = add_component(root, "00_SKELETON")
-        spine = add_component(root, "01_SPINE_2x6")
+        # FLAG: purchased center spine is now 2x5 (cab_rail_h), not 2x6.
+        spine = add_component(root, "01_SPINE_2x5")
         add_component(root, "02_CLIP_FRONT")
         add_component(root, "03_CLIP_REAR")
         mounts = add_component(root, "04_MOUNTS_73_87")
@@ -146,8 +184,11 @@ def run(_context):
         ui.messageBox(
             "Rails are in this Untitled document.\n\n"
             "If you still see a blank cube: click the canvas and press the Home / Fit view.\n"
-            "The 2x6s sit 16 in off centerline — not on the origin.\n\n"
-            "Browser (left) should list 00_SKELETON and 01_SPINE_2x6.\n"
+            "Cab/center 2x5 rails sit at rail_cl = 16.0 in (34 in OD) — not on the origin.\n"
+            "core_width 33.5 is the core-mount C-C (28 in nose + 2.75 pads/side), not rail spacing.\n"
+            "FLAG: purchased center spine is now 2x5 (cab_rail_h=5), bottom cab_rail_bottom=3.5.\n"
+            "Front clip (02_CLIP_FRONT) is empty here — run KTECH_C10_FrontClip into that component.\n\n"
+            "Browser (left) should list 00_SKELETON and 01_SPINE_2x5.\n"
             "Save as KTECH_C10_CHASSIS."
         )
     except Exception:
@@ -308,6 +349,7 @@ def draw_layout_sketches(comp):
 
 
 def build_spine(comp):
+    """Purchased center/cab tube as 2x5 (cab_rail_h) at cab_rail_bottom / rail_cl."""
     design = adsk.fusion.Design.cast(comp.parentDesign)
     sk = comp.sketches.add(comp.yZConstructionPlane)
     sk.name = "SK_RAIL_RH_SECTION"
@@ -320,7 +362,7 @@ def build_spine(comp):
             ring = prof
             break
     if not ring:
-        raise RuntimeError("Could not find the 2x6 tube ring profile.")
+        raise RuntimeError("Could not find the 2x5 tube ring profile.")
 
     extrudes = comp.features.extrudeFeatures
     ext_in = extrudes.createInput(ring, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
@@ -345,8 +387,15 @@ def build_spine(comp):
 
 
 def _tube_section(sk, design, x_world):
-    rb = param_cm(design, "rail_bottom")
-    th = param_cm(design, "tube_h")
+    # Prefer cab_rail_* when present; fall back to rail_bottom / tube_h.
+    try:
+        rb = param_cm(design, "cab_rail_bottom")
+    except Exception:
+        rb = param_cm(design, "rail_bottom")
+    try:
+        th = param_cm(design, "cab_rail_h")
+    except Exception:
+        th = param_cm(design, "tube_h")
     tw = param_cm(design, "tube_w")
     cl = param_cm(design, "rail_cl")
     wall = param_cm(design, "wall")
@@ -365,8 +414,8 @@ def _tube_section(sk, design, x_world):
     inner = sk.sketchCurves.sketchLines.addCenterPointRectangle(outer_c, inner_r)
     sk.isComputeDeferred = False
 
-    _dim_two_sides(sk, outer, "tube_w", "tube_h")
-    _dim_two_sides(sk, inner, "tube_w - 2 * wall", "tube_h - 2 * wall")
+    _dim_two_sides(sk, outer, "tube_w", "cab_rail_h")
+    _dim_two_sides(sk, inner, "tube_w - 2 * wall", "cab_rail_h - 2 * wall")
 
 
 def _line_mid(line):
