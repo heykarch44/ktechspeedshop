@@ -37,7 +37,7 @@ Prototype: **73–87 C10 short (117.5")**. Same clips cover 67–72 once the sec
 | Brakes | Wilwood kit for this spindle, 12–14" when the wheel is picked |
 | Rear | Triangulated or parallel 4-link, **22–24" lowers** (20" floor) |
 | Tire / bags | 32" OD lay-out target, ~11" bag stroke |
-| Rail | Cab/center **2×5**; front clip flat 6" / 34" OD; nose 28×4 (FLAG: spine was 2×6) |
+| Rail | Cab/center **2×5**; front clip flat **5"** / 34" OD (was 6); nose 28×4 |
 
 CPP X10 was considered (same modern hub idea) then dropped because Wilwood published the print. Drawing: `KTECH_C10_Chassis_Setup/wilwood-831-14202.png`.
 

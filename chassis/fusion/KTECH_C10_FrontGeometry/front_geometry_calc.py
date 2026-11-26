@@ -5,12 +5,12 @@
 # 2D front view, inches. z = lateral from vehicle centerline (+ = outboard),
 # y = height above ground. One side is computed; the other is a mirror.
 #
-# Design pose locked to 2026-11-25 box sketches:
+# Design pose locked to 2026-11-25 box sketches (rail height update):
 #   29.0 OD tire, rail_cl 16.0 (34 in OD flat rail, no arch),
 #   LCA pivot (13.50, 8.07), UCA pivot (15.50, 17.88),
 #   UBJ (26.56, 19.04) / LBJ (28.10, 8.07) from Wilwood 831-14202 math,
-#   front rail 10.07–16.07, hanging LCA 2 in below rail, ~1.8 in UCA tower,
-#   cab/center bottom 3.5 at design ride.
+#   front rail 10.07–15.07 (5 in; was 6 / 16.07), hanging LCA 2 in below
+#   rail, ~2.81 in UCA tower, cab/center bottom 3.5 at design ride.
 
 import math
 
@@ -44,20 +44,20 @@ PARAMS = [
     ("fg_rh_lay", "0 in", "in", "Laid out (frame down 3.5 so cab rails sit on the ground)"),
     ("fg_rh_a", "3 in", "in", "Ride-height guide line"),
     ("fg_rh_b", "4 in", "in", "Ride-height guide line"),
-    ("fg_rh_air", "7 in", "in", "Aired up (cab bottom ~7; front rail 13.57–19.57)"),
+    ("fg_rh_air", "7 in", "in", "Aired up (cab bottom ~7; front rail 13.57–18.57)"),
     # --- Frame (flat front clip + 2x5 cab; no arch) -----------------------
     ("fg_tube_w", "2 in", "in", "Rail / tube width across the car"),
-    ("fg_tube_h", "6 in", "in", "Front-clip rail height at the arms (flat 6 in; no arch)"),
-    ("fg_cab_rail_h", "5 in", "in", "FLAG: purchased center spine is now 2x5 (was 2x6)"),
-    ("fg_front_rail_bottom", "10.07 in", "in", "Front-clip rail bottom at arms (design ride). Top = 16.07"),
+    ("fg_tube_h", "5 in", "in", "Front-clip rail height at the arms (flat 5 in; was 6; no arch)"),
+    ("fg_cab_rail_h", "5 in", "in", "Purchased center spine 2x5"),
+    ("fg_front_rail_bottom", "10.07 in", "in", "Front-clip rail bottom at arms (design ride). Top = 15.07"),
     ("fg_cab_rail_bottom", "3.5 in", "in", "Cab/center section bottom at design ride (= fg_rh_design)"),
     ("fg_rail_cl", "16.0 in", "in", "Rail CL from vehicle CL through arms/engine (34 in OD). Literal — NOT core_width/2"),
     # --- Inner pivots (locked) + derived hang / tower -----------------------
     ("fg_lca_pivot_y", "8.07 in", "in", "Lower inner pivot height (locked; = LBJ height, arm level at ride)"),
     ("fg_lca_pivot_z", "13.50 in", "in", "Lower inner pivot from vehicle CL (locked)"),
-    ("fg_uca_pivot_y", "17.88 in", "in", "Upper inner pivot height at design ride (locked; ~1.81 tower above rail top)"),
+    ("fg_uca_pivot_y", "17.88 in", "in", "Upper inner pivot height at design ride (locked; ~2.81 tower above rail top)"),
     ("fg_uca_pivot_z", "15.50 in", "in", "Upper inner pivot lateral off CL (locked; not rail_cl - tube_w/4)"),
-    ("fg_uca_tower", "fg_uca_pivot_y - (fg_front_rail_bottom + fg_tube_h)", "in", "Upper tower above flat rail top (~1.81). Replaces arch"),
+    ("fg_uca_tower", "fg_uca_pivot_y - (fg_front_rail_bottom + fg_tube_h)", "in", "Upper tower above flat rail top (~2.81). Replaces arch"),
     ("fg_lca_hang", "fg_front_rail_bottom - fg_lca_pivot_y", "in", "Hanging lower mount below rail bottom (2.00 at defaults)"),
     # --- Lower crossmember / pan guide --------------------------------------
     ("fg_xm_bottom_y", "5.0 in", "in", "ESTIMATE. Crossmember bottom above ground at design ride"),

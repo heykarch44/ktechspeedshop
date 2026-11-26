@@ -6,13 +6,14 @@
 #   3. Select this folder (KTECH_C10_FrontClip)
 #   4. Run on the chassis doc (02_CLIP_FRONT empty) or a New Design.
 #
-# Design intent (2026-11-25 box sketches)
-#   Raised flat 6 in / 34 in OD plate-box rail through steering + A-arms.
-#   Narrowed 28 x 4 in nose ahead of the rack with a single 23 deg / 7 in
-#   plan-view kick (3 in inset/side, constant ~2.44 box width, top ramps
-#   2 in, bottom level, ribs at bend lines). Angular cab drop 6.57 over
-#   12 in (x=8→20), finished before cab_f_x. Aft slip sized to purchased
-#   2x5 center tube (FLAG: was 2x6). Hanging LCA mount + ~1.8 in UCA tower.
+# Design intent (2026-11-25 box sketches; rail heights updated)
+#   Raised flat 5 in / 34 in OD plate-box rail through steering + A-arms
+#   (was 6; top 15.07). Narrowed 28 x 4 in nose ahead of the rack with a
+#   single 23 deg / 7 in plan-view kick (3 in inset/side, constant ~2.44
+#   box width, top ramps 1 in ≈ 8.13 deg elev, bottom level, ribs at bend
+#   lines). Angular cab drop 6.57 top AND bottom over 12 in (x=8→20),
+#   finished before cab_f_x. Aft slip sized to purchased 2x5 center tube.
+#   Hanging LCA mount + ~2.81 in UCA tower (pivots locked).
 #
 # Coordinates (Fusion Y-up) — same as KTECH_C10_Chassis_Setup
 #   Origin = front axle × ground × frame centerline
@@ -52,21 +53,33 @@ PARAM_ORDER = [
     ),
     (
         "front_rail_h",
-        "6 in",
+        "5 in",
         "in",
-        "Flat 6 in rail through steering / A-arms / engine (no arch)",
+        "Flat 5 in rail through steering / A-arms / engine (was 6; no arch). Top = 15.07",
     ),
     (
         "nose_rail_h",
         "4 in",
         "in",
-        "Nose height ahead of kick (top ramps 2 in over kick; bottom level)",
+        "Nose height ahead of kick (top ramps 1 in over kick; bottom level)",
+    ),
+    (
+        "nose_top_ramp",
+        "front_rail_h - nose_rail_h",
+        "in",
+        "Top drop over kick (1 in at defaults; bottom level)",
+    ),
+    (
+        "nose_elev_deg",
+        "8.13",
+        "",
+        "Elevation ramp deg ≈ atan(nose_top_ramp/kick_len); ~8.13 at 1 in / 7 in",
     ),
     (
         "cab_drop",
         "front_rail_bottom - cab_rail_bottom",
         "in",
-        "Angular drop amount (6.57 at defaults)",
+        "Angular drop 6.57 on top AND bottom (both rails 5 in; parallel) x=8→20",
     ),
     ("wall", "0.188 in", "in", "A500 wall (center tube ref)"),
     ("clip_t", "0.188 in", "in", "Laser plate thickness"),
@@ -82,7 +95,7 @@ PARAM_ORDER = [
         "slip_id_h",
         "cab_rail_h + 2 * clip_clear",
         "in",
-        "Slip inside height — sized to 2x5 center (NOT rear 2x6)",
+        "Slip inside height — sized to 2x5 center (matches rear clip 2x5)",
     ),
     (
         "box_od_h_front",
@@ -181,13 +194,13 @@ PARAM_ORDER = [
         "uca_pivot_y",
         "17.88 in",
         "in",
-        "Upper inner pivot height. ~1.81 tower above rail top (no arch)",
+        "Upper inner pivot height. ~2.81 tower above rail top (no arch)",
     ),
     (
         "uca_tower",
         "uca_pivot_y - (front_rail_bottom + front_rail_h)",
         "in",
-        "Upper tower above rail top",
+        "Upper tower above rail top (~2.81)",
     ),
     ("pivot_stub_t", "0.375 in", "in", "PLACEHOLDER. Pivot stub plate thickness"),
     ("pivot_stub_w", "2.500 in", "in", "PLACEHOLDER. Pivot stub width along X"),
@@ -271,11 +284,14 @@ def run(_context):
             "Front clip built in this document.\n\n"
             "rail_cl = 16.0 (34 in OD through arms/engine).\n"
             "Nose: rail_cl_nose = 13.0 (28 in OD) x 4 in tall; "
-            "23 deg / 7 in kick; bottom level at front_rail_bottom.\n"
-            "Raised flat 6 in rail 10.07–16.07; drop x=8→20 before cab_f_x.\n"
-            "FLAG: aft slip sized to 2x5 center (cab_rail_h=5) — was 2x6.\n"
+            "23 deg / 7 in kick; top ramps 1 in (~8.13 deg elev); "
+            "bottom level at front_rail_bottom.\n"
+            "Raised flat 5 in rail 10.07–15.07; drop 6.57 top+bottom "
+            "x=8→20 before cab_f_x.\n"
+            "Aft slip sized to 2x5 center (cab_rail_h=5).\n"
             "core_width 33.5 is core-mount C-C, not rail spacing.\n"
-            "LCA hang pivot (13.50, 8.07); UCA tower pivot (15.50, 17.88).\n\n"
+            "LCA hang pivot (13.50, 8.07); UCA tower pivot (15.50, 17.88) "
+            "tower ~2.81.\n\n"
             "Fit view if empty. Save as KTECH_C10_FRONT_CLIP "
             "(or keep on the chassis doc / 02_CLIP_FRONT)."
         )

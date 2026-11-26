@@ -56,6 +56,12 @@ PARAM_ORDER = [
         "in",
         "Front-clip rail bottom at the arms (design ride)",
     ),
+    (
+        "front_rail_h",
+        "5 in",
+        "in",
+        "Front-clip rail height through cab section AND A-arms (was 6). Top = 15.07",
+    ),
     ("front_overhang", "34 in", "in", "Tube ahead of front axle"),
     ("wb", "117.5 in", "in", "Wheelbase"),
     ("rear_overhang", "42 in", "in", "Tube behind rear axle"),

@@ -7,10 +7,13 @@
 #   4. Run it. It opens / uses a Design document. Save as KTECH_C10_REAR_CLIP.
 #
 # Design intent (overrides older C-socket notes in DESIGN.md)
-#   Purchased 2x6 A500 center tube = reference body only.
+#   Purchased 2x5 A500 center tube = reference body only (matches cab).
 #   Rear clip = four-piece laser plate box rail per side (top / bottom /
 #   inboard / outboard) that slip-fits over the tube for length adjust,
-#   then welds. Tab-and-slot keys locate subassemblies into the rails.
+#   then welds. Straight / slip sections are 5 in tall; arch / kick-up
+#   plateau is 4 in (arch_rail_h) — 1 in cut on the ramps (bottom rises
+#   kickup_rise; top rises kickup_top_rise = rise + arch − tube_h).
+#   Tab-and-slot keys locate subassemblies into the rails.
 #   Prototype: 73-87 short (wb = wb_73_87_short). Switch to wb_67_72_short
 #   for 67-72. REV-B layout: outboard lower 4-link bars; rear_link_type selects
 #   triangulated (inboard uppers) or parallel_watts (parallel uppers + Watts
@@ -19,17 +22,15 @@
 #   across link variants so the same UtilityModule plugs into either.
 #   Aft of kickup the rails step back down and END at rail_end_x (short key
 #   bay past rcv_front_x). An end-cap plate welds onto the box aft face at
-#   rail_end_x (extrudes aft by clip_t) with a square cutout for the
-#   receiver OD. Square RECEIVER tubes pass through the cap; RCV_KEY tabs
-#   seat on the receiver OD faces and lap the rail side-plate outer faces
-#   forward of the key-bay window (rcv_od > box_od_w — weld/shim gap, no
-#   interior tube-in-box). Receiver length is parametric: key bay + end cap
-#   + 0.125 in tip clear + mod_insert_depth (default 6 in slip) so the tube
-#   is just long enough for the insert — not a long empty stub. Open mouths
-#   at rcv_rear_x (= clip_rear_x) are the aft-most clip feature. Cross-bolts
-#   sit inside the inserted span and lock the slide-in utility module
-#   (see KTECH_C10_UtilityModule). rear_overhang remains a body/module
-#   envelope reference and no longer drives rail length.
+#   rail_end_x (extrudes aft by clip_t) with a rectangular cutout for the
+#   2x4-module receiver OD (rcv_w x rcv_h). Rectangular RECEIVER tubes pass
+#   through the cap; RCV_KEY tabs seat on the receiver OD faces and lap the
+#   rail side-plate outer faces forward of the key-bay window. Receiver
+#   length is parametric: key bay + end cap + 0.125 in tip clear +
+#   mod_insert_depth (default 6 in slip). Open mouths at rcv_rear_x
+#   (= clip_rear_x) are the aft-most clip feature. Cross-bolts lock the
+#   slide-in 2x4 utility module (see KTECH_C10_UtilityModule).
+#   rail_bottom = 3.5 absolute ride height (cab match). rail_cl = 16.0.
 #
 # Coordinates (Fusion Y-up) — same as KTECH_C10_Chassis_Setup
 #   Origin = front axle × ground × frame centerline
@@ -117,12 +118,23 @@ PARAM_ORDER = [
     ("tube_w", "2 in", "in", "A500 width across the car"),
     (
         "tube_h",
-        "6 in",
+        "5 in",
         "in",
-        "A500 height — FLAG: center spine now 2x5; slip_id_h still from tube_h=6 until follow-up",
+        "A500 height — 2x5 cab box; slip_id_h matches FrontClip / Chassis_Setup",
+    ),
+    (
+        "arch_rail_h",
+        "4 in",
+        "in",
+        "Rail height over the arch / kick-up plateau (1 in cut from tube_h on the ramps)",
     ),
     ("wall", "0.188 in", "in", "A500 wall"),
-    ("rail_bottom", "8 in", "in", "Bottom of tube off ground"),
+    (
+        "rail_bottom",
+        "3.5 in",
+        "in",
+        "Absolute ride height — matches cab_rail_bottom 3.5 (was stale local 8)",
+    ),
     ("wb_73_87_short", "117.5 in", "in", "73-87 shortbed WB — first prototype"),
     ("wb_67_72_short", "115.0 in", "in", "67-72 shortbed WB — switch wb to this"),
     ("wb", "wb_73_87_short", "in", "Active wheelbase"),
@@ -132,8 +144,13 @@ PARAM_ORDER = [
         "in",
         "PLACEHOLDER. Body/module envelope aft of axle — NOT rail length",
     ),
-    ("core_width", "33.5 in", "in", "TAPED. Core support C-C"),
-    ("rail_cl", "core_width / 2", "in", "2x6 CL from vehicle CL"),
+    ("core_width", "33.5 in", "in", "TAPED. Core support C-C (mount ref; rails use rail_cl)"),
+    (
+        "rail_cl",
+        "16.0 in",
+        "in",
+        "Literal. Match front/cab 34 in OD (2*rail_cl + tube_w). Was core_width/2",
+    ),
     ("core_x", "-33 in", "in", "PLACEHOLDER. Core vs front axle"),
     ("core_to_mid", "55 in", "in", "TAPED. Core to mid along rail"),
     ("mid_to_rear", "43 in", "in", "TAPED. Mid to cab-rear along rail"),
@@ -144,10 +161,10 @@ PARAM_ORDER = [
     ("slip_overlap", "8 in", "in", "Slip-fit overlap of plate box on tube"),
     ("clip_t", "0.188 in", "in", "Laser plate thickness"),
     ("clip_clear", "0.030 in", "in", "Per-side slip clearance"),
-    ("center_tube_end_x", "cab_r_x + splice_aft", "in", "Aft end of purchased 2x6"),
+    ("center_tube_end_x", "cab_r_x + splice_aft", "in", "Aft end of purchased 2x5"),
     ("clip_front_x", "center_tube_end_x - slip_overlap", "in", "Forward end of plate box"),
     ("slip_id_w", "tube_w + 2 * clip_clear", "in", "Slip inside width"),
-    ("slip_id_h", "tube_h + 2 * clip_clear", "in", "Slip inside height"),
+    ("slip_id_h", "tube_h + 2 * clip_clear", "in", "Slip inside height (2x5)"),
     ("box_od_w", "slip_id_w + 2 * clip_t", "in", "Box outer width"),
     ("box_od_h", "slip_id_h + 2 * clip_t", "in", "Box outer height straight"),
     # Tab-and-slot
@@ -160,7 +177,13 @@ PARAM_ORDER = [
     ("bag_stroke", "11 in", "in", "Bag travel target"),
     ("kickup_ahead", "10 in", "in", "PLACEHOLDER. Kickup start ahead of axle"),
     ("kickup_aft", "8 in", "in", "PLACEHOLDER. Kickup end aft of axle"),
-    ("kickup_rise", "4 in", "in", "PLACEHOLDER. Rail top rise over axle"),
+    ("kickup_rise", "4 in", "in", "PLACEHOLDER. Vertical rise of rail BOTTOM over axle"),
+    (
+        "kickup_top_rise",
+        "kickup_rise + arch_rail_h - tube_h",
+        "in",
+        "Top rise over arch (=3 at defaults: peak top = bottom + rise + arch_rail_h)",
+    ),
     ("kickup_ramp", "4 in", "in", "PLACEHOLDER. Kickup ramp length"),
     # 4-link — REV-B lowers outboard; uppers inboard (triangulated) or parallel
     ("lower_link_len", "23 in", "in", "PLACEHOLDER. Target lower C-C (actual from pickups)"),
@@ -245,9 +268,9 @@ PARAM_ORDER = [
     ("mount_x_off", "0.000 in", "in", "PLACEHOLDER. Mount fore/aft offset from axle CL"),
     (
         "shock_eye_y",
-        "rail_bottom + tube_h + kickup_rise - 1 in",
+        "rail_bottom + arch_rail_h + kickup_rise - 1 in",
         "in",
-        "PLACEHOLDER. Upper shock/coilover eye height (Fusion Y)",
+        "PLACEHOLDER. Upper shock/coilover eye height (Fusion Y) at arch peak",
     ),
     ("shock_bore", "0.500 in", "in", "PLACEHOLDER. Shock/coilover bolt bore"),
     ("shock_tab_w", "2.500 in", "in", "PLACEHOLDER. Shock tab width along X"),
@@ -324,7 +347,7 @@ PARAM_ORDER = [
         "in",
         "PLACEHOLDER. Axle upper half-spread — triangulated (ignored when parallel_watts)",
     ),
-    ("mount_y", "rail_bottom + tube_h", "in", "Top of straight tube / slip section"),
+    ("mount_y", "rail_bottom + tube_h", "in", "Top of straight 2x5 / slip section"),
     # Watts link (used when rear_link_type = parallel_watts) — all PLACEHOLDER
     (
         "watts_pivot_x",
@@ -422,18 +445,42 @@ PARAM_ORDER = [
         "in",
         "PLACEHOLDER. Axle Watts pivot mount plate height along Y",
     ),
-    # Aft receivers (slide-in utility module — tube-in-tube)
+    # Aft receivers (slide-in 2x4 utility module — rectangular tube-in-tube)
     (
-        "rcv_od",
-        "2.500 in",
+        "mod_w",
+        "2.000 in",
         "in",
-        "PLACEHOLDER. Receiver square tube outer size (OD)",
+        "Air & fuel utility module rail width (2x4 rectangle; match UtilityModule)",
+    ),
+    (
+        "mod_h",
+        "4.000 in",
+        "in",
+        "Air & fuel utility module rail height (2x4 rectangle; match UtilityModule)",
+    ),
+    (
+        "mod_slip_clear",
+        "0.030 in",
+        "in",
+        "PLACEHOLDER. Per-side clear vs receiver ID (match UtilityModule)",
     ),
     (
         "rcv_wall",
         "0.188 in",
         "in",
-        "PLACEHOLDER. Receiver square tube wall",
+        "PLACEHOLDER. Receiver rectangular tube wall",
+    ),
+    (
+        "rcv_w",
+        "mod_w + 2 * mod_slip_clear + 2 * rcv_wall",
+        "in",
+        "Receiver outer width (across car) — rectangular pocket for 2x4 module",
+    ),
+    (
+        "rcv_h",
+        "mod_h + 2 * mod_slip_clear + 2 * rcv_wall",
+        "in",
+        "Receiver outer height — rectangular pocket for 2x4 module",
     ),
     (
         "rcv_front_x",
@@ -469,21 +516,21 @@ PARAM_ORDER = [
     ),
     (
         "rcv_cl_y",
-        "rail_bottom + tube_h / 2",
+        "rail_bottom + mod_h / 2",
         "in",
-        "PLACEHOLDER. Receiver CL height (Fusion Y) after kickup step-down",
+        "Receiver CL — module bottom at rail_bottom 3.5 / top 7.5 (not tube_h/2)",
     ),
     (
         "rcv_key_h",
-        "rcv_od",
+        "rcv_h",
         "in",
-        "PLACEHOLDER. Receiver key tab height (matches tube OD)",
+        "PLACEHOLDER. Receiver key tab height (matches receiver OD height)",
     ),
     (
         "rcv_weld_clear",
         "0.030 in",
         "in",
-        "PLACEHOLDER. Extra cutout clear around rcv_od at rail end cap",
+        "PLACEHOLDER. Extra cutout clear around receiver OD at rail end cap",
     ),
     (
         "rail_end_x",
@@ -531,7 +578,7 @@ PARAM_ORDER = [
     ),
     (
         "rcv_xm_h",
-        "rcv_od",
+        "rcv_h",
         "in",
         "PLACEHOLDER. Rear receiver crossmember plate height",
     ),
@@ -705,10 +752,12 @@ def run(_context):
             "{}\n"
             "{}\n"
             "{}\n"
-            "Aft receivers: rails end at rail_end_x; end cap welded aft; "
-            "open mouths at rcv_rear_x (= clip_rear_x); RCV_KEY on receiver "
-            "OD lapping rail side plates; cross-bolts aft of end cap for "
-            "slide-in utility module.\n"
+            "2x5 slip (tube_h=5); arch_rail_h=4 over kickup; "
+            "rail_bottom=3.5 ride; rail_cl=16.0.\n"
+            "Aft receivers: rectangular rcv_w x rcv_h for 2x4 module; "
+            "rails end at rail_end_x; end cap welded aft; open mouths at "
+            "rcv_rear_x (= clip_rear_x); RCV_KEY on receiver OD; cross-bolts "
+            "lock slide-in utility module.\n"
             "Lateral locator: {}.\n"
             "Exported {} plate DXFs to:\n{}\n"
             "Bar cut list:\n{}\n\n"
@@ -973,20 +1022,23 @@ def _kickup_world_points(design, top=True):
     rb = param_cm(design, "rail_bottom")
     clear = param_cm(design, "clip_clear")
     th = param_cm(design, "tube_h")
+    try:
+        arch_h = param_cm(design, "arch_rail_h")
+    except Exception:
+        arch_h = th
     ahead = param_cm(design, "kickup_ahead")
     aft = param_cm(design, "kickup_aft")
     rise = param_cm(design, "kickup_rise")
     ramp = param_cm(design, "kickup_ramp")
 
-    # Slip box outer: bottom at rail_bottom - clear - t? 
-    # Inside bottom = tube bottom - clear = rail_bottom - clear
-    # Outer bottom plate sits below that by clip_t for top/bottom wrap style,
-    # but side plates span the INSIDE height only (between top and bottom plates).
-    # Side plate vertical span = slip_id_h = tube_h + 2*clear
+    # Slip box: side plates span INSIDE height between top/bottom plates.
+    # Straight: slip_id_h = tube_h + 2*clear. Arch plateau: arch_rail_h + 2*clear.
+    # Bottom rises by kickup_rise; top rises by kickup_rise + arch_rail_h - tube_h
+    # so peak height = arch_rail_h (1 in cut when tube_h=5 / arch=4).
     y_bot = rb - clear
     y_top = rb + th + clear
-    y_top_hi = y_top + rise
     y_bot_hi = y_bot + rise
+    y_top_hi = y_bot_hi + arch_h + 2.0 * clear
 
     x_k0 = wb - ahead
     x_k1 = x_k0 + ramp
@@ -1143,7 +1195,7 @@ def build_rail_side(comp, passenger=True):
     if is_parallel_watts():
         _add_watts_key_slots(comp, design, side, sign)
 
-    # Clearance tunnel through plate box in the key bay so rcv_od can pass
+    # Clearance tunnel through plate box in the key bay so receiver OD can pass
     # without intersecting rail plates (keys lap outside — see receivers).
     _cut_receiver_rail_clearance(comp, design, side, sign)
 
@@ -1213,6 +1265,10 @@ def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
     rb = param_cm(design, "rail_bottom")
     clear = param_cm(design, "clip_clear")
     th = param_cm(design, "tube_h")
+    try:
+        arch_h = param_cm(design, "arch_rail_h")
+    except Exception:
+        arch_h = th
     t = param_cm(design, "clip_t")
     rise = param_cm(design, "kickup_rise")
     xf = param_cm(design, "clip_front_x")
@@ -1235,8 +1291,9 @@ def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
 
     y_bot_outer = rb - clear - t
     y_top_outer = rb + th + clear
+    # Bottom rises by kickup_rise; arch is arch_rail_h tall (top rises less).
     y_bot_hi = y_bot_outer + rise
-    y_top_hi = y_top_outer + rise
+    y_top_hi = y_bot_hi + t + arch_h + 2.0 * clear
 
     z0 = min(z_in_outer, z_out_outer)
     z1 = max(z_in_outer, z_out_outer)
@@ -1722,24 +1779,34 @@ def _rcv_weld_clear_cm(design):
         return 0.030 * IN_TO_CM
 
 
-def _cut_receiver_rail_clearance(comp, design, side, sign):
-    """Cut rcv_od (+ weld clear) side-plate windows in the key bay.
+def _rcv_wh_cm(design):
+    """Receiver outer width (Z) and height (Y) in cm. Falls back to legacy rcv_od."""
+    try:
+        return param_cm(design, "rcv_w"), param_cm(design, "rcv_h")
+    except Exception:
+        od = param_cm(design, "rcv_od")
+        return od, od
 
-    rcv_od exceeds slip_id_w / box_od_w, so without this cut the receiver
-    would intersect the side plates over [rcv_front_x, rail_end_x]. Top and
+
+def _cut_receiver_rail_clearance(comp, design, side, sign):
+    """Cut rcv_w x rcv_h (+ weld clear) side-plate windows in the key bay.
+
+    Receiver may exceed slip_id / box OD, so without this cut it would
+    intersect the side plates over [rcv_front_x, rail_end_x]. Top and
     bottom plates are cut only when the receiver Y span actually reaches
-    that plate's inner face (defaults: receiver sits inside the 6 in box).
-    RCV_KEY tabs seat on the receiver OD and lap the side-plate outer
-    faces forward of the window.
+    that plate's inner face (defaults: 4.4 in receiver sits inside the
+    5 in box). RCV_KEY tabs seat on the receiver OD and lap the side-plate
+    outer faces forward of the window.
     """
     x0 = param_cm(design, "rcv_front_x")
     x1 = param_cm(design, "rail_end_x")
     if x1 <= x0 + 0.05 * IN_TO_CM:
         return
     cy = param_cm(design, "rcv_cl_y")
-    od = param_cm(design, "rcv_od")
+    rw, rh = _rcv_wh_cm(design)
     clear = _rcv_weld_clear_cm(design)
-    half = od / 2.0 + clear
+    half_h = rh / 2.0 + clear
+    half_w = rw / 2.0 + clear
     cz = param_cm(design, "rail_cl") * sign
     z_in = _rail_inboard_inner_z(design, sign)
     z_out = _rail_outboard_inner_z(design, sign)
@@ -1757,10 +1824,10 @@ def _cut_receiver_rail_clearance(comp, design, side, sign):
         sk = comp.sketches.add(pl)
         sk.name = "SK_{}_{}".format(side, role)
         sk.isComputeDeferred = True
-        p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy - half, z_face))
-        p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + half, z_face))
-        p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x1, cy + half, z_face))
-        p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x1, cy - half, z_face))
+        p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy - half_h, z_face))
+        p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + half_h, z_face))
+        p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(x1, cy + half_h, z_face))
+        p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(x1, cy - half_h, z_face))
         lines = sk.sketchCurves.sketchLines
         lines.addByTwoPoints(p00, p01)
         lines.addByTwoPoints(p01, p11)
@@ -1785,10 +1852,10 @@ def _cut_receiver_rail_clearance(comp, design, side, sign):
     th = param_cm(design, "tube_h")
     y_top_inner = rb + th + clip_clear
     y_bot_inner = rb - clip_clear
-    rcv_y0 = cy - half
-    rcv_y1 = cy + half
-    z0 = min(cz - half, cz + half)
-    z1 = max(cz - half, cz + half)
+    rcv_y0 = cy - half_h
+    rcv_y1 = cy + half_h
+    z0 = min(cz - half_w, cz + half_w)
+    z1 = max(cz - half_w, cz + half_w)
     # Expand Z cut to full box width so top/bottom fully clear the tunnel.
     z_box0 = min(z_in - sign * t, z_out + sign * t)
     z_box1 = max(z_in - sign * t, z_out + sign * t)
@@ -1841,7 +1908,7 @@ def _build_rail_end_cap(comp, design, side, sign, z_in_outer, z_out_outer):
     Extrudes aft (+X) by clip_t so the cap occupies
     [rail_end_x, rail_end_x + clip_t] with no overlap into the side / tail
     plates. Outer rect = box outer (grown to surround the receiver cutout);
-    cutout = rcv_od + 2*rcv_weld_clear.
+    cutout = (rcv_w x rcv_h) + 2*rcv_weld_clear each side.
     """
     x_face = param_cm(design, "rail_end_x")
     t = param_cm(design, "clip_t")
@@ -1850,19 +1917,20 @@ def _build_rail_end_cap(comp, design, side, sign, z_in_outer, z_out_outer):
     th = param_cm(design, "tube_h")
     cy = param_cm(design, "rcv_cl_y")
     cz = param_cm(design, "rail_cl") * sign
-    od = param_cm(design, "rcv_od")
+    rw, rh = _rcv_wh_cm(design)
     weld = _rcv_weld_clear_cm(design)
-    half_cut = od / 2.0 + weld
+    half_cut_h = rh / 2.0 + weld
+    half_cut_w = rw / 2.0 + weld
 
     y0 = rb - clear - t
     y1 = rb + th + clear + t
     z0 = min(z_in_outer, z_out_outer)
     z1 = max(z_in_outer, z_out_outer)
     # Grow the cap to fully surround the receiver cutout if OD > box OD.
-    z0 = min(z0, cz - half_cut - t)
-    z1 = max(z1, cz + half_cut + t)
-    y0 = min(y0, cy - half_cut - t)
-    y1 = max(y1, cy + half_cut + t)
+    z0 = min(z0, cz - half_cut_w - t)
+    z1 = max(z1, cz + half_cut_w + t)
+    y0 = min(y0, cy - half_cut_h - t)
+    y1 = max(y1, cy + half_cut_h + t)
 
     name = "RAIL_{}_END_CAP".format(side)
     planes = comp.constructionPlanes
@@ -1884,10 +1952,10 @@ def _build_rail_end_cap(comp, design, side, sign, z_in_outer, z_out_outer):
     lines.addByTwoPoints(p01, p11)
     lines.addByTwoPoints(p11, p10)
     lines.addByTwoPoints(p10, p00)
-    # Inner square cutout centered on receiver.
+    # Inner rectangular cutout centered on receiver.
     oc = sk.modelToSketchSpace(adsk.core.Point3D.create(x_face, cy, cz))
     or_ = sk.modelToSketchSpace(
-        adsk.core.Point3D.create(x_face, cy + half_cut, cz + half_cut)
+        adsk.core.Point3D.create(x_face, cy + half_cut_h, cz + half_cut_w)
     )
     sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, or_)
     sk.isComputeDeferred = False
@@ -1915,10 +1983,14 @@ def _build_rail_end_cap(comp, design, side, sign, z_in_outer, z_out_outer):
 def _over_axle_top_y(design):
     """Inner top of kickup rail (underside of raised top plate / XM top seat)."""
     rb = param_cm(design, "rail_bottom")
-    th = param_cm(design, "tube_h")
     clear = param_cm(design, "clip_clear")
     rise = param_cm(design, "kickup_rise")
-    return rb + th + clear + rise
+    try:
+        arch_h = param_cm(design, "arch_rail_h")
+    except Exception:
+        arch_h = param_cm(design, "tube_h")
+    # Peak inner top = rail_bottom + kickup_rise + arch_rail_h + clear
+    return rb + rise + arch_h + clear
 
 
 def _ox_include_bottom(design):
@@ -3078,10 +3150,10 @@ def build_receivers(comp, rail_rh, rail_lh, xmembers):
 
 
 def _build_one_receiver(comp, design, passenger=True):
-    """Extrude hollow square tube along +X at rail_cl / rcv_cl_y.
+    """Extrude hollow rectangular tube along +X at rail_cl / rcv_cl_y.
 
     Tube runs rcv_front_x → rcv_rear_x, passing through the rail-end cap
-    cutout. Key-bay plate material is cleared so OD does not intersect rails.
+    cutout. Sized for 2x4 utility-module rails (rcv_w x rcv_h).
     """
     sign = 1.0 if passenger else -1.0
     side = "RH" if passenger else "LH"
@@ -3090,7 +3162,7 @@ def _build_one_receiver(comp, design, passenger=True):
     length = x1 - x0
     if length <= 0.05 * IN_TO_CM:
         length = param_cm(design, "rcv_length")
-    od = param_cm(design, "rcv_od")
+    rw, rh = _rcv_wh_cm(design)
     wall = param_cm(design, "rcv_wall")
     cy = param_cm(design, "rcv_cl_y")
     cz = param_cm(design, "rail_cl") * sign
@@ -3104,13 +3176,17 @@ def _build_one_receiver(comp, design, passenger=True):
     sk = comp.sketches.add(pl)
     sk.name = "SK_RCV_{}".format(side)
     sk.isComputeDeferred = True
-    half = od / 2.0
-    inner = half - wall
+    half_h = rh / 2.0
+    half_w = rw / 2.0
     oc = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy, cz))
-    or_ = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + half, cz + half))
-    ir_ = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + inner, cz + inner))
+    or_ = sk.modelToSketchSpace(
+        adsk.core.Point3D.create(x0, cy + half_h, cz + half_w)
+    )
+    ir_ = sk.modelToSketchSpace(
+        adsk.core.Point3D.create(x0, cy + half_h - wall, cz + half_w - wall)
+    )
     sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, or_)
-    if inner > 0.05:
+    if half_h - wall > 0.05 and half_w - wall > 0.05:
         sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, ir_)
     sk.isComputeDeferred = False
 
@@ -3135,10 +3211,10 @@ def _build_receiver_keys(comp, design, passenger=True):
     """Key tabs on receiver OD faces, lapping rail side plates (DXF).
 
     Inner face of each tab sits on the receiver OD (|z − rail_cl·sign| =
-    rcv_od/2) and extrudes outward by clip_t. X span is
+    rcv_w/2) and extrudes outward by clip_t. X span is
     [rcv_front_x − rcv_key_w, rail_end_x]: lap the receiver in the key bay
     and the rail side-plate outer face forward of the window. Gap to the
-    plate outer face is rcv_od/2 − box_od_w/2 (weld/shim; no intersection).
+    plate outer face is rcv_w/2 − box_od_w/2 (weld/shim; no intersection).
     OUT tabs land outboard of the receiver; IN tabs inboard.
     """
     sign = 1.0 if passenger else -1.0
@@ -3149,15 +3225,15 @@ def _build_receiver_keys(comp, design, passenger=True):
     x1 = param_cm(design, "rail_end_x")
     key_h = param_cm(design, "rcv_key_h")
     cy = param_cm(design, "rcv_cl_y")
-    od = param_cm(design, "rcv_od")
+    rw, _rh = _rcv_wh_cm(design)
     t = param_cm(design, "clip_t")
     cz = param_cm(design, "rail_cl") * sign
     xc = 0.5 * (x0 + x1)
     hx = max(abs(x1 - x0) / 2.0, 0.05 * IN_TO_CM)
     hy = key_h / 2.0
     # Receiver OD faces (inner face of each tab).
-    z_in_od = cz - sign * (od / 2.0)
-    z_out_od = cz + sign * (od / 2.0)
+    z_in_od = cz - sign * (rw / 2.0)
+    z_out_od = cz + sign * (rw / 2.0)
 
     for role, z_face, toward_outboard in (
         ("IN", z_in_od, False),
@@ -3214,15 +3290,15 @@ def _cut_receiver_bolt_holes(comp, design, passenger=True):
     """Cross-bolt holes through receiver side walls (along Z) for module lock."""
     sign = 1.0 if passenger else -1.0
     side = "RH" if passenger else "LH"
-    od = param_cm(design, "rcv_od")
+    rw, _rh = _rcv_wh_cm(design)
     cy = param_cm(design, "rcv_cl_y")
     cz = param_cm(design, "rail_cl") * sign
     d = param_cm(design, "rcv_bolt_d")
     pitch = param_cm(design, "rcv_bolt_pitch")
     x_first = param_cm(design, "rcv_bolt_first_x")
     n = _rcv_bolt_count(design)
-    # Sketch on XY at outboard outer face of tube; cut through full OD along −sign Z.
-    z_face = cz + sign * (od / 2.0)
+    # Sketch on XY at outboard outer face of tube; cut through full width along −sign Z.
+    z_face = cz + sign * (rw / 2.0)
 
     for i in range(n):
         xc = x_first + i * pitch
@@ -3243,7 +3319,7 @@ def _cut_receiver_bolt_holes(comp, design, passenger=True):
         ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
         # Cut through both walls (+ a little) toward frame CL.
         reverse = sign > 0
-        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(od + 0.1))
+        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(rw + 0.1))
         try:
             ext = extrudes.add(ext_in)
             ext.name = "EX_RCV_BOLT_{}_{}".format(side, i + 1)
@@ -3263,11 +3339,11 @@ def build_receiver_crossmember(comp, design):
     if t < 0.01:
         t = param_cm(design, "rcv_xm_w")
     cy = param_cm(design, "rcv_cl_y")
-    od = param_cm(design, "rcv_od")
+    rw, _rh = _rcv_wh_cm(design)
     cl = param_cm(design, "rail_cl")
     # Span between inboard faces of the two receivers.
-    z0 = -(cl - od / 2.0)
-    z1 = cl - od / 2.0
+    z0 = -(cl - rw / 2.0)
+    z1 = cl - rw / 2.0
     x_face = xc - t / 2.0
 
     planes = comp.constructionPlanes
@@ -3648,7 +3724,7 @@ def receiver_packaging_report(design):
     """Pure-math packaging checks for rail end / receiver / slide-in path."""
     lines = ["Receiver packaging checks (math):"]
     try:
-        rcv_od = param_cm(design, "rcv_od")
+        rcv_w, rcv_h = _rcv_wh_cm(design)
         slip_id_w = param_cm(design, "slip_id_w")
         slip_id_h = param_cm(design, "slip_id_h")
         box_od_w = param_cm(design, "box_od_w")
@@ -3684,19 +3760,21 @@ def receiver_packaging_report(design):
             mod_front = None
             insert_aft = None
 
-        # Width math: OD vs box — key tabs on OD with weld gap to plate.
-        od_in = rcv_od / IN_TO_CM
+        # Width/height math: OD vs box — key tabs on OD with weld gap to plate.
+        rw_in = rcv_w / IN_TO_CM
+        rh_in = rcv_h / IN_TO_CM
         id_w_in = slip_id_w / IN_TO_CM
         id_h_in = slip_id_h / IN_TO_CM
         box_w_in = box_od_w / IN_TO_CM
         box_h_in = box_od_h / IN_TO_CM
-        key_gap = (rcv_od / 2.0 - box_od_w / 2.0) / IN_TO_CM
-        if rcv_od > slip_id_w + 1e-6 or rcv_od > slip_id_h + 1e-6:
+        key_gap = (rcv_w / 2.0 - box_od_w / 2.0) / IN_TO_CM
+        if rcv_w > slip_id_w + 1e-6 or rcv_h > slip_id_h + 1e-6:
             lines.append(
-                "  rcv_od={:.3f} > slip_id {:.3f}x{:.3f} (box OD {:.3f}x{:.3f}) — "
+                "  rcv {:.3f}x{:.3f} > slip_id {:.3f}x{:.3f} (box OD {:.3f}x{:.3f}) — "
                 "side-plate window + RCV_KEY on OD (gap to plate outer "
                 "{:.3f} in).".format(
-                    od_in,
+                    rw_in,
+                    rh_in,
                     id_w_in,
                     id_h_in,
                     box_w_in,
@@ -3706,8 +3784,8 @@ def receiver_packaging_report(design):
             )
         else:
             lines.append(
-                "  rcv_od={:.3f} fits slip_id {:.3f}x{:.3f} — interior key possible.".format(
-                    od_in, id_w_in, id_h_in
+                "  rcv {:.3f}x{:.3f} fits slip_id {:.3f}x{:.3f} — interior key possible.".format(
+                    rw_in, rh_in, id_w_in, id_h_in
                 )
             )
         if key_gap < -1e-4:
@@ -3717,7 +3795,7 @@ def receiver_packaging_report(design):
             )
         else:
             lines.append(
-                "  Key/plate Z gap={:.3f} in (rcv_od/2 − box_od_w/2; weld/shim).".format(
+                "  Key/plate Z gap={:.3f} in (rcv_w/2 − box_od_w/2; weld/shim).".format(
                     key_gap
                 )
             )

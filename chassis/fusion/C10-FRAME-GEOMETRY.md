@@ -58,7 +58,7 @@ Core to cab-rear = **98"**.
 | Hub | Modular / unit hub, 5×4.75 and 5×5 |
 | Rear | 4-link, **22–24" lowers** (20" is the floor) |
 | Tire / bags | 32" OD lay-out, ~11" bag stroke |
-| Rail | Cab/center **2×5** × 3/16 A500 (FLAG: was 2×6); front clip flat 6" / 34" OD; nose 28×4 |
+| Rail | Cab/center **2×5** × 3/16 A500; front clip flat **5"** / 34" OD (was 6); nose 28×4 |
 
 CPP X10 was considered and dropped because Wilwood published the print.
 
@@ -82,8 +82,8 @@ Drawing file in the Fusion script folder: `wilwood-831-14202.png`.
 | Dim | Value |
 |---|---|
 | Tube (cab/center) | 2 × 5 × 0.188" A500 (FLAG: was 2×6) |
-| Front clip at arms | Flat 6" tall, 34" OD (`rail_cl = 16.0`), bottom 10.07 at ride |
-| Nose | 28 × 4 in, 23° / 7 in kick, drop x=8→20 before `cab_f_x` |
+| Front clip at arms | Flat **5"** tall, 34" OD (`rail_cl = 16.0`), bottom 10.07 / top 15.07 at ride |
+| Nose | 28 × 4 in, 23° / 7 in kick, top ramps **1 in** (~8.13° elev), drop 6.57 x=8→20 before `cab_f_x` |
 | Clip overlap | 14" (legacy) / FrontClip slip 8" over 2×5 |
 | Clip plate | 0.188" |
 | Slip clearance | 0.030" per side |

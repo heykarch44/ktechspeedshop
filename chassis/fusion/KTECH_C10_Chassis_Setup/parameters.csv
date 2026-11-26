@@ -6,6 +6,7 @@ wall,0.188,in,A500 wall. Use 0.250 for heavier
 rail_bottom,3.5,in,COMPAT: cab/center bottom at design ride (was stale 8). Prefer cab_rail_bottom
 cab_rail_bottom,3.5,in,Cab/center section bottom above ground at design ride
 front_rail_bottom,10.07,in,Front-clip rail bottom at the arms (design ride). Lower pivot hangs 2 in below
+front_rail_h,5,in,Front-clip rail height through cab section AND A-arms (was 6). Top = 15.07
 front_overhang,34,in,Tube ahead of front axle. Horns / core support.
 wb,117.5,in,Wheelbase. 73-87 short=117.5  long=131.5  67-72 short=115  long=127
 rear_overhang,42,in,Tube behind rear axle. Raised bed — not a body-mount number.

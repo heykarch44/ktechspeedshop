@@ -4,15 +4,17 @@ cab_rail_h,5,in,FLAG: purchased center spine is now 2x5 (was 2x6). FrontClip aft
 cab_rail_bottom,3.5,in,Cab/center section bottom at design ride
 rail_bottom,cab_rail_bottom,in,COMPAT alias → cab_rail_bottom
 front_rail_bottom,10.07,in,Front-clip rail bottom at the arms (design ride)
-front_rail_h,6,in,Flat 6 in rail through steering / A-arms / engine (no arch)
-nose_rail_h,4,in,Nose height ahead of kick (top ramps down 2 in over kick; bottom stays level)
-cab_drop,front_rail_bottom - cab_rail_bottom,in,Angular drop amount (6.57 at defaults)
+front_rail_h,5,in,Flat 5 in rail through steering / A-arms / engine (was 6; no arch). Top = 15.07
+nose_rail_h,4,in,Nose height ahead of kick (top ramps 1 in over kick; bottom stays level)
+nose_top_ramp,front_rail_h - nose_rail_h,in,Top drop over kick (1 in at defaults; bottom level)
+nose_elev_deg,8.13,,Elevation ramp deg ≈ atan(nose_top_ramp/kick_len); ~8.13 at 1 in / 7 in
+cab_drop,front_rail_bottom - cab_rail_bottom,in,Angular drop 6.57 on top AND bottom (both rails 5 in; parallel) x=8→20
 wall,0.188,in,A500 wall (center tube ref)
 clip_t,0.188,in,Laser plate thickness for four-piece box
 clip_clear,0.030,in,Per-side slip-fit clearance
 box_od_w,tube_w + 2 * clip_clear + 2 * clip_t,in,Constant plate-box outer width (~2.44) through kick
 slip_id_w,tube_w + 2 * clip_clear,in,Slip inside width over center tube
-slip_id_h,cab_rail_h + 2 * clip_clear,in,Slip inside height — sized to 2x5 center (NOT rear 2x6)
+slip_id_h,cab_rail_h + 2 * clip_clear,in,Slip inside height — sized to 2x5 center (matches rear clip)
 box_od_h_front,front_rail_h + 2 * clip_clear + 2 * clip_t,in,Box outer height on raised front section
 box_od_h_cab,slip_id_h + 2 * clip_t,in,Box outer height on cab/slip section
 rail_cl,16.0,in,Literal. 34 in OD through arms/engine (2*rail_cl + tube_w). Uncoupled from core_width
@@ -41,8 +43,8 @@ lca_pivot_z,13.50,in,Lower inner pivot lateral off CL (level arm at ride)
 lca_pivot_y,8.07,in,Lower inner pivot height (= LBJ height). 2.00 hang below front_rail_bottom
 lca_hang,front_rail_bottom - lca_pivot_y,in,Hanging drop-mount below rail bottom (2.00 at defaults)
 uca_pivot_z,15.50,in,Upper inner pivot lateral off CL
-uca_pivot_y,17.88,in,Upper inner pivot height. ~1.81 above front rail top (tower; no arch)
-uca_tower,uca_pivot_y - (front_rail_bottom + front_rail_h),in,Upper tower above rail top (~1.81)
+uca_pivot_y,17.88,in,Upper inner pivot height. ~2.81 above front rail top (tower; no arch)
+uca_tower,uca_pivot_y - (front_rail_bottom + front_rail_h),in,Upper tower above rail top (~2.81)
 pivot_stub_t,0.375,in,PLACEHOLDER. Solid stub plate thickness for pivot construction
 pivot_stub_w,2.500,in,PLACEHOLDER. Solid stub width along X
 core_pad_t,0.250,in,PLACEHOLDER. Core-support pad plate thickness

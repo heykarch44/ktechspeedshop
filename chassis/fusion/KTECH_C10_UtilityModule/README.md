@@ -1,6 +1,6 @@
 # KTECH_C10_UtilityModule
 
-Fusion 360 Python script that builds a parametric **bench-built bolt-in utility tray** for the Ktech C10 rear clip: two square-tube rails that **slide inside** the rear-clip receivers (tube-in-tube) and **cross-bolt**, a keyed laser-cut tray, fuel-tank envelope (welded aluminum box + Boyd 21057 sump + Radium 20-0278 6x10 24-bolt flange / FCST-X + Usher UD3F fill + Ace Race Parts ORB bungs + SAE 5-bolt sender), optional air system (tank, twin compressors, valve manifold), twin batteries, and a forward **bulkhead service plate** with AN / air / battery-cable / control pass-throughs.
+Fusion 360 Python script that builds a parametric **bench-built bolt-in utility tray** for the Ktech C10 rear clip: two **2×4** rectangular-tube rails (air & fuel module) that **slide inside** the rear-clip rectangular receivers (tube-in-tube) and **cross-bolt**, a keyed laser-cut tray, fuel-tank envelope (welded aluminum box + Boyd 21057 sump + Radium 20-0278 6x10 24-bolt flange / FCST-X + Usher UD3F fill + Ace Race Parts ORB bungs + SAE 5-bolt sender), optional air system (tank, twin compressors, valve manifold), twin batteries, and a forward **bulkhead service plate** with AN / air / battery-cable / control pass-throughs.
 
 Mates to `../KTECH_C10_RearClip/` receivers (`rcv_*` params must match).
 
@@ -24,7 +24,7 @@ Coordinates match the chassis / rear clip: origin = front axle × ground × fram
 |---|---|
 | `00_ORIGIN` | 6" marker cube |
 | `00_SKELETON` | SK_SIDE, SK_TOP layout refs |
-| `01_RAILS` | LH/RH hollow square tubes (`mod_od` × `mod_wall`) + matching cross-bolt holes |
+| `01_RAILS` | LH/RH hollow 2×4 tubes (`mod_w` × `mod_h` × `mod_wall`) + matching cross-bolt holes |
 | `02_TRAY` | Keyed laser floor plate + rail key strips (`TRAY_FLOOR`, `TRAY_KEY_*`) |
 | `03_FUEL_TANK` | Box + Boyd sump + 6x10 flange / fill / vent / sender / feed+return+drain bung envelopes + mount plates |
 | `04_AIR` | Air tank, twin compressors, valve manifold + mounts (**air_fuel** only; omitted note when `fuel_only`) |
@@ -82,12 +82,13 @@ Mirrors `KTECH_C10_RearClip` receiver packaging. Shared `mod_insert_depth` (defa
 | `tray_x0` / `bh_x` | `rcv_rear_x` | **133.313** (at receiver mouths) |
 | `wb + rear_overhang` | body envelope ref | **159.5** (`mod_rear_x` ≈ this when `mod_tray_len` is dialed in) |
 
-- Rear clip receivers: `rcv_od` / `rcv_wall` (default **2.5 × 0.188 PLACEHOLDER**) — must match rear clip exactly
-- Module rails: `mod_od` / `mod_wall` (default **2.0 × 0.188 PLACEHOLDER**) slide in from `rcv_rear_x` forward by `mod_insert_depth`
+- Air & fuel module rails: **2×4** (`mod_w=2` across car, `mod_h=4` tall, `mod_wall` 0.188) — bottom at `rail_bottom` 3.5 / top 7.5
+- Rear clip receivers: rectangular `rcv_w` / `rcv_h` / `rcv_wall` (= mod + 2×`mod_slip_clear` + 2×wall) — must match rear clip exactly
 - Per-side slip: `mod_slip_clear` (default **0.030 PLACEHOLDER**)
 - Insert: `mod_insert_len = mod_insert_depth`; `mod_front_x = rcv_rear_x - mod_insert_depth`
 - Cross-bolts (shared exprs): `rcv_bolt_first_x = (rcv_rear_x - mod_insert_depth) + (mod_insert_depth - rcv_bolt_pitch) / 2` — both holes inside the insert with ~1.5 in end distance
-- End-cap cutout on the clip is sized for `rcv_od`; module OD fits through the receiver bore and the cap opening
+- End-cap cutout on the clip is sized for `rcv_w` × `rcv_h`; module OD fits through the receiver bore and the cap opening
+- Shared refs: `tube_h=5`, `rail_bottom=3.5`, `rail_cl=16.0` (cab 2×5 match; was stale 2×6 @ 8)
 
 ## Variant
 

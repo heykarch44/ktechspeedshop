@@ -10,8 +10,8 @@
 #   Ground, ride-height lines (0 / 3 / 3.5 design / 4 / 7), vehicle CL, hub CL,
 #   tire + wheel outlines, wheel CL, hub mounting face, spindle CL, Wilwood
 #   831-14202 ball joints and steering axis extended to ground (scrub), tie-rod
-#   height guide, upper + lower arms to locked inner pivots, flat 6 in front
-#   rail at 10.07–16.07 (no arch) with ~1.8 in UCA tower + hanging LCA, cab
+#   height guide, upper + lower arms to locked inner pivots, flat 5 in front
+#   rail at 10.07–15.07 (no arch) with ~2.81 in UCA tower + hanging LCA, cab
 #   2x5 at 3.5 bottom, lower crossmember + oil pan guide, IC / RC lines.
 #
 # Workflow
@@ -316,7 +316,7 @@ def draw_side(pen, v, g, s):
     pen.point(*up)
     pen.point(*lp)
 
-    # rails: flat front clip at arms (10.07–16.07) + cab/center 2x5 at 3.5 (construction)
+    # rails: flat front clip at arms (10.07–15.07) + cab/center 2x5 at 3.5 (construction)
     rz, tw, th = s * v["fg_rail_cl"], v["fg_tube_w"], v["fg_tube_h"]
     yb = v["fg_front_rail_bottom"]
     pen.rect(rz - tw / 2, yb, rz + tw / 2, yb + th)
@@ -351,6 +351,6 @@ def draw_side(pen, v, g, s):
         pen.text(ag[0] - 1, -2.4, "SCRUB {:+.2f}".format(g["scrub"]), 0.45)
         tower = v.get("fg_uca_tower", up[1] - (yb + th))
         hang = v.get("fg_lca_hang", yb - lp[1])
-        pen.text(rz + tw / 2 + 0.4, yb + th / 2, "FLAT RAIL 10.07-16.07", 0.3)
+        pen.text(rz + tw / 2 + 0.4, yb + th / 2, "FLAT RAIL 10.07-15.07", 0.3)
         pen.text(rz + tw / 2 + 0.4, yb + th + 0.4, "TOWER +{:.2f}".format(tower), 0.3)
         pen.text(rz + tw / 2 + 0.4, yb - 0.8, "HANG {:.2f}".format(hang), 0.3)

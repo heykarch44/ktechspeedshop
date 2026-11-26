@@ -7,17 +7,19 @@
 #   4. Run it. It opens / uses a Design document. Save as KTECH_C10_UTILITY_MODULE.
 #
 # Design intent
-#   Bench-built bolt-in tray. Two smaller square-tube rails (default 2.0 x
-#   0.188 PLACEHOLDER) slide INSIDE the rear-clip receivers (tube-in-tube)
-#   by mod_insert_depth (default 6 in) and cross-bolt. mod_front_x =
-#   rcv_rear_x - mod_insert_depth; receiver length on the clip is shortened
-#   to key bay + end cap + tip clear + insert (match rear-clip expressions).
-#   Tray is keyed laser-cut plate. Parametric envelopes / mounts for fuel
-#   tank (welded alum box + Boyd 21057 sump + Radium 20-0278 6x10 24-bolt
-#   weld flange / FCST-X + Usher UD3F fill + Ace Race Parts ORB
-#   feed/return/drain/vent + SAE 5-bolt sender), air tank, twin compressors,
-#   valve manifold, twin batteries. Forward bulkhead service plate with AN
-#   fuel feed/return, air, battery-cable, and control pass-throughs.
+#   Bench-built bolt-in tray. Air & fuel utility module uses 2x4 tube
+#   rails (mod_w=2 across car, mod_h=4 tall) that slide INSIDE the
+#   rear-clip rectangular receivers (rcv_w x rcv_h) by mod_insert_depth
+#   (default 6 in) and cross-bolt. Module bottom at rail_bottom 3.5 /
+#   top 7.5 at ride. mod_front_x = rcv_rear_x - mod_insert_depth; receiver
+#   length on the clip is shortened to key bay + end cap + tip clear +
+#   insert (match rear-clip expressions). Tray is keyed laser-cut plate.
+#   Parametric envelopes / mounts for fuel tank (welded alum box + Boyd
+#   21057 sump + Radium 20-0278 6x10 24-bolt weld flange / FCST-X + Usher
+#   UD3F fill + Ace Race Parts ORB feed/return/drain/vent + SAE 5-bolt
+#   sender), air tank, twin compressors, valve manifold, twin batteries.
+#   Forward bulkhead service plate with AN fuel feed/return, air,
+#   battery-cable, and control pass-throughs.
 #   module_variant = air_fuel | fuel_only.
 #
 # Fuel fittings (sourced) — see README for full URLs
@@ -78,14 +80,24 @@ STRING_PARAMS = {
 
 PARAM_ORDER = [
     # Shared names (match rear clip / chassis setup where they apply)
-    ("tube_w", "2 in", "in", "Shared spine width reference"),
-    ("tube_h", "6 in", "in", "Shared spine height reference"),
+    ("tube_w", "2 in", "in", "Shared spine width reference (cab 2x5)"),
+    ("tube_h", "5 in", "in", "Shared spine height reference (cab 2x5; was 6)"),
     ("wall", "0.188 in", "in", "Shared spine wall reference"),
-    ("rail_bottom", "8 in", "in", "Bottom of 2x6 off ground"),
+    (
+        "rail_bottom",
+        "3.5 in",
+        "in",
+        "Shared — cab/rear bottom at design ride (was stale 8)",
+    ),
     ("wb_73_87_short", "117.5 in", "in", "73-87 shortbed WB"),
     ("wb", "wb_73_87_short", "in", "Active wheelbase — match rear clip"),
     ("core_width", "33.5 in", "in", "TAPED. Core support C-C"),
-    ("rail_cl", "core_width / 2", "in", "Rail/receiver CL from vehicle CL"),
+    (
+        "rail_cl",
+        "16.0 in",
+        "in",
+        "Literal. Match rear clip / front 34 in OD (was core_width/2)",
+    ),
     ("clip_t", "0.188 in", "in", "Laser plate thickness"),
     ("clip_clear", "0.030 in", "in", "Shared slip-clear name"),
     ("kickup_aft", "8 in", "in", "PLACEHOLDER. Match rear clip kickup_aft"),
@@ -95,9 +107,39 @@ PARAM_ORDER = [
         "in",
         "PLACEHOLDER. Match rear clip — body/module envelope aft of axle",
     ),
-    # Mate to rear-clip receivers (expressions/defaults must match KTECH_C10_RearClip)
-    ("rcv_od", "2.500 in", "in", "PLACEHOLDER. Match rear clip receiver OD"),
+    # Air & fuel utility module: 2x4 rails + matching rectangular receivers
+    (
+        "mod_w",
+        "2.000 in",
+        "in",
+        "Air & fuel utility module rail width — 2x4 rectangle (2 in across car)",
+    ),
+    (
+        "mod_h",
+        "4.000 in",
+        "in",
+        "Air & fuel utility module rail height — 2x4 rectangle (4 in tall)",
+    ),
+    ("mod_wall", "0.188 in", "in", "PLACEHOLDER. Module rail wall"),
+    (
+        "mod_slip_clear",
+        "0.030 in",
+        "in",
+        "PLACEHOLDER. Per-side clear vs receiver ID",
+    ),
     ("rcv_wall", "0.188 in", "in", "PLACEHOLDER. Match rear clip receiver wall"),
+    (
+        "rcv_w",
+        "mod_w + 2 * mod_slip_clear + 2 * rcv_wall",
+        "in",
+        "Match rear clip — receiver outer width for 2x4 module",
+    ),
+    (
+        "rcv_h",
+        "mod_h + 2 * mod_slip_clear + 2 * rcv_wall",
+        "in",
+        "Match rear clip — receiver outer height for 2x4 module",
+    ),
     ("rcv_front_x", "wb + kickup_aft", "in", "PLACEHOLDER. Match rear clip rcv_front_x"),
     (
         "rcv_key_w",
@@ -124,7 +166,12 @@ PARAM_ORDER = [
         "in",
         "Match rear clip — receiver aft mouth X",
     ),
-    ("rcv_cl_y", "rail_bottom + tube_h / 2", "in", "PLACEHOLDER. Match rear clip rcv_cl_y"),
+    (
+        "rcv_cl_y",
+        "rail_bottom + mod_h / 2",
+        "in",
+        "Module/receiver CL — bottom at rail_bottom 3.5 / top 7.5",
+    ),
     (
         "rail_end_x",
         "rcv_front_x + rcv_key_w",
@@ -147,15 +194,7 @@ PARAM_ORDER = [
         "in",
         "PLACEHOLDER. Match rear clip — first bolt centered in insert",
     ),
-    # Module rails (tube-in-tube)
-    ("mod_od", "2.000 in", "in", "PLACEHOLDER. Module rail square tube OD"),
-    ("mod_wall", "0.188 in", "in", "PLACEHOLDER. Module rail wall"),
-    (
-        "mod_slip_clear",
-        "0.030 in",
-        "in",
-        "PLACEHOLDER. Per-side clear vs receiver ID",
-    ),
+    # Module rail lengths
     (
         "mod_insert_len",
         "mod_insert_depth",
@@ -175,7 +214,7 @@ PARAM_ORDER = [
     ("tray_t", "clip_t", "in", "PLACEHOLDER. Tray plate thickness"),
     (
         "tray_width",
-        "2 * rail_cl - mod_od",
+        "2 * rail_cl - mod_w",
         "in",
         "PLACEHOLDER. Tray width between rail inboard faces",
     ),
@@ -188,9 +227,9 @@ PARAM_ORDER = [
     ),
     (
         "tray_y",
-        "rcv_cl_y - mod_od / 2",
+        "rcv_cl_y - mod_h / 2",
         "in",
-        "PLACEHOLDER. Tray top face (on rail top)",
+        "PLACEHOLDER. Tray top face (on rail top = rail_bottom + mod_h)",
     ),
     ("tray_drop", "0.000 in", "in", "PLACEHOLDER. Extra drop below rail top"),
     ("tab_width", "0.750 in", "in", "PLACEHOLDER. Tray key tab width"),
@@ -549,8 +588,9 @@ def run(_context):
         ui.messageBox(
             "Utility module built in this document.\n\n"
             "Variant: {} (module_variant user/CSV string).\n"
-            "Rails: mod_od x mod_wall square tube with mod_slip_clear; "
-            "slide into rear-clip receivers (tube-in-tube) and cross-bolt.\n"
+            "Rails: 2x4 (mod_w x mod_h) with mod_wall; rectangular "
+            "receivers rcv_w x rcv_h; tube-in-tube + cross-bolt. "
+            "Bottom at rail_bottom 3.5 / top 7.5.\n"
             "{}\n"
             "Exported {} plate DXFs to:\n{}\n\n"
             "Fit view if the canvas looks empty.\n"
@@ -652,14 +692,27 @@ def _int_param(design, name, default=1):
 def _fit_check_note(design):
     """Receiver ID vs module OD + 2*slip — soft check printed at run."""
     try:
-        rcv_id = param_cm(design, "rcv_od") - 2.0 * param_cm(design, "rcv_wall")
-        need = param_cm(design, "mod_od") + 2.0 * param_cm(design, "mod_slip_clear")
-        gap = (rcv_id - need) / IN_TO_CM
-        ok = "OK" if gap >= -0.001 else "TIGHT/INTERFERENCE — adjust PLACEHOLDER dims"
+        wall = param_cm(design, "rcv_wall")
+        clear = param_cm(design, "mod_slip_clear")
+        try:
+            rcv_w = param_cm(design, "rcv_w")
+            rcv_h = param_cm(design, "rcv_h")
+            mod_w = param_cm(design, "mod_w")
+            mod_h = param_cm(design, "mod_h")
+        except Exception:
+            rcv_w = rcv_h = param_cm(design, "rcv_od")
+            mod_w = mod_h = param_cm(design, "mod_od")
+        gap_w = (rcv_w - 2.0 * wall - mod_w - 2.0 * clear) / IN_TO_CM
+        gap_h = (rcv_h - 2.0 * wall - mod_h - 2.0 * clear) / IN_TO_CM
+        ok_w = "OK" if gap_w >= -0.001 else "TIGHT/INTERFERENCE"
+        ok_h = "OK" if gap_h >= -0.001 else "TIGHT/INTERFERENCE"
         lines = [
-            "Tube-in-tube fit (rcv ID − mod OD − 2*clear): {:.3f} in — {}.".format(
-                gap, ok
-            )
+            "Tube-in-tube fit W (rcv ID − mod − 2*clear): {:.3f} in — {}.".format(
+                gap_w, ok_w
+            ),
+            "Tube-in-tube fit H (rcv ID − mod − 2*clear): {:.3f} in — {}.".format(
+                gap_h, ok_h
+            ),
         ]
         # Packaging stations vs rear clip.
         rcv_front = param_cm(design, "rcv_front_x") / IN_TO_CM
@@ -843,12 +896,21 @@ def build_module_rails(comp):
         _cut_module_bolt_holes(comp, design, passenger=passenger)
 
 
+def _mod_wh_cm(design):
+    """Module rail outer width (Z) and height (Y) in cm."""
+    try:
+        return param_cm(design, "mod_w"), param_cm(design, "mod_h")
+    except Exception:
+        od = param_cm(design, "mod_od")
+        return od, od
+
+
 def _build_one_module_rail(comp, design, passenger=True):
     sign = 1.0 if passenger else -1.0
     side = "RH" if passenger else "LH"
     x0 = param_cm(design, "mod_front_x")
     length = param_cm(design, "mod_rail_len")
-    od = param_cm(design, "mod_od")
+    mw, mh = _mod_wh_cm(design)
     wall = param_cm(design, "mod_wall")
     cy = param_cm(design, "rcv_cl_y")
     cz = param_cm(design, "rail_cl") * sign
@@ -862,13 +924,17 @@ def _build_one_module_rail(comp, design, passenger=True):
     sk = comp.sketches.add(pl)
     sk.name = "SK_MOD_RAIL_{}".format(side)
     sk.isComputeDeferred = True
-    half = od / 2.0
-    inner = half - wall
+    half_h = mh / 2.0
+    half_w = mw / 2.0
     oc = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy, cz))
-    or_ = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + half, cz + half))
-    ir_ = sk.modelToSketchSpace(adsk.core.Point3D.create(x0, cy + inner, cz + inner))
+    or_ = sk.modelToSketchSpace(
+        adsk.core.Point3D.create(x0, cy + half_h, cz + half_w)
+    )
+    ir_ = sk.modelToSketchSpace(
+        adsk.core.Point3D.create(x0, cy + half_h - wall, cz + half_w - wall)
+    )
     sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, or_)
-    if inner > 0.05:
+    if half_h - wall > 0.05 and half_w - wall > 0.05:
         sk.sketchCurves.sketchLines.addCenterPointRectangle(oc, ir_)
     sk.isComputeDeferred = False
 
@@ -892,14 +958,14 @@ def _cut_module_bolt_holes(comp, design, passenger=True):
     """Matching cross-bolt holes through module rails (align with receiver bolts)."""
     sign = 1.0 if passenger else -1.0
     side = "RH" if passenger else "LH"
-    od = param_cm(design, "mod_od")
+    mw, _mh = _mod_wh_cm(design)
     cy = param_cm(design, "rcv_cl_y")
     cz = param_cm(design, "rail_cl") * sign
     d = param_cm(design, "rcv_bolt_d")
     pitch = param_cm(design, "rcv_bolt_pitch")
     x_first = param_cm(design, "rcv_bolt_first_x")
     n = _int_param(design, "rcv_bolt_count", 2)
-    z_face = cz + sign * (od / 2.0)
+    z_face = cz + sign * (mw / 2.0)
 
     for i in range(n):
         xc = x_first + i * pitch
@@ -919,7 +985,7 @@ def _cut_module_bolt_holes(comp, design, passenger=True):
         extrudes = comp.features.extrudeFeatures
         ext_in = extrudes.createInput(prof, adsk.fusion.FeatureOperations.CutFeatureOperation)
         reverse = sign > 0
-        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(od + 0.1))
+        ext_in.setDistanceExtent(reverse, adsk.core.ValueInput.createByReal(mw + 0.1))
         try:
             ext = extrudes.add(ext_in)
             ext.name = "EX_MOD_BOLT_{}_{}".format(side, i + 1)
@@ -957,12 +1023,12 @@ def _cut_tray_key_slots(comp, design, _body):
     tw = param_cm(design, "tab_width")
     sc = param_cm(design, "slot_clear")
     cl = param_cm(design, "rail_cl")
-    od = param_cm(design, "mod_od")
+    mw, _mh = _mod_wh_cm(design)
     # Three tabs along each long edge.
     n_tabs = 3
     pitch = length / (n_tabs + 1)
     for side_sign, label in ((1.0, "RH"), (-1.0, "LH")):
-        z_edge = side_sign * (cl - od / 2.0)
+        z_edge = side_sign * (cl - mw / 2.0)
         for i in range(n_tabs):
             xc = x0 + (i + 1) * pitch
             planes = comp.constructionPlanes
@@ -1010,13 +1076,13 @@ def _build_tray_keys(comp, design):
     tw = param_cm(design, "tab_width")
     tl = param_cm(design, "tab_length")
     cl = param_cm(design, "rail_cl")
-    od = param_cm(design, "mod_od")
+    mw, _mh = _mod_wh_cm(design)
     n_tabs = 3
     pitch = length / (n_tabs + 1)
     # One representative key plate per side (union of tab strip) for DXF.
     for side_sign, side in ((1.0, "RH"), (-1.0, "LH")):
-        z0 = side_sign * (cl - od / 2.0) - tl / 2.0
-        z1 = side_sign * (cl - od / 2.0) + tl / 2.0
+        z0 = side_sign * (cl - mw / 2.0) - tl / 2.0
+        z1 = side_sign * (cl - mw / 2.0) + tl / 2.0
         # Single strip covering all tab stations for a clean DXF body.
         name = "TRAY_KEY_{}".format(side)
         _extrude_xz_plate(
