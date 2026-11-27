@@ -7,14 +7,15 @@ rail_bottom,3.5,in,Absolute ride height — matches cab_rail_bottom 3.5 (was sta
 wb_73_87_short,117.5,in,73-87 C10 shortbed wheelbase — first prototype
 wb_67_72_short,115.0,in,67-72 C10 shortbed wheelbase — switch wb expression to this
 wb,wb_73_87_short,in,Active wheelbase. Proto = wb_73_87_short; set to wb_67_72_short for 67-72
-rear_overhang,42,in,PLACEHOLDER. Body/module envelope aft of axle — NOT rail length
+rear_overhang,36,in,TAPED 2026-11-26. Rear axle CL to end of frame (was 42). Frame end = wb+36 = 153.5 — NOT rail length
 core_width,33.5,in,TAPED. Core support C-C (mount ref; rails use rail_cl)
 rail_cl,16.0,in,Literal. Match front/cab 34 in OD (2*rail_cl + tube_w). Was core_width/2
-core_x,-33,in,Core vs front axle. PLACEHOLDER until IFS lands.
+cab_to_axle,87,in,FLAG: FRONT cab mount to rear axle CL (2026-11-26). Match Chassis_Setup
+cab_f_x,wb - cab_to_axle,in,Driver (=30.5). Was core_x + core_to_mid
 core_to_mid,55,in,TAPED. Core to mid / cab-front along the rail
+core_x,cab_f_x - core_to_mid,in,Derived (=−24.5). Was the old driver (−33 placeholder)
 mid_to_rear,43,in,TAPED. Mid to back of cab along the rail
-cab_f_x,core_x + core_to_mid,in,Computed
-cab_r_x,cab_f_x + mid_to_rear,in,Computed
+cab_r_x,cab_f_x + mid_to_rear,in,Computed (=73.5)
 splice_aft,3,in,PLACEHOLDER. Split behind cab_r before clip starts
 slip_overlap,8,in,Slip-fit overlap of plate box over 2x5 center tube
 clip_t,0.188,in,Laser plate thickness for clip rails and keyed mounts
@@ -33,8 +34,8 @@ tire_od,32,in,Lay-out tire. Lock before finalizing kickup
 bag_stroke,11,in,Bag travel target
 kickup_ahead,10,in,PLACEHOLDER. Kickup start ahead of rear axle CL
 kickup_aft,8,in,PLACEHOLDER. Kickup ends aft of rear axle CL
-kickup_rise,4,in,PLACEHOLDER. Vertical rise of rail BOTTOM over axle
-kickup_top_rise,kickup_rise + arch_rail_h - tube_h,in,Top rise over arch (=3 at defaults: peak top = bottom + rise + arch_rail_h)
+kickup_rise,8,in,"FLAG CLEARANCE: 8 in bottom rise (2026-11-26 tape). At ride arch bottom=11.5 / top=15.5. 32 in tire → axle CL 16 / tube top 17.5; at axle_travel_up=3 tube top=20.5. Arch underside 11.5 is BELOW axle at ride AND bump (same problem at old rise=4). To clear tube at bump +0.5 margin need ~21.0 underside (~17.5 rise) not 8. Bags 8 OD inboard on OA XM — rail must clear tubes first. Stock 8-9 tape may be ground-to-underside/gap/rise; applied as 8 bottom rise as instructed."
+kickup_top_rise,kickup_rise + arch_rail_h - tube_h,in,Top rise over arch (=7 at defaults: peak top = bottom + rise + arch_rail_h)
 kickup_ramp,4,in,PLACEHOLDER. Horizontal length of each kickup ramp
 rear_link_type,triangulated,,triangulated|parallel_watts — string enum (default triangulated)
 lower_link_len,23,in,PLACEHOLDER. Target lower bar C-C (actual from pickups; 22-24 in target)

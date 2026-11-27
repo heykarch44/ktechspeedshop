@@ -140,9 +140,9 @@ PARAM_ORDER = [
     ("wb", "wb_73_87_short", "in", "Active wheelbase"),
     (
         "rear_overhang",
-        "42 in",
+        "36 in",
         "in",
-        "PLACEHOLDER. Body/module envelope aft of axle — NOT rail length",
+        "TAPED 2026-11-26. Rear axle CL to end of frame (was 42). Frame end wb+36=153.5 — NOT rail length",
     ),
     ("core_width", "33.5 in", "in", "TAPED. Core support C-C (mount ref; rails use rail_cl)"),
     (
@@ -151,11 +151,27 @@ PARAM_ORDER = [
         "in",
         "Literal. Match front/cab 34 in OD (2*rail_cl + tube_w). Was core_width/2",
     ),
-    ("core_x", "-33 in", "in", "PLACEHOLDER. Core vs front axle"),
+    (
+        "cab_to_axle",
+        "87 in",
+        "in",
+        "FLAG: FRONT cab mount to rear axle CL (2026-11-26). Match Chassis_Setup",
+    ),
+    (
+        "cab_f_x",
+        "wb - cab_to_axle",
+        "in",
+        "Driver (=30.5). Was core_x + core_to_mid",
+    ),
     ("core_to_mid", "55 in", "in", "TAPED. Core to mid along rail"),
+    (
+        "core_x",
+        "cab_f_x - core_to_mid",
+        "in",
+        "Derived (=−24.5). Was the old driver (−33 placeholder)",
+    ),
     ("mid_to_rear", "43 in", "in", "TAPED. Mid to cab-rear along rail"),
-    ("cab_f_x", "core_x + core_to_mid", "in", "Computed"),
-    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed"),
+    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed (=73.5)"),
     # Rear clip / slip-fit (clip_rear_x defined after rcv_* / rail_end_x)
     ("splice_aft", "3 in", "in", "PLACEHOLDER. Split aft of cab_r"),
     ("slip_overlap", "8 in", "in", "Slip-fit overlap of plate box on tube"),
@@ -177,12 +193,20 @@ PARAM_ORDER = [
     ("bag_stroke", "11 in", "in", "Bag travel target"),
     ("kickup_ahead", "10 in", "in", "PLACEHOLDER. Kickup start ahead of axle"),
     ("kickup_aft", "8 in", "in", "PLACEHOLDER. Kickup end aft of axle"),
-    ("kickup_rise", "4 in", "in", "PLACEHOLDER. Vertical rise of rail BOTTOM over axle"),
+    (
+        "kickup_rise",
+        "8 in",
+        "in",
+        "FLAG CLEARANCE: 8 in bottom rise (arch bottom 11.5 / top 15.5 at ride). "
+        "32 in tire axle CL 16 / tube top 17.5; at axle_travel_up=3 tube top 20.5. "
+        "11.5 underside is BELOW axle at ride AND bump (same at old rise=4). "
+        "Need ~21.0 underside (~17.5 rise) for bump+0.5. Applied as 8 as taped.",
+    ),
     (
         "kickup_top_rise",
         "kickup_rise + arch_rail_h - tube_h",
         "in",
-        "Top rise over arch (=3 at defaults: peak top = bottom + rise + arch_rail_h)",
+        "Top rise over arch (=7 at defaults: peak top = bottom + rise + arch_rail_h)",
     ),
     ("kickup_ramp", "4 in", "in", "PLACEHOLDER. Kickup ramp length"),
     # 4-link — REV-B lowers outboard; uppers inboard (triangulated) or parallel
@@ -752,8 +776,11 @@ def run(_context):
             "{}\n"
             "{}\n"
             "{}\n"
-            "2x5 slip (tube_h=5); arch_rail_h=4 over kickup; "
-            "rail_bottom=3.5 ride; rail_cl=16.0.\n"
+            "2x5 slip (tube_h=5); kickup_rise=8 / arch_rail_h=4 "
+            "(arch bottom 11.5 / top 15.5 at ride); FLAG: 11.5 underside "
+            "does not clear 3 in axle tube at ride or bump — see CSV/README.\n"
+            "cab_to_axle=87 FRONT→axle; cab_f_x=30.5; rear_overhang=36 "
+            "(frame end 153.5).\n"
             "Aft receivers: rectangular rcv_w x rcv_h for 2x4 module; "
             "rails end at rail_end_x; end cap welded aft; open mouths at "
             "rcv_rear_x (= clip_rear_x); RCV_KEY on receiver OD; cross-bolts "

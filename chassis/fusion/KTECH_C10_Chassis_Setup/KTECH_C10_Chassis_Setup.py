@@ -64,7 +64,12 @@ PARAM_ORDER = [
     ),
     ("front_overhang", "34 in", "in", "Tube ahead of front axle"),
     ("wb", "117.5 in", "in", "Wheelbase"),
-    ("rear_overhang", "42 in", "in", "Tube behind rear axle"),
+    (
+        "rear_overhang",
+        "36 in",
+        "in",
+        "TAPED 2026-11-26. Rear axle CL to end of frame (was 42). Frame end wb+36=153.5; spine 187.5",
+    ),
     ("overlap", "14 in", "in", "Clip socket on the tube"),
     ("clip_t", "0.188 in", "in", "Clip plate thickness"),
     ("clip_clear", "0.030 in", "in", "C-socket clearance per side"),
@@ -102,9 +107,25 @@ PARAM_ORDER = [
         "in",
         "Literal. 34 in OD through arms/engine (2*rail_cl+tube_w). Uncoupled from core_width",
     ),
-    ("core_x", "-33 in", "in", "Core vs front axle. Set when IFS is placed."),
-    ("cab_f_x", "core_x + core_to_mid", "in", "Computed"),
-    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed"),
+    (
+        "cab_to_axle",
+        "87 in",
+        "in",
+        "FLAG: FRONT cab mount to rear axle CL (2026-11-26). Not rear cab mount",
+    ),
+    (
+        "cab_f_x",
+        "wb - cab_to_axle",
+        "in",
+        "Driver from wb + cab_to_axle (=30.5). Was core_x + core_to_mid",
+    ),
+    (
+        "core_x",
+        "cab_f_x - core_to_mid",
+        "in",
+        "Derived (=−24.5). Was the old driver (−33 placeholder)",
+    ),
+    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed (=73.5)"),
 ]
 
 STATIONS = (
@@ -193,6 +214,8 @@ def run(_context):
             "Cab/center 2x5 rails sit at rail_cl = 16.0 in (34 in OD) — not on the origin.\n"
             "core_width 33.5 is the core-mount C-C (28 in nose + 2.75 pads/side), not rail spacing.\n"
             "FLAG: purchased center spine is now 2x5 (cab_rail_h=5), bottom cab_rail_bottom=3.5.\n"
+            "FLAG: cab_to_axle=87 is FRONT cab mount to rear axle; cab_f_x=wb-87=30.5; "
+            "core_x derived (=−24.5). rear_overhang=36 → spine 187.5.\n"
             "Front clip (02_CLIP_FRONT) is empty here — run KTECH_C10_FrontClip into that component.\n\n"
             "Browser (left) should list 00_SKELETON and 01_SPINE_2x5.\n"
             "Save as KTECH_C10_CHASSIS."

@@ -80,7 +80,7 @@ Mirrors `KTECH_C10_RearClip` receiver packaging. Shared `mod_insert_depth` (defa
 | bolt 1 / bolt 2 | centered in insert, pitch 3.000 | **128.813** / **131.813** |
 | `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **133.313** |
 | `tray_x0` / `bh_x` | `rcv_rear_x` | **133.313** (at receiver mouths) |
-| `wb + rear_overhang` | body envelope ref | **159.5** (`mod_rear_x` ≈ this when `mod_tray_len` is dialed in) |
+| `wb + rear_overhang` | frame end | **153.5** (`mod_rear_x` = this; `mod_tray_len` shortened from 36) |
 
 - Air & fuel module rails: **2×4** (`mod_w=2` across car, `mod_h=4` tall, `mod_wall` 0.188) — bottom at `rail_bottom` 3.5 / top 7.5
 - Rear clip receivers: rectangular `rcv_w` / `rcv_h` / `rcv_wall` (= mod + 2×`mod_slip_clear` + 2×wall) — must match rear clip exactly
@@ -111,13 +111,13 @@ Sourced fitting comments start with **SOURCED (…)**. Layout / unverified items
 |---|---|---|
 | `module_variant` | air_fuel | air_fuel\|fuel_only |
 | `rcv_*` / `rail_end_x` / `clip_rear_x` / `mod_insert_depth` | match rear clip | Mirror expressions/defaults exactly |
-| `rear_overhang` | 42 in | Match rear clip body/module envelope |
+| `rear_overhang` | 36 in | TAPED axle CL → frame end (was 42); match rear clip |
 | `mod_od` / `mod_wall` | 2.0 / 0.188 in | PLACEHOLDER module rail |
 | `mod_slip_clear` | 0.030 in | PLACEHOLDER per side vs rcv ID |
 | `mod_insert_depth` / `mod_insert_len` | 6.000 in / `= depth` | Slip depth into receiver |
 | `mod_front_x` | `rcv_rear_x - mod_insert_depth` | Tip aft of end cap (≈127.313) |
 | `tray_x0` | `rcv_rear_x` | Tray/bulkhead at receiver mouths (≈133.313) |
-| `mod_tray_len` | 36 in | PLACEHOLDER exposed tray length |
+| `mod_tray_len` | `(wb + rear_overhang) - rcv_rear_x` | FLAG: ~**20.2** exposed (was 36 ending at 159.5). A 36 tray + receivers cannot fit inside the 36 in axle-to-frame-end |
 | `fuel_l` / `fuel_w` / `fuel_h` | 28 / 18 / 10 in | PLACEHOLDER tank shell |
 | `fuel_pf_*` / `fuel_fcst_*` | sourced | Radium 20-0278 / Nuke DXF / FCST-X |
 | `fuel_sender_*` | sourced | SAE 5-bolt (angles PLACEHOLDER) |

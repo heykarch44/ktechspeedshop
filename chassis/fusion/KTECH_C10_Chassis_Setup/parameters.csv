@@ -9,7 +9,7 @@ front_rail_bottom,10.07,in,Front-clip rail bottom at the arms (design ride). Low
 front_rail_h,5,in,Front-clip rail height through cab section AND A-arms (was 6). Top = 15.07
 front_overhang,34,in,Tube ahead of front axle. Horns / core support.
 wb,117.5,in,Wheelbase. 73-87 short=117.5  long=131.5  67-72 short=115  long=127
-rear_overhang,42,in,Tube behind rear axle. Raised bed — not a body-mount number.
+rear_overhang,36,in,TAPED 2026-11-26. Rear axle CL to end of frame (was 42 placeholder). Frame end = wb+36 = 153.5; spine = 34+117.5+36 = 187.5
 overlap,14,in,Front and rear clip socket length on the tube
 clip_t,0.188,in,Plate thickness for clips
 clip_clear,0.030,in,Per-side clearance in the C-socket
@@ -32,6 +32,7 @@ core_half,core_width / 2,in,Computed
 mid_half,mid_width / 2,in,Computed
 rear_half,rear_cab_width / 2,in,Computed
 rail_cl,16.0,in,Literal. 34 in OD through arms/engine (2*rail_cl + tube_w). Uncoupled from core_width
-core_x,-33,in,Core vs front axle. Set when you place the IFS.
-cab_f_x,core_x + core_to_mid,in,Computed
-cab_r_x,cab_f_x + mid_to_rear,in,Computed
+cab_to_axle,87,in,FLAG: FRONT cab mount to rear axle CL (2026-11-26 tape). Not rear cab — rear would put cab_r at 30.5 and contradict mid_to_rear 43
+cab_f_x,wb - cab_to_axle,in,Driver from wb + cab_to_axle (=30.5). Was core_x + core_to_mid with core_x as driver
+core_x,cab_f_x - core_to_mid,in,Derived (=−24.5). Was the old driver (−33 placeholder); inversion 2026-11-26
+cab_r_x,cab_f_x + mid_to_rear,in,Computed (=73.5)

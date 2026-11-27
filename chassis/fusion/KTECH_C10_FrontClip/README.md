@@ -21,15 +21,16 @@ Coordinates match Chassis_Setup: origin = front axle × ground × frame CL; **+X
 |---|---|
 | `rail_cl` | **16.0** → 34 in OD through arms/engine (uncoupled from `core_width`) |
 | `rail_cl_nose` | **13.0** → 28 in OD nose |
-| `front_rail_bottom` / `front_rail_h` | **10.07** / **5** (flat, no arch; was 6) → top **15.07** |
-| `nose_rail_h` | **4** (bottom level with front; top ramps **1 in** ≈ **8.13°** elev over 7 in kick) |
+| `front_rail_bottom` / `front_rail_h` | **10.07** / **5** (flat, no arch; was 6) → top **15.07** — **unchanged at A-arms** |
+| `nose_rail_h` / `nose_bottom` / `nose_top` | **4** / **6.07** / **10.07** (vs stock core bottom 9.00 = **−2.93**) |
+| Nose elev | Top drop **5 in** ≈ **35.5°**; bottom drop **4 in** ≈ **29.7°** over 7 in kick (was 1 in top / level bottom) |
 | Kick | **23°**, **7 in**, **3 in** inset/side; constant `box_od_w` ≈ 2.44 |
-| Drop | **6.57** top **and** bottom over **12 in**, `x = 8` → `20`, finished before `cab_f_x = 22` |
+| Drop | **6.57** top **and** bottom over **12 in**, `x = 8` → `20`, finished **10.5 in** before `cab_f_x = 30.5` |
 | Cab / slip | `cab_rail_bottom = 3.5`, `cab_rail_h = 5` (2×5) — matches rear slip |
-| LCA pivot | **(13.50, 8.07)** — 2.00 hang below rail |
+| LCA pivot | **(13.50, 8.07)** — 2.00 hang below rail (unchanged; arms on un-dropped clip) |
 | UCA pivot | **(15.50, 17.88)** — ~**2.81** tower above rail top |
 | Core pads | **2.75** outboard of 28 in nose; `core_width = 33.5` C-C |
-| `core_x` | **−33** PLACEHOLDER |
+| `cab_to_axle` / `cab_f_x` / `core_x` | **87** FLAG (FRONT mount→rear axle) / **30.5** driver / **−24.5** derived |
 
 Ride notes (comments / FrontGeometry): design cab 3.5 / front 10.07–15.07; laid out frame −3.5; aired cab 7.
 

@@ -10,7 +10,7 @@ rail_cl,16.0,in,Literal. Match rear clip / front 34 in OD (was core_width/2)
 clip_t,0.188,in,Laser plate thickness for tray / bulkhead / keys
 clip_clear,0.030,in,Shared slip clear name (module uses mod_slip_clear)
 kickup_aft,8,in,PLACEHOLDER. Match rear clip — kickup ends aft of axle
-rear_overhang,42,in,PLACEHOLDER. Match rear clip — body/module envelope aft of axle
+rear_overhang,36,in,TAPED 2026-11-26. Match rear clip — axle CL to frame end (was 42). Frame end = wb+36 = 153.5
 mod_w,2.000,in,Air & fuel utility module rail width — 2x4 rectangle (2 in across car)
 mod_h,4.000,in,Air & fuel utility module rail height — 2x4 rectangle (4 in tall)
 mod_wall,0.188,in,PLACEHOLDER. Module rail tube wall
@@ -32,7 +32,7 @@ rcv_bolt_pitch,3.000,in,PLACEHOLDER. Match rear clip cross-bolt pitch
 rcv_bolt_first_x,(rcv_rear_x - mod_insert_depth) + (mod_insert_depth - rcv_bolt_pitch) / 2,in,PLACEHOLDER. Match rear clip — first bolt centered in insert
 module_variant,air_fuel,,PLACEHOLDER. air_fuel|fuel_only — string enum (not Fusion length)
 mod_insert_len,mod_insert_depth,in,Insert length into receiver (= mod_insert_depth)
-mod_tray_len,36.000,in,PLACEHOLDER. Tray / exposed rail length aft of receiver mouth
+mod_tray_len,(wb + rear_overhang) - rcv_rear_x,in,"FLAG: shortened from 36 — old tray ended at 159.5 past frame end. Now ends at wb+rear_overhang=153.5 (~20.2 exposed). A 36 tray + receivers cannot fit inside the 36 in axle-to-frame-end."
 mod_rail_len,mod_insert_len + mod_tray_len,in,Total module rail length
 mod_front_x,rcv_rear_x - mod_insert_depth,in,Module rail forward tip = mouth − insert depth (aft of end cap)
 mod_rear_x,mod_front_x + mod_rail_len,in,Module rail aft tip X

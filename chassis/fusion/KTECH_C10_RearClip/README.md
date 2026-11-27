@@ -75,7 +75,7 @@ Receiver length is sized to the insert, not a long empty stub. With `wb=117.5`, 
 | bolt 1 | `rcv_bolt_first_x` | **128.813** |
 | bolt 2 | `+ rcv_bolt_pitch` | **131.813** |
 | `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **133.313** |
-| `wb + rear_overhang` | body/module envelope ref | **159.5** (not rail length) |
+| `wb + rear_overhang` | frame end / body envelope | **153.5** (was 159.5; rear_overhang now **36**) |
 
 - Rectangular tube per side: `rcv_w` / `rcv_h` / `rcv_wall` sized from `mod_w=2` / `mod_h=4` + slip clear (≈ **2.436 × 4.436**), CL at `rcv_cl_y = rail_bottom + mod_h/2` (module bottom 3.5 / top 7.5)
 - Plate-box rails stop at `rail_end_x`; open receiver mouths at `rcv_rear_x` are the **aft-most** clip feature (`clip_rear_x = rcv_rear_x`)
@@ -159,7 +159,7 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `splice_aft` | 3 in | PLACEHOLDER — split aft of `cab_r` |
 | `tube_h` / `arch_rail_h` | 5 / 4 in | Straight 2×5; 4 in tall over arch (1 in cut on ramps) |
 | `rail_bottom` / `rail_cl` | 3.5 / 16.0 in | Absolute ride height (cab match); 34 in OD |
-| `kickup_rise` / `kickup_top_rise` | 4 / expr | Bottom rise 4; top rise 3 (= rise + arch − tube_h) |
+| `kickup_rise` / `kickup_top_rise` | 8 / expr | Bottom rise 8; top rise 7 (= rise + arch − tube_h). Arch at ride: bottom **11.5** / top **15.5** |
 | `kickup_*` | various | PLACEHOLDER — ahead/aft/ramp lengths |
 | `lower_link_y` | rail outboard + 0.75 in | PLACEHOLDER lateral (Fusion \|Z\|) — outboard lowers |
 | `frame_link_spread_z` / `axle_lower_spread_z` | `lower_link_y` | Outboard lower pickups |
@@ -191,9 +191,16 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `rcv_bolt_d` / `rcv_bolt_count` | 0.5 in / 2 | PLACEHOLDER cross-bolts (inside insert) |
 | `rcv_bolt_first_x` | centered in insert (see above) | Equal ~1.5 in end distance; pitch 3.000 |
 | `rcv_xm_w` / `rcv_xm_t` | 2 / `clip_t` in | PLACEHOLDER rear receiver XM |
-| `rear_overhang` | 42 in | Body/module envelope — **not** rail length |
+| `rear_overhang` | 36 in | TAPED axle CL → frame end (was 42) — **not** rail length |
+| `cab_to_axle` / `cab_f_x` / `core_x` / `cab_r_x` | 87 / 30.5 / −24.5 / 73.5 | FLAG: 87 is **FRONT** cab→axle; cab_f driver; core derived |
 | `axle_wms_a` | **58.0 in** | PLACEHOLDER — tire TBD (was 63.625) |
 | `cs_width` / `cs_height` / `cs_depth` / `tube_insert` | — | PLACEHOLDER UNVERIFIED — Currie |
+
+## FLAG — arch / axle-tube clearance (2026-11-26)
+
+`kickup_rise = 8` with `arch_rail_h = 4` → arch underside **11.5** / top **15.5** at ride (`rail_bottom = 3.5`).
+
+A **32 in** rear tire puts axle CL at **16** at ride and axle-tube top at **17.5** (3 in tube OD). At the `axle_travel_up = 3` PLACEHOLDER, tube top at full bump is **20.5**. An **11.5** arch underside is **below** the axle at ride and at bump (the previous 4 in rise had the same problem). To clear the tube at full bump with 0.5 in margin, the arch underside would need ~**21.0** (bottom rise ~**17.5**, not 8). Bags (8 in OD) are typically inboard on the over-axle XM, so the rail arch must clear the axle tubes first. The 8–9 in tape under the stock arch (bag visible below) may be ground-to-underside, a gap, or the requested rise; applied as an **8 in bottom rise** as instructed — leave this flag until a real bump package is taped.
 
 ## Open items
 

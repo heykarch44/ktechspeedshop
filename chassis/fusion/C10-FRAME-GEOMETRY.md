@@ -45,7 +45,7 @@ Core to cab-rear = **98"**.
 
 **Rails through arms/engine:** `rail_cl = 16.0` (34 in OD). Core width stays 33.5 as mount C-C. Do not dogleg the tube to hit mid/cab-rear holes — those are weld-on hats. Cab/center tube is now **2×5** at bottom **3.5** (FLAG: was 2×6).
 
-**Still open:** core vs front axle (`core_x`). Placeholder is **−33"**. Tape core-bolt to front-axle centerline when the Wilwood is on the truck. That number slides the whole cab station set in Fusion.
+**Cab stations (2026-11-26):** `cab_to_axle = 87` is **FRONT** cab mount to rear axle CL (FLAG — not rear cab). Driver: `cab_f_x = wb − 87 = 30.5`; `core_x = cab_f_x − 55 = −24.5` (was the old driver / −33 placeholder); `cab_r_x = 30.5 + 43 = 73.5`.
 
 ---
 
@@ -83,7 +83,8 @@ Drawing file in the Fusion script folder: `wilwood-831-14202.png`.
 |---|---|
 | Tube (cab/center) | 2 × 5 × 0.188" A500 (FLAG: was 2×6) |
 | Front clip at arms | Flat **5"** tall, 34" OD (`rail_cl = 16.0`), bottom 10.07 / top 15.07 at ride |
-| Nose | 28 × 4 in, 23° / 7 in kick, top ramps **1 in** (~8.13° elev), drop 6.57 x=8→20 before `cab_f_x` |
+| Nose | 28 × 4 in, 23° / 7 in kick, top ramps **5 in** (~35.5°), bottom **4 in** (~29.7°); nose top **10.07** / bottom **6.07** (vs stock core bottom 9.00 = −2.93); drop 6.57 x=8→20 finishes 10.5 in before `cab_f_x=30.5` |
+| Rear arch | `kickup_rise=8`, `arch_rail_h=4` → bottom **11.5** / top **15.5** at ride. FLAG: does not clear 3 in axle tube at ride or bump — see RearClip README |
 | Clip overlap | 14" (legacy) / FrontClip slip 8" over 2×5 |
 | Clip plate | 0.188" |
 | Slip clearance | 0.030" per side |
@@ -105,13 +106,14 @@ Origin = **front axle × ground × frame centerline**.
 |---|---|---|
 | `front_overhang` | 34" | Estimate — horns / core |
 | `wb` | 117.5" | Locked for first proto |
-| `rear_overhang` | 42" | Estimate — raised bed |
-| `core_x` | −33" | **Placeholder — tape next** |
-| `cab_f_x` | `core_x + 55` | Computed from tape |
-| `cab_r_x` | `cab_f_x + 43` | Computed from tape |
+| `rear_overhang` | 36" | TAPED 2026-11-26 — axle CL to frame end (was 42) |
+| `cab_to_axle` | 87" | FLAG: **FRONT** cab mount → rear axle |
+| `cab_f_x` | `wb − cab_to_axle` = 30.5" | Driver |
+| `core_x` | `cab_f_x − 55` = −24.5" | Derived (was old driver / −33) |
+| `cab_r_x` | `cab_f_x + 43` = 73.5" | Computed from tape |
 | `cab_rail_bottom` / `rail_bottom` | 3.5" | Cab/center bottom at design ride |
-| `front_rail_bottom` | 10.07" | Front clip at arms |
-| `spine_length` | 193.5" | 34 + 117.5 + 42 |
+| `front_rail_bottom` | 10.07" | Front clip at arms (unchanged) |
+| `spine_length` | 187.5" | 34 + 117.5 + 36 (frame end 153.5) |
 
 If the Fusion canvas looks empty after Run: Fit view. Rails sit at `rail_cl = 16.0` (34 in OD), not on the origin.
 
@@ -201,7 +203,7 @@ Numbers live in `parameters.csv` and `mount_points.csv`. The `.py` script builds
 ## Next on the Fusion PC
 
 1. Hybrid + New Design + Run **KTECH_C10_Chassis_Setup**. Confirm six mount points.
-2. Tape **core to front axle**. Set `core_x`. Re-run.
+2. Cab stations driven by `cab_to_axle=87` (FRONT mount); re-tape if needed.
 3. Model 831-14202 on SK_SIDE from `wilwood-831-14202.png`.
 4. Front clip C-socket + LCA inners. Do not dogleg the 2×6.
 5. Rear 4-link at 22–24", step around 32" tire + 11" bags.

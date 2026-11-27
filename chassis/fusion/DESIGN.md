@@ -1,6 +1,6 @@
 # Ktech C10 boxed frame — design pack
 
-Last updated 2026-10-04. This is the working spec for a 67–87 C10 2WD restomod chassis: 2×6 spine, plate clips, weld-on body hats, Wilwood 2.5" ProSpindle.
+Last updated 2026-11-26. This is the working spec for a 67–87 C10 2WD restomod chassis: 2×5 spine (FLAG: was 2×6), plate clips, weld-on body hats, Wilwood 2.5" ProSpindle.
 
 Fusion script lives in `KTECH_C10_Chassis_Setup/`. On the Fusion PC, copy that whole folder into:
 
@@ -64,7 +64,7 @@ Core to cab-rear = **98"**.
 
 **Straight rails:** `rail_cl = 16.0` (34 in OD through arms/engine). `core_width = 33.5` is core-mount C-C (28 in nose + 2.75 pads/side), not rail spacing. Mid/cab-rear mounts stay weld-on hats — do not dogleg the tube.
 
-Still open: **core vs front axle** (`core_x`). Set when the Wilwood and IFS land. Placeholder is −33".
+**Cab stations (2026-11-26):** `cab_to_axle = 87` is **FRONT** cab mount to rear axle (FLAG). `cab_f_x = wb − 87 = 30.5`; `core_x = cab_f_x − 55 = −24.5` (was old driver / −33); `cab_r_x = 73.5`. `rear_overhang = 36` → frame end 153.5 / spine 187.5.
 
 Wheelbases to hit later (rear clip / splice, not cab hats):
 
@@ -91,7 +91,7 @@ Split 2–4" behind rear cab mount, in the straight rail. Not at the engine, kic
 
 **Split by generation:** cab/core hole pattern, core support / horns vs OEM clip, engine-to-firewall. Do not share cab holes.
 
-Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack. Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes before `cab_f_x`. Rear `axle_wms_a = 58.0` PLACEHOLDER.
+Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack (top drop 5 in / bottom 4 in over 7 in kick; nose 10.07 / 6.07). Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes 10.5 in before `cab_f_x=30.5`. Front clip at arms unchanged (10.07–15.07). Rear arch rise 8 / rail 4 (FLAG: tube clearance). Rear `axle_wms_a = 58.0` PLACEHOLDER.
 
 ---
 
@@ -152,7 +152,7 @@ Do not run the Fusion-generated hello script named `C10` — it only pops “Unt
 1. Pull this repo / copy `chassis/fusion/KTECH_C10_Chassis_Setup` into Fusion My Scripts.
 2. Preferences → Hybrid. New Design. Run **KTECH_C10_Chassis_Setup**.
 3. Confirm six mount points match the tape.
-4. Tape **core to front axle**, set `core_x`.
+4. Cab stations from `cab_to_axle=87` (FRONT mount); re-tape if needed.
 5. Model 831-14202 on SK_SIDE from the Wilwood png.
 6. Front clip C-socket + LCA inners. Rear 4-link at 22–24".
 

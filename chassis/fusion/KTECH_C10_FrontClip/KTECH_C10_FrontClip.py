@@ -6,13 +6,15 @@
 #   3. Select this folder (KTECH_C10_FrontClip)
 #   4. Run on the chassis doc (02_CLIP_FRONT empty) or a New Design.
 #
-# Design intent (2026-11-25 box sketches; rail heights updated)
+# Design intent (2026-11-25 box sketches; 2026-11-26 nose + cab stations)
 #   Raised flat 5 in / 34 in OD plate-box rail through steering + A-arms
-#   (was 6; top 15.07). Narrowed 28 x 4 in nose ahead of the rack with a
-#   single 23 deg / 7 in plan-view kick (3 in inset/side, constant ~2.44
-#   box width, top ramps 1 in ≈ 8.13 deg elev, bottom level, ribs at bend
-#   lines). Angular cab drop 6.57 top AND bottom over 12 in (x=8→20),
-#   finished before cab_f_x. Aft slip sized to purchased 2x5 center tube.
+#   (was 6; top 15.07) — UNCHANGED at the arms. Narrowed 28 x 4 in nose
+#   ahead of the rack with a single 23 deg / 7 in plan-view kick (3 in
+#   inset/side, constant ~2.44 box width). Top ramps 5 in down (~35.5 deg
+#   elev); bottom ramps 4 in down (~29.7 deg); nose top 10.07 / bottom 6.07
+#   (vs stock core bottom 9.00 = −2.93). Angular cab drop 6.57 top AND
+#   bottom over 12 in (x=8→20), finished 10.5 in before cab_f_x=30.5.
+#   Aft slip sized to purchased 2x5 center tube.
 #   Hanging LCA mount + ~2.81 in UCA tower (pivots locked).
 #
 # Coordinates (Fusion Y-up) — same as KTECH_C10_Chassis_Setup
@@ -61,19 +63,43 @@ PARAM_ORDER = [
         "nose_rail_h",
         "4 in",
         "in",
-        "Nose height ahead of kick (top ramps 1 in over kick; bottom level)",
+        "Nose height ahead of kick (keep 4 in)",
     ),
     (
         "nose_top_ramp",
-        "front_rail_h - nose_rail_h",
+        "5 in",
         "in",
-        "Top drop over kick (1 in at defaults; bottom level)",
+        "Top drop from front-clip top over kick (5 in; was 1 with bottom level)",
+    ),
+    (
+        "nose_bot_ramp",
+        "4 in",
+        "in",
+        "Bottom drop from front-clip bottom over kick (was 0 / level)",
+    ),
+    (
+        "nose_bottom",
+        "front_rail_bottom - nose_bot_ramp",
+        "in",
+        "Nose bottom (=6.07). vs stock core bottom 9.00 = −2.93",
+    ),
+    (
+        "nose_top",
+        "nose_bottom + nose_rail_h",
+        "in",
+        "Nose top (=10.07 = front top 15.07 − 5)",
     ),
     (
         "nose_elev_deg",
-        "8.13",
+        "35.54",
         "",
-        "Elevation ramp deg ≈ atan(nose_top_ramp/kick_len); ~8.13 at 1 in / 7 in",
+        "Top elev ≈ atan(nose_top_ramp/kick_len); ~35.5 at 5 in / 7 in",
+    ),
+    (
+        "nose_bot_elev_deg",
+        "29.74",
+        "",
+        "Bottom elev ≈ atan(nose_bot_ramp/kick_len); ~29.7 at 4 in / 7 in",
     ),
     (
         "cab_drop",
@@ -128,13 +154,25 @@ PARAM_ORDER = [
         "in",
         "Outboard core pad per side from 28 in nose outside face",
     ),
-    ("core_x", "-33 in", "in", "PLACEHOLDER. Core vs front axle"),
-    ("core_to_mid", "55 in", "in", "TAPED. Core to cab-front along rail"),
+    ("wb", "117.5 in", "in", "Match Chassis_Setup — 73-87 shortbed locked WB"),
+    (
+        "cab_to_axle",
+        "87 in",
+        "in",
+        "FLAG: FRONT cab mount to rear axle CL (2026-11-26). Match Chassis_Setup",
+    ),
     (
         "cab_f_x",
-        "core_x + core_to_mid",
+        "wb - cab_to_axle",
         "in",
-        "Cab front mount X — drop must finish before this",
+        "Driver (=30.5). Drop ends at 20 — 10.5 in before cab_f_x",
+    ),
+    ("core_to_mid", "55 in", "in", "TAPED. Core to cab-front along rail"),
+    (
+        "core_x",
+        "cab_f_x - core_to_mid",
+        "in",
+        "Derived (=−24.5). Was the old driver (−33 placeholder)",
     ),
     ("nose_tip_x", "-34 in", "in", "PLACEHOLDER. Forward tip of nose"),
     (
@@ -157,7 +195,7 @@ PARAM_ORDER = [
         "drop_end_x",
         "20 in",
         "in",
-        "Drop finished (cab height) BEFORE cab_f_x",
+        "Drop finished (cab height) BEFORE cab_f_x (=30.5); 10.5 in gap",
     ),
     ("slip_overlap", "8 in", "in", "Slip-fit overlap over 2x5 center tube"),
     (
@@ -284,10 +322,12 @@ def run(_context):
             "Front clip built in this document.\n\n"
             "rail_cl = 16.0 (34 in OD through arms/engine).\n"
             "Nose: rail_cl_nose = 13.0 (28 in OD) x 4 in tall; "
-            "23 deg / 7 in kick; top ramps 1 in (~8.13 deg elev); "
-            "bottom level at front_rail_bottom.\n"
-            "Raised flat 5 in rail 10.07–15.07; drop 6.57 top+bottom "
-            "x=8→20 before cab_f_x.\n"
+            "23 deg / 7 in kick; top ramps 5 in (~35.5 deg); "
+            "bottom ramps 4 in (~29.7 deg); nose 10.07 / 6.07 "
+            "(vs stock core bottom 9.00 = −2.93).\n"
+            "Raised flat 5 in rail 10.07–15.07 UNCHANGED at arms; "
+            "drop 6.57 top+bottom x=8→20 before cab_f_x=30.5.\n"
+            "FLAG: cab_to_axle=87 FRONT mount; core_x derived (=−24.5).\n"
             "Aft slip sized to 2x5 center (cab_rail_h=5).\n"
             "core_width 33.5 is core-mount C-C, not rail spacing.\n"
             "LCA hang pivot (13.50, 8.07); UCA tower pivot (15.50, 17.88) "
@@ -465,13 +505,15 @@ def _side_profile_xy(design, top=True):
     aft = param_cm(design, "clip_aft_x")
     frb = param_cm(design, "front_rail_bottom")
     frh = param_cm(design, "front_rail_h")
+    nb = param_cm(design, "nose_bottom")
     nrh = param_cm(design, "nose_rail_h")
     crb = param_cm(design, "cab_rail_bottom")
     crh = param_cm(design, "cab_rail_h")
     clear = param_cm(design, "clip_clear")
 
+    y_bot_n = nb - clear
+    y_top_nose = nb + nrh + clear
     y_bot_f = frb - clear
-    y_top_nose = frb + nrh + clear
     y_top_f = frb + frh + clear
     y_bot_c = crb - clear
     y_top_c = crb + crh + clear
@@ -486,8 +528,8 @@ def _side_profile_xy(design, top=True):
             (aft, y_top_c),
         ]
     return [
-        (tip, y_bot_f),
-        (ks, y_bot_f),
+        (tip, y_bot_n),
+        (ks, y_bot_n),
         (ke, y_bot_f),
         (ds, y_bot_f),
         (de, y_bot_c),
@@ -549,6 +591,7 @@ def _draw_front_sections(sk, design):
     cl = param_cm(design, "rail_cl")
     frb = param_cm(design, "front_rail_bottom")
     frh = param_cm(design, "front_rail_h")
+    nb = param_cm(design, "nose_bottom")
     nrh = param_cm(design, "nose_rail_h")
     crb = param_cm(design, "cab_rail_bottom")
     crh = param_cm(design, "cab_rail_h")
@@ -580,7 +623,7 @@ def _draw_front_sections(sk, design):
         ln.isConstruction = True
 
     for sign in (1.0, -1.0):
-        rect(sign * cl_n, frb, frb + nrh)
+        rect(sign * cl_n, nb, nb + nrh)
         rect(sign * cl, frb, frb + frh)
         rect(sign * cl, crb, crb + crh)
         for z, y in ((sign * lz, ly), (sign * uz, uy)):
@@ -695,7 +738,7 @@ def build_rail_side(comp, passenger=True):
         x0=param_cm(design, "nose_tip_x"),
         x1=param_cm(design, "kick_start_x"),
         cl=param_cm(design, "rail_cl_nose"),
-        y_bot=param_cm(design, "front_rail_bottom"),
+        y_bot=param_cm(design, "nose_bottom"),
         h=param_cm(design, "nose_rail_h"),
     )
     _build_kick_segment(comp, design, side, sign)
@@ -768,7 +811,7 @@ def _build_segment_box(comp, design, side, sign, role, x0, x1, cl, y_bot, h, sli
 
 
 def _build_kick_segment(comp, design, side, sign):
-    """Faceted plan kick: trapezoid top/bottom + angled side plates; top ramps."""
+    """Faceted plan kick: trapezoid top/bottom + angled sides; top+bottom ramp."""
     x0 = param_cm(design, "kick_start_x")
     x1 = param_cm(design, "kick_end_x")
     if x1 <= x0 + 0.05 * IN_TO_CM:
@@ -779,13 +822,16 @@ def _build_kick_segment(comp, design, side, sign):
     cl0 = param_cm(design, "rail_cl_nose") * sign
     cl1 = param_cm(design, "rail_cl") * sign
     frb = param_cm(design, "front_rail_bottom")
+    nb = param_cm(design, "nose_bottom")
     nrh = param_cm(design, "nose_rail_h")
     frh = param_cm(design, "front_rail_h")
 
-    y_bot_outer = frb - clear - t
-    y_top0 = frb + nrh + clear
+    y_bot0_outer = nb - clear - t
+    y_bot1_outer = frb - clear - t
+    y_top0 = nb + nrh + clear
     y_top1 = frb + frh + clear
-    y_bot_inner = frb - clear
+    y_bot0_inner = nb - clear
+    y_bot1_inner = frb - clear
 
     # Outer Z at start/end for trapezoid caps.
     half_inner = tw / 2.0 + clear
@@ -803,7 +849,7 @@ def _build_kick_segment(comp, design, side, sign):
     )
     _extrude_trap_plate(
         comp, "KICK_BOT", side,
-        x0, x1, y_bot_outer + t, y_bot_outer + t,
+        x0, x1, y_bot0_outer + t, y_bot1_outer + t,
         z_in0, z_out0, z_in1, z_out1,
         "clip_t", up=False,
     )
@@ -817,11 +863,13 @@ def _build_kick_segment(comp, design, side, sign):
     z_in_i1 = cl1 - sign * half_inner
     _extrude_angled_side(
         comp, "KICK_OUT", side, sign, x0, x1,
-        y_bot_inner, y_top0, y_top1, z_out_i0, z_out_i1, toward_outboard=True,
+        y_bot0_inner, y_bot1_inner, y_top0, y_top1, z_out_i0, z_out_i1,
+        toward_outboard=True,
     )
     _extrude_angled_side(
         comp, "KICK_IN", side, sign, x0, x1,
-        y_bot_inner, y_top0, y_top1, z_in_i0, z_in_i1, toward_outboard=False,
+        y_bot0_inner, y_bot1_inner, y_top0, y_top1, z_in_i0, z_in_i1,
+        toward_outboard=False,
     )
 
 
@@ -877,15 +925,28 @@ def _build_kick_ribs(comp, design, side, sign):
     clear = param_cm(design, "clip_clear")
     t = param_cm(design, "clip_t")
     frb = param_cm(design, "front_rail_bottom")
+    nb = param_cm(design, "nose_bottom")
     nrh = param_cm(design, "nose_rail_h")
     frh = param_cm(design, "front_rail_h")
-    for label, x, cl, h in (
-        ("RIB_KICK_S", param_cm(design, "kick_start_x"), param_cm(design, "rail_cl_nose"), nrh),
-        ("RIB_KICK_E", param_cm(design, "kick_end_x"), param_cm(design, "rail_cl"), frh),
+    for label, x, cl, y_bot, h in (
+        (
+            "RIB_KICK_S",
+            param_cm(design, "kick_start_x"),
+            param_cm(design, "rail_cl_nose"),
+            nb,
+            nrh,
+        ),
+        (
+            "RIB_KICK_E",
+            param_cm(design, "kick_end_x"),
+            param_cm(design, "rail_cl"),
+            frb,
+            frh,
+        ),
     ):
         z_in_i, z_out_i, z_in_o, z_out_o = _z_faces(cl * sign, sign, tw, clear, t)
-        y0 = frb - clear
-        y1 = frb + h + clear
+        y0 = y_bot - clear
+        y1 = y_bot + h + clear
         z0 = min(z_in_o, z_out_o)
         z1 = max(z_in_o, z_out_o)
         _extrude_rib_yz(comp, label, side, x, y0, y1, z0, z1)
@@ -1030,10 +1091,12 @@ def _extrude_side_poly(comp, design, role, side, sign, xy_pts, z_start, toward_o
     return body
 
 
-def _extrude_angled_side(comp, role, side, sign, x0, x1, y_bot, y_top0, y_top1, z0, z1, toward_outboard):
+def _extrude_angled_side(
+    comp, role, side, sign, x0, x1, y_bot0, y_bot1, y_top0, y_top1, z0, z1, toward_outboard
+):
     """Side plate for the kick facet: sketch on a plane through the outboard chord."""
     # Build a construction plane through three points on the facet.
-    # Fallback: extrude from mid-Z XY-offset using a rectangle that spans
+    # Fallback: extrude from mid-Z XY-offset using a trapezoid that spans
     # average Z — packaging approximation (README notes true miter follow-up).
     z_mid = 0.5 * (z0 + z1)
     planes = comp.constructionPlanes
@@ -1047,8 +1110,8 @@ def _extrude_angled_side(comp, role, side, sign, x0, x1, y_bot, y_top0, y_top1, 
     sk.isComputeDeferred = True
     lines = sk.sketchCurves.sketchLines
     pts = [
-        sk.modelToSketchSpace(adsk.core.Point3D.create(x0, y_bot, z_mid)),
-        sk.modelToSketchSpace(adsk.core.Point3D.create(x1, y_bot, z_mid)),
+        sk.modelToSketchSpace(adsk.core.Point3D.create(x0, y_bot0, z_mid)),
+        sk.modelToSketchSpace(adsk.core.Point3D.create(x1, y_bot1, z_mid)),
         sk.modelToSketchSpace(adsk.core.Point3D.create(x1, y_top1, z_mid)),
         sk.modelToSketchSpace(adsk.core.Point3D.create(x0, y_top0, z_mid)),
     ]
@@ -1165,10 +1228,10 @@ def build_core_pads(comp):
     pad_l = param_cm(design, "core_pad_l")
     pad_w = param_cm(design, "core_pad_w")
     pad_t = param_cm(design, "core_pad_t")
-    frb = param_cm(design, "front_rail_bottom")
+    nb = param_cm(design, "nose_bottom")
     nrh = param_cm(design, "nose_rail_h")
     # Nose outside face at rail_cl_nose + tube_w/2; pads extend further outboard.
-    y_top = frb + nrh
+    y_top = nb + nrh
 
     for sign, tag in ((1.0, "RH"), (-1.0, "LH")):
         z_nose_out = sign * (cl_n + tw / 2.0)

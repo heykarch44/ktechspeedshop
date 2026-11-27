@@ -103,9 +103,9 @@ PARAM_ORDER = [
     ("kickup_aft", "8 in", "in", "PLACEHOLDER. Match rear clip kickup_aft"),
     (
         "rear_overhang",
-        "42 in",
+        "36 in",
         "in",
-        "PLACEHOLDER. Match rear clip — body/module envelope aft of axle",
+        "TAPED 2026-11-26. Match rear clip — axle CL to frame end (was 42). Frame end 153.5",
     ),
     # Air & fuel utility module: 2x4 rails + matching rectangular receivers
     (
@@ -201,7 +201,12 @@ PARAM_ORDER = [
         "in",
         "Insert length into receiver (= mod_insert_depth)",
     ),
-    ("mod_tray_len", "36.000 in", "in", "PLACEHOLDER. Exposed tray / rail length aft"),
+    (
+        "mod_tray_len",
+        "(wb + rear_overhang) - rcv_rear_x",
+        "in",
+        "FLAG: shortened from 36 — ends at frame end 153.5 (~20.2). Old 36 tray stuck past frame",
+    ),
     ("mod_rail_len", "mod_insert_len + mod_tray_len", "in", "Total module rail length"),
     (
         "mod_front_x",
