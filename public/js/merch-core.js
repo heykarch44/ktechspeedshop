@@ -202,16 +202,22 @@
     refreshPill();
   }
 
+  function setHasPill(on) {
+    document.body.classList.toggle("merch-has-pill", !!on);
+  }
+
   function refreshPill() {
     if (!cfg || !cart) return;
     var pill = document.querySelector(".merch-pill");
     if (!cfg.pill || isCheckoutFlowPath(cfg)) {
       if (pill) pill.hidden = true;
+      setHasPill(false);
       return;
     }
     var n = cart.count();
     if (n < 1) {
       if (pill) pill.hidden = true;
+      setHasPill(false);
       return;
     }
     if (!pill) {
@@ -224,6 +230,7 @@
     pill.href = (cfg.paths && cfg.paths.cart) || "/cart";
     pill.textContent = "Cart (" + n + ") →";
     pill.hidden = false;
+    setHasPill(true);
   }
 
   function wireAddForms() {
@@ -251,9 +258,8 @@
         }
         var cartPath = (cfg.paths && cfg.paths.cart) || "/cart";
         showToast([
-          "Added to cart. ",
+          "Added. ",
           el("a", { href: cartPath, text: "View cart" }),
-          ".",
         ]);
         refreshBadges();
       });

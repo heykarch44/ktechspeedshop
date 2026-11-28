@@ -1,6 +1,8 @@
-# Shared merch framework (v1.0.0)
+# Shared merch framework (v1.0.1)
 
 Cart, quote, Stripe Embedded Checkout, and webhook helpers shared by **K-TECH Speedshop** and **C10 United**. Only data access (catalog adapter), page shells, and theme differ per site.
+
+**Changelog:** 1.0.1 — toast never overlaps cart pill; compact mobile toast with pointer-events pass-through; body padding when pill shown.
 
 ## KEEP BOTH COPIES BYTE-IDENTICAL
 

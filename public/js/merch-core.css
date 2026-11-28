@@ -11,12 +11,15 @@
   --merch-radius: 0;
   --merch-font: system-ui, sans-serif;
   --merch-font-display: system-ui, sans-serif;
+  --merch-pill-offset: max(1rem, env(safe-area-inset-bottom, 0px));
+  --merch-pill-height: 44px;
+  --merch-toast-gap: 0.75rem;
 }
 
 .merch-toast {
   position: fixed;
   left: 50%;
-  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   z-index: 60;
   max-width: min(92vw, 28rem);
@@ -26,7 +29,16 @@
   border: 1px solid var(--merch-accent);
   font: inherit;
   font-family: var(--merch-font);
+  line-height: 1.35;
   box-shadow: 0 8px 24px color-mix(in srgb, #000 25%, transparent);
+}
+
+body.merch-has-pill .merch-toast {
+  bottom: calc(var(--merch-pill-offset) + var(--merch-pill-height) + var(--merch-toast-gap));
+}
+
+body.merch-has-pill {
+  padding-bottom: calc(var(--merch-pill-offset) + var(--merch-pill-height) + 1rem);
 }
 
 .merch-toast a {
@@ -41,12 +53,12 @@
 
 .merch-pill {
   position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: var(--merch-pill-offset);
   z-index: 55;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--merch-pill-height);
   padding: 0.65rem 0.95rem;
   background: var(--merch-accent);
   color: var(--merch-accent-fg);
@@ -67,6 +79,23 @@
 .merch-pill:focus-visible {
   outline: 2px solid var(--merch-accent);
   outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .merch-toast {
+    left: auto;
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    transform: none;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    pointer-events: none;
+  }
+
+  .merch-toast a {
+    pointer-events: auto;
+  }
 }
 
 .merch-cart,
