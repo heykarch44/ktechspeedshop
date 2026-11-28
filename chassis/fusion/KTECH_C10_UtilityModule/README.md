@@ -71,16 +71,16 @@ Plate DXFs → `dxf_out/` next to the script. Run dialog also prints a **tube-in
 
 Mirrors `KTECH_C10_RearClip` receiver packaging. Shared `mod_insert_depth` (default **6 in**) sets slip depth; the clip shortens the receiver to `rcv_key_w + clip_t + 0.125 in + mod_insert_depth` (≈**7.813 in**) so there is no long empty stub ahead of the tip. Module tip stays **0.125 in** aft of the end-cap aft face.
 
-| Station | Expression | Default (in) @ wb=117.5 |
+| Station | Expression | Default (in) @ wb_stock=116.5 |
 |---|---|---|
-| `rcv_front_x` | `wb + kickup_aft` | **125.5** |
-| `rail_end_x` | `rcv_front_x + rcv_key_w` | **127.0** |
-| end-cap aft | `rail_end_x + clip_t` | **127.188** |
-| `mod_front_x` | `rcv_rear_x - mod_insert_depth` | **127.313** |
-| bolt 1 / bolt 2 | centered in insert, pitch 3.000 | **128.813** / **131.813** |
-| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **133.313** |
-| `tray_x0` / `bh_x` | `rcv_rear_x` | **133.313** (at receiver mouths) |
-| `wb + rear_overhang` | frame end | **153.5** (`mod_rear_x` = this; `mod_tray_len` shortened from 36) |
+| `rcv_front_x` | `wb_stock + kickup_aft` | **123.5** |
+| `rail_end_x` | `rcv_front_x + rcv_key_w` | **125.0** |
+| end-cap aft | `rail_end_x + clip_t` | **125.188** |
+| `mod_front_x` | `rcv_rear_x - mod_insert_depth` | **125.313** |
+| bolt 1 / bolt 2 | centered in insert, pitch 3.000 | **126.813** / **129.813** |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **131.313** |
+| `tray_x0` / `bh_x` | `rcv_rear_x` | **131.313** (at receiver mouths) |
+| `wb_stock + rear_overhang` | frame end | **152.5** (`mod_rear_x` = this; exposed tray ≈**21.187**) |
 
 - Air & fuel module rails: **2×4** (`mod_w=2` across car, `mod_h=4` tall, `mod_wall` 0.188) — bottom at `rail_bottom` 3.5 / top 7.5
 - Rear clip receivers: rectangular `rcv_w` / `rcv_h` / `rcv_wall` (= mod + 2×`mod_slip_clear` + 2×wall) — must match rear clip exactly
@@ -111,13 +111,14 @@ Sourced fitting comments start with **SOURCED (…)**. Layout / unverified items
 |---|---|---|
 | `module_variant` | air_fuel | air_fuel\|fuel_only |
 | `rcv_*` / `rail_end_x` / `clip_rear_x` / `mod_insert_depth` | match rear clip | Mirror expressions/defaults exactly |
-| `rear_overhang` | 36 in | TAPED axle CL → frame end (was 42); match rear clip |
+| `wb_stock` / `kickup_aft` | 116.5 / 7 | Match rear clip stock hoop / kick end |
+| `rear_overhang` | 36 in | TAPED from STOCK rear axle → frame end **152.5** |
 | `mod_od` / `mod_wall` | 2.0 / 0.188 in | PLACEHOLDER module rail |
 | `mod_slip_clear` | 0.030 in | PLACEHOLDER per side vs rcv ID |
 | `mod_insert_depth` / `mod_insert_len` | 6.000 in / `= depth` | Slip depth into receiver |
-| `mod_front_x` | `rcv_rear_x - mod_insert_depth` | Tip aft of end cap (≈127.313) |
-| `tray_x0` | `rcv_rear_x` | Tray/bulkhead at receiver mouths (≈133.313) |
-| `mod_tray_len` | `(wb + rear_overhang) - rcv_rear_x` | FLAG: ~**20.2** exposed (was 36 ending at 159.5). A 36 tray + receivers cannot fit inside the 36 in axle-to-frame-end |
+| `mod_front_x` | `rcv_rear_x - mod_insert_depth` | Tip aft of end cap (≈125.313) |
+| `tray_x0` | `rcv_rear_x` | Tray/bulkhead at receiver mouths (≈131.313) |
+| `mod_tray_len` | `(wb_stock + rear_overhang) - rcv_rear_x` | Exposed tray ≈**21.187** (was ~20.2 at frame end 153.5). Does not run past 152.5 |
 | `fuel_l` / `fuel_w` / `fuel_h` | 28 / 18 / 10 in | PLACEHOLDER tank shell |
 | `fuel_pf_*` / `fuel_fcst_*` | sourced | Radium 20-0278 / Nuke DXF / FCST-X |
 | `fuel_sender_*` | sourced | SAE 5-bolt (angles PLACEHOLDER) |

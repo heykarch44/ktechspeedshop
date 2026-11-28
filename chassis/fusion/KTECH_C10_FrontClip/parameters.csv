@@ -3,8 +3,8 @@ tube_w,2,in,A500 / slip tube width across the car
 cab_rail_h,5,in,FLAG: purchased center spine is now 2x5 (was 2x6). FrontClip aft slip must match
 cab_rail_bottom,3.5,in,Cab/center section bottom at design ride
 rail_bottom,cab_rail_bottom,in,COMPAT alias → cab_rail_bottom
-front_rail_bottom,10.07,in,Front-clip rail bottom at the arms (design ride)
-front_rail_h,5,in,Flat 5 in rail through steering / A-arms / engine (was 6; no arch). Top = 15.07
+front_rail_bottom,10.07,in,Front-clip rail bottom at the arms (design ride) — LOCKED; do not raise for tire clearance
+front_rail_h,5,in,Flat 5 in rail through steering / A-arms / engine (was 6; no arch). Top = 15.07 — LOCKED
 nose_rail_h,4,in,Nose height ahead of kick (keep 4 in)
 nose_top_ramp,5,in,Top drop from front-clip top over kick (5 in from A-arm area; was 1 with bottom level)
 nose_bot_ramp,4,in,Bottom drop from front-clip bottom over kick (was 0 / level)
@@ -25,19 +25,22 @@ rail_cl,16.0,in,Literal. 34 in OD through arms/engine (2*rail_cl + tube_w). Unco
 rail_cl_nose,13.0,in,28 in OD nose (2*rail_cl_nose + tube_w)
 core_width,33.5,in,TAPED. Core-mount C-C = 28 in nose OD + 2*core_pad_outboard — NOT rail spacing
 core_pad_outboard,2.75,in,Outboard core-support pad per side from 28 in nose outside face
-wb,117.5,in,Match Chassis_Setup — 73-87 shortbed locked WB
-cab_to_axle,87,in,FLAG: FRONT cab mount to rear axle CL (2026-11-26). Match Chassis_Setup
-cab_f_x,wb - cab_to_axle,in,Driver (=30.5). Drop ends at 20 — 10.5 in before cab_f_x (was 2 in before 22)
-core_to_mid,55,in,TAPED. Core to cab-front along rail
-core_x,cab_f_x - core_to_mid,in,Derived (=−24.5). Was the old driver (−33 placeholder)
-nose_tip_x,-34,in,PLACEHOLDER. Forward tip of nose / horn envelope
-kick_start_x,-8,in,Plan-view kick start (ahead of rack). Fits between core and axle
+wb_stock,116.5,in,TAPED 2026-11-27. Stock hub-to-hub / stock rear-axle station. Match Chassis_Setup
+wb,wb_stock,in,Active stock WB (frame stations). Match Chassis_Setup
+front_axle_forward,1.0,in,DEFAULT. Design front hub X = −front_axle_forward. Moves spindle/A-arm pickups only — rails/drop/nose/core stay
+front_axle_x,-front_axle_forward,in,Design front hub X (default −1.0). Pivot construction at this station
+cab_to_axle,87,in,CONFIRMED 2026-11-27: FRONT cab mount to STOCK rear axle. Match Chassis_Setup
+cab_f_x,wb_stock - cab_to_axle,in,Driver (=29.5). Drop ends at 20 — 9.5 in before cab_f_x. Was 30.5
+core_to_mid,55,in,"TAPED earlier — recorded only. Direct 29.5−(−25)=54.5; FLAG 0.5 in. Not the core_x driver"
+core_x,-25,in,LITERAL TAPED 2026-11-27. Core 25 ahead of stock front hub (was −24.5 derived)
+nose_tip_x,-34,in,PLACEHOLDER. Forward tip of nose / horn envelope (stock-hub datum)
+kick_start_x,-8,in,Plan-view nose kick start (ahead of rack). Fits between core and stock hub — frame feature; not shifted by front_axle_forward
 kick_len,7,in,Single faceted plan-view kick length
-kick_end_x,kick_start_x + kick_len,in,Kick ends just ahead of steering/rack / front axle
+kick_end_x,kick_start_x + kick_len,in,Kick ends just ahead of steering/rack
 kick_angle_deg,23,deg,Plan-view kick angle (deg). 23 deg over 7 in ≈ 3 in inset
 kick_inset,3,in,Inward per side through kick (rail_cl - rail_cl_nose)
-drop_start_x,8,in,Side-view angular drop start (aft of arms / bellhousing)
-drop_end_x,20,in,Drop finished (cab height) BEFORE cab_f_x (=30.5); 10.5 in gap
+drop_start_x,8,in,Side-view angular drop start (aft of arms / bellhousing) — LOCKED
+drop_end_x,20,in,Drop finished (cab height) BEFORE cab_f_x (=29.5); 9.5 in gap — LOCKED x=8→20
 slip_overlap,8,in,Slip-fit overlap of plate box over 2x5 center tube
 center_tube_front_x,drop_end_x,in,Forward end of purchased 2x5 center tube (at finished drop)
 clip_aft_x,center_tube_front_x + slip_overlap,in,Aft end of front-clip plate box (over tube)
@@ -46,10 +49,10 @@ tab_length,clip_t,in,Tab protrusion = mating plate thickness
 slot_clear,0.010,in,PLACEHOLDER. Laser slot oversize vs tab
 tab_pitch,4.000,in,PLACEHOLDER. Tab pitch along long edges
 lca_pivot_z,13.50,in,Lower inner pivot lateral off CL (level arm at ride)
-lca_pivot_y,8.07,in,Lower inner pivot height (= LBJ height). 2.00 hang below front_rail_bottom
+lca_pivot_y,8.07,in,Lower inner pivot height (= LBJ height). 2.00 hang below front_rail_bottom — LOCKED Y
 lca_hang,front_rail_bottom - lca_pivot_y,in,Hanging drop-mount below rail bottom (2.00 at defaults)
 uca_pivot_z,15.50,in,Upper inner pivot lateral off CL
-uca_pivot_y,17.88,in,Upper inner pivot height. ~2.81 above front rail top (tower; no arch)
+uca_pivot_y,17.88,in,Upper inner pivot height. ~2.81 above front rail top (tower; no arch) — LOCKED Y
 uca_tower,uca_pivot_y - (front_rail_bottom + front_rail_h),in,Upper tower above rail top (~2.81)
 pivot_stub_t,0.375,in,PLACEHOLDER. Solid stub plate thickness for pivot construction
 pivot_stub_w,2.500,in,PLACEHOLDER. Solid stub width along X

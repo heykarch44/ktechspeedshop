@@ -13,7 +13,8 @@
 #   inset/side, constant ~2.44 box width). Top ramps 5 in down (~35.5 deg
 #   elev); bottom ramps 4 in down (~29.7 deg); nose top 10.07 / bottom 6.07
 #   (vs stock core bottom 9.00 = −2.93). Angular cab drop 6.57 top AND
-#   bottom over 12 in (x=8→20), finished 10.5 in before cab_f_x=30.5.
+#   bottom over 12 in (x=8→20), finished 9.5 in before cab_f_x=29.5.
+#   Origin = STOCK front hub; A-arm pickups at front_axle_x (= −front_axle_forward).
 #   Aft slip sized to purchased 2x5 center tube.
 #   Hanging LCA mount + ~2.81 in UCA tower (pivots locked).
 #
@@ -154,25 +155,48 @@ PARAM_ORDER = [
         "in",
         "Outboard core pad per side from 28 in nose outside face",
     ),
-    ("wb", "117.5 in", "in", "Match Chassis_Setup — 73-87 shortbed locked WB"),
+    (
+        "wb_stock",
+        "116.5 in",
+        "in",
+        "TAPED 2026-11-27. Stock hub-to-hub. Match Chassis_Setup",
+    ),
+    ("wb", "wb_stock", "in", "Active stock WB (frame stations). Match Chassis_Setup"),
+    (
+        "front_axle_forward",
+        "1.0 in",
+        "in",
+        "DEFAULT. Design front hub X = −this. Moves A-arm pickups only",
+    ),
+    (
+        "front_axle_x",
+        "-front_axle_forward",
+        "in",
+        "Design front hub X (default −1.0)",
+    ),
     (
         "cab_to_axle",
         "87 in",
         "in",
-        "FLAG: FRONT cab mount to rear axle CL (2026-11-26). Match Chassis_Setup",
+        "CONFIRMED 2026-11-27: FRONT cab mount to STOCK rear axle. Match Chassis_Setup",
     ),
     (
         "cab_f_x",
-        "wb - cab_to_axle",
+        "wb_stock - cab_to_axle",
         "in",
-        "Driver (=30.5). Drop ends at 20 — 10.5 in before cab_f_x",
+        "Driver (=29.5). Drop ends at 20 — 9.5 in before cab_f_x",
     ),
-    ("core_to_mid", "55 in", "in", "TAPED. Core to cab-front along rail"),
+    (
+        "core_to_mid",
+        "55 in",
+        "in",
+        "TAPED earlier — recorded only. Direct 54.5; FLAG 0.5 in",
+    ),
     (
         "core_x",
-        "cab_f_x - core_to_mid",
+        "-25 in",
         "in",
-        "Derived (=−24.5). Was the old driver (−33 placeholder)",
+        "LITERAL TAPED 2026-11-27 (was −24.5 derived)",
     ),
     ("nose_tip_x", "-34 in", "in", "PLACEHOLDER. Forward tip of nose"),
     (
@@ -195,7 +219,7 @@ PARAM_ORDER = [
         "drop_end_x",
         "20 in",
         "in",
-        "Drop finished (cab height) BEFORE cab_f_x (=30.5); 10.5 in gap",
+        "Drop finished (cab height) BEFORE cab_f_x (=29.5); 9.5 in gap",
     ),
     ("slip_overlap", "8 in", "in", "Slip-fit overlap over 2x5 center tube"),
     (
@@ -326,8 +350,9 @@ def run(_context):
             "bottom ramps 4 in (~29.7 deg); nose 10.07 / 6.07 "
             "(vs stock core bottom 9.00 = −2.93).\n"
             "Raised flat 5 in rail 10.07–15.07 UNCHANGED at arms; "
-            "drop 6.57 top+bottom x=8→20 before cab_f_x=30.5.\n"
-            "FLAG: cab_to_axle=87 FRONT mount; core_x derived (=−24.5).\n"
+            "drop 6.57 top+bottom x=8→20 before cab_f_x=29.5.\n"
+            "core_x=−25 literal; front_axle_forward=1 → pickups at front_axle_x=−1.\n"
+            "Rail/pivot Y LOCKED (10.07–15.07 / 8.07 / 17.88). FLAG: rear tire 27.5 vs FrontGeometry 29.\n"
             "Aft slip sized to 2x5 center (cab_rail_h=5).\n"
             "core_width 33.5 is core-mount C-C, not rail spacing.\n"
             "LCA hang pivot (13.50, 8.07); UCA tower pivot (15.50, 17.88) "
@@ -1267,7 +1292,7 @@ def build_pivot_geometry(comp):
         ("PL_LCA_Z_LH", "-lca_pivot_z"),
         ("PL_UCA_Z_RH", "uca_pivot_z"),
         ("PL_UCA_Z_LH", "-uca_pivot_z"),
-        ("PL_AXLE_X", "0 in"),
+        ("PL_AXLE_X", "front_axle_x"),
     ):
         pin = planes.createInput()
         if "Y" in name:
@@ -1313,10 +1338,12 @@ def build_pivot_geometry(comp):
     cl = param_cm(design, "rail_cl")
     tw = param_cm(design, "tube_w")
 
+    ax = param_cm(design, "front_axle_x")
     for sign, tag in ((1.0, "RH"), (-1.0, "LH")):
         # Hanging LCA: plate from rail bottom down to pivot, at outboard of rail.
+        # X centered on design front hub (front_axle_x); rail Y unchanged.
         z_rail_out = sign * (cl + tw / 2.0)
-        x0, x1 = -stub_w / 2.0, stub_w / 2.0
+        x0, x1 = ax - stub_w / 2.0, ax + stub_w / 2.0
         _extrude_side_rect(
             comp, design, "LCA_HANG", tag, sign,
             x0, x1, ly - stub_t, frb, z_rail_out, toward_outboard=True,

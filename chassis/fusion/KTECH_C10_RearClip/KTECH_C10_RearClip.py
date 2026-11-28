@@ -135,14 +135,45 @@ PARAM_ORDER = [
         "in",
         "Absolute ride height — matches cab_rail_bottom 3.5 (was stale local 8)",
     ),
-    ("wb_73_87_short", "117.5 in", "in", "73-87 shortbed WB — first prototype"),
-    ("wb_67_72_short", "115.0 in", "in", "67-72 shortbed WB — switch wb to this"),
-    ("wb", "wb_73_87_short", "in", "Active wheelbase"),
+    (
+        "wb_stock",
+        "116.5 in",
+        "in",
+        "TAPED 2026-11-27. Stock hub-to-hub / stock rear-axle station (was 117.5)",
+    ),
+    ("wb_73_87_short", "wb_stock", "in", "73-87 shortbed stock WB — first prototype"),
+    ("wb_67_72_short", "115.0 in", "in", "67-72 shortbed stock WB — switch wb to this"),
+    ("wb", "wb_stock", "in", "Active STOCK WB / stock rear-axle station (frame + hoop)"),
+    (
+        "front_axle_forward",
+        "1.0 in",
+        "in",
+        "DEFAULT. Match Chassis_Setup — for design_wb only here",
+    ),
+    (
+        "axle_setback",
+        "0.5 in",
+        "in",
+        "DEFAULT 0.5 (range 0.5–1.0). Design rear hub = wb_stock + this",
+    ),
+    (
+        "rear_axle_x",
+        "wb_stock + axle_setback",
+        "in",
+        "Design rear hub X (default 117.0). Hoop stays on wb_stock",
+    ),
+    (
+        "design_wb",
+        "wb_stock + front_axle_forward + axle_setback",
+        "in",
+        "RESULTING design WB (default 118.0) — not a frame driver",
+    ),
     (
         "rear_overhang",
         "36 in",
         "in",
-        "TAPED 2026-11-26. Rear axle CL to end of frame (was 42). Frame end wb+36=153.5 — NOT rail length",
+        "TAPED 2026-11-27. From STOCK rear axle to frame end. "
+        "Frame end wb_stock+36=152.5 — NOT rail length",
     ),
     ("core_width", "33.5 in", "in", "TAPED. Core support C-C (mount ref; rails use rail_cl)"),
     (
@@ -155,25 +186,52 @@ PARAM_ORDER = [
         "cab_to_axle",
         "87 in",
         "in",
-        "FLAG: FRONT cab mount to rear axle CL (2026-11-26). Match Chassis_Setup",
+        "CONFIRMED 2026-11-27: FRONT cab mount to STOCK rear axle",
     ),
     (
         "cab_f_x",
-        "wb - cab_to_axle",
+        "wb_stock - cab_to_axle",
         "in",
-        "Driver (=30.5). Was core_x + core_to_mid",
+        "Driver (=29.5). Was 30.5",
     ),
-    ("core_to_mid", "55 in", "in", "TAPED. Core to mid along rail"),
+    (
+        "core_to_mid",
+        "55 in",
+        "in",
+        "TAPED earlier — recorded only. Direct 54.5; FLAG 0.5 in",
+    ),
     (
         "core_x",
-        "cab_f_x - core_to_mid",
+        "-25 in",
         "in",
-        "Derived (=−24.5). Was the old driver (−33 placeholder)",
+        "LITERAL TAPED 2026-11-27 (was −24.5 derived)",
     ),
-    ("mid_to_rear", "43 in", "in", "TAPED. Mid to cab-rear along rail"),
-    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed (=73.5)"),
+    (
+        "mid_to_rear",
+        "43 in",
+        "in",
+        "TAPED. Mid to rear cab MOUNT (keep vs cab_back 45)",
+    ),
+    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed (=72.5). Was 73.5"),
+    (
+        "cab_back",
+        "45 in",
+        "in",
+        "TAPED. Back of cab behind front mount. FLAG: 45 vs mount 43",
+    ),
+    (
+        "kick_start_x",
+        "cab_f_x + cab_back",
+        "in",
+        "Kick-up rise starts after cab back (=74.5)",
+    ),
     # Rear clip / slip-fit (clip_rear_x defined after rcv_* / rail_end_x)
-    ("splice_aft", "3 in", "in", "PLACEHOLDER. Split aft of cab_r"),
+    (
+        "splice_aft",
+        "3 in",
+        "in",
+        "PLACEHOLDER. FLAG: cab_r+3=75.5 is 1 in into kick_start 74.5",
+    ),
     ("slip_overlap", "8 in", "in", "Slip-fit overlap of plate box on tube"),
     ("clip_t", "0.188 in", "in", "Laser plate thickness"),
     ("clip_clear", "0.030 in", "in", "Per-side slip clearance"),
@@ -189,26 +247,44 @@ PARAM_ORDER = [
     ("slot_clear", "0.010 in", "in", "PLACEHOLDER. Slot oversize vs tab"),
     ("tab_pitch", "4.000 in", "in", "PLACEHOLDER. Tab pitch along edges"),
     # Kickup / tire envelope
-    ("tire_od", "32 in", "in", "Lay-out tire"),
+    (
+        "tire_od",
+        "27.5 in",
+        "in",
+        "Lay-out tire 275/35/20 (was 32). FLAG: FrontGeometry still 29",
+    ),
     ("bag_stroke", "11 in", "in", "Bag travel target"),
-    ("kickup_ahead", "10 in", "in", "PLACEHOLDER. Kickup start ahead of axle"),
-    ("kickup_aft", "8 in", "in", "PLACEHOLDER. Kickup end aft of axle"),
+    (
+        "kickup_ahead",
+        "7 in",
+        "in",
+        "Hoop bottom half ahead of STOCK rear axle (109.5)",
+    ),
+    (
+        "kickup_aft",
+        "7 in",
+        "in",
+        "Hoop bottom half aft of STOCK rear axle (123.5 = kick end)",
+    ),
     (
         "kickup_rise",
-        "8 in",
+        "17 in",
         "in",
-        "FLAG CLEARANCE: 8 in bottom rise (arch bottom 11.5 / top 15.5 at ride). "
-        "32 in tire axle CL 16 / tube top 17.5; at axle_travel_up=3 tube top 20.5. "
-        "11.5 underside is BELOW axle at ride AND bump (same at old rise=4). "
-        "Need ~21.0 underside (~17.5 rise) for bump+0.5. Applied as 8 as taped.",
+        "TAPED 2026-11-27. 17 above rail bottom (was 8). Ride underside 20.5 / "
+        "laid out 17. FLAG: 15 vs 13.75 axle; clear is tube not tire OD; bag ~9–10",
     ),
     (
         "kickup_top_rise",
         "kickup_rise + arch_rail_h - tube_h",
         "in",
-        "Top rise over arch (=7 at defaults: peak top = bottom + rise + arch_rail_h)",
+        "Top rise over arch (=16 at defaults: 17+4−5)",
     ),
-    ("kickup_ramp", "4 in", "in", "PLACEHOLDER. Kickup ramp length"),
+    (
+        "kickup_ramp",
+        "3 in",
+        "in",
+        "Top-plateau inset ((14−8)/2). Top hoop 112.5–120.5",
+    ),
     # 4-link — REV-B lowers outboard; uppers inboard (triangulated) or parallel
     ("lower_link_len", "23 in", "in", "PLACEHOLDER. Target lower C-C (actual from pickups)"),
     ("upper_link_len", "22 in", "in", "PLACEHOLDER. Target upper C-C (actual from pickups)"),
@@ -355,7 +431,7 @@ PARAM_ORDER = [
         "Derived axle tube length each side",
     ),
     ("axle_cl_y", "rail_bottom + tube_h / 2", "in", "PLACEHOLDER. Axle CL height at ride"),
-    ("axle_lower_pickup_x", "wb", "in", "PLACEHOLDER. Axle lower pickup X"),
+    ("axle_lower_pickup_x", "rear_axle_x", "in", "PLACEHOLDER. Axle lower pickup X (design axle)"),
     ("axle_lower_pickup_y", "axle_cl_y - 1 in", "in", "PLACEHOLDER. Axle lower pickup height"),
     (
         "axle_lower_spread_z",
@@ -363,7 +439,7 @@ PARAM_ORDER = [
         "in",
         "PLACEHOLDER. Axle lower lateral — outboard of rails near housing tubes",
     ),
-    ("axle_upper_pickup_x", "wb", "in", "PLACEHOLDER. Axle upper pickup X"),
+    ("axle_upper_pickup_x", "rear_axle_x", "in", "PLACEHOLDER. Axle upper pickup X (design axle)"),
     ("axle_upper_pickup_y", "axle_cl_y + 2 in", "in", "PLACEHOLDER. Axle upper pickup height"),
     (
         "axle_upper_spread_z",
@@ -375,9 +451,9 @@ PARAM_ORDER = [
     # Watts link (used when rear_link_type = parallel_watts) — all PLACEHOLDER
     (
         "watts_pivot_x",
-        "wb + cs_depth / 2",
+        "rear_axle_x + cs_depth / 2",
         "in",
-        "PLACEHOLDER. Watts pivot X — aft face of housing center section",
+        "PLACEHOLDER. Watts pivot X — aft face of housing (design axle)",
     ),
     (
         "watts_pivot_y",
@@ -508,9 +584,9 @@ PARAM_ORDER = [
     ),
     (
         "rcv_front_x",
-        "wb + kickup_aft",
+        "wb_stock + kickup_aft",
         "in",
-        "PLACEHOLDER. Receiver forward face X (start of step-down aft bay)",
+        "Receiver forward face X = kick end (~123.5 on stock hoop)",
     ),
     (
         "rcv_key_w",
@@ -765,22 +841,24 @@ def run(_context):
                 lat_txt = "none (triangulated uppers provide lateral)"
         ui.messageBox(
             "Rear clip built in this document.\n\n"
-            "Prototype WB = wb_73_87_short (117.5). For 67-72 set wb = wb_67_72_short.\n"
+            "Origin = STOCK front hub. wb_stock=116.5; design rear_axle_x="
+            "wb_stock+axle_setback (default 117.0). For 67-72 set wb = wb_67_72_short.\n"
             "rear_link_type: {}\n"
             "REV-B: lowers outboard (lower_link_y); bag/shock inboard "
-            "(bag_y / shock_y). Rails/kickup/OA XM/receivers identical for both "
-            "link variants.\n"
+            "(bag_y / shock_y). Rails/kickup/OA XM on STOCK axle; axle mockup "
+            "follows rear_axle_x.\n"
             "Suspension mount mode: {} (suspension_mode user param).\n"
             "Four-link bars: {} (1.25 tube + RH/LH rod ends; cut list written).\n"
             "Over-axle XM bump clearance (underside vs housing/CS): {:.3f} in — {}.\n"
             "{}\n"
             "{}\n"
             "{}\n"
-            "2x5 slip (tube_h=5); kickup_rise=8 / arch_rail_h=4 "
-            "(arch bottom 11.5 / top 15.5 at ride); FLAG: 11.5 underside "
-            "does not clear 3 in axle tube at ride or bump — see CSV/README.\n"
-            "cab_to_axle=87 FRONT→axle; cab_f_x=30.5; rear_overhang=36 "
-            "(frame end 153.5).\n"
+            "2x5 slip (tube_h=5); kickup_rise=17 / arch_rail_h=4 "
+            "(arch bottom 20.5 / top 24.5 at ride; laid out 17 / 21). "
+            "Hoop on wb_stock 109.5–123.5 / 112.5–120.5; kick_start=74.5. "
+            "FLAG: 15 vs 13.75 axle tape; tire OD cross in side view OK "
+            "(clear is tube); bag ~9–10; see CSV/README.\n"
+            "cab_f_x=29.5; core_x=−25; rear_overhang=36 (frame end 152.5).\n"
             "Aft receivers: rectangular rcv_w x rcv_h for 2x4 module; "
             "rails end at rail_end_x; end cap welded aft; open mouths at "
             "rcv_rear_x (= clip_rear_x); RCV_KEY on receiver OD; cross-bolts "
@@ -1039,13 +1117,41 @@ def _draw_kickup_polyline(sk, design, z_world, construction=False):
     sk.isComputeDeferred = False
 
 
+def _kickup_x_stations(design):
+    """Kick/hoop X stations in cm. Hoop centered on STOCK rear axle (wb_stock).
+
+    Rise begins at kick_start_x (cab back). Bottom hoop 14 wide / top 8 wide
+    via kickup_ahead/aft/ramp (defaults 7 / 7 / 3 → 109.5–123.5 / 112.5–120.5).
+    """
+    try:
+        stock = param_cm(design, "wb_stock")
+    except Exception:
+        stock = param_cm(design, "wb")
+    try:
+        kick0 = param_cm(design, "kick_start_x")
+    except Exception:
+        kick0 = stock - param_cm(design, "kickup_ahead")
+    ahead = param_cm(design, "kickup_ahead")
+    aft = param_cm(design, "kickup_aft")
+    ramp = param_cm(design, "kickup_ramp")
+    hoop0 = stock - ahead
+    hoop1 = stock + aft
+    return {
+        "kick0": kick0,
+        "hoop0": hoop0,
+        "plat0": hoop0 + ramp,
+        "plat1": hoop1 - ramp,
+        "hoop1": hoop1,
+        "stock": stock,
+    }
+
+
 def _kickup_world_points(design, top=True):
     """Return list of (x,y) inches-as-cm model values for side-plate outline."""
     # Values are already cm from userParameters.value
     xf = param_cm(design, "clip_front_x")
     # Plate-box rails end at rail_end_x (receivers continue to clip_rear_x).
     xr = param_cm(design, "rail_end_x")
-    wb = param_cm(design, "wb")
     rb = param_cm(design, "rail_bottom")
     clear = param_cm(design, "clip_clear")
     th = param_cm(design, "tube_h")
@@ -1053,10 +1159,8 @@ def _kickup_world_points(design, top=True):
         arch_h = param_cm(design, "arch_rail_h")
     except Exception:
         arch_h = th
-    ahead = param_cm(design, "kickup_ahead")
-    aft = param_cm(design, "kickup_aft")
     rise = param_cm(design, "kickup_rise")
-    ramp = param_cm(design, "kickup_ramp")
+    xs = _kickup_x_stations(design)
 
     # Slip box: side plates span INSIDE height between top/bottom plates.
     # Straight: slip_id_h = tube_h + 2*clear. Arch plateau: arch_rail_h + 2*clear.
@@ -1067,28 +1171,23 @@ def _kickup_world_points(design, top=True):
     y_bot_hi = y_bot + rise
     y_top_hi = y_bot_hi + arch_h + 2.0 * clear
 
-    x_k0 = wb - ahead
-    x_k1 = x_k0 + ramp
-    x_k2 = wb + aft - ramp
-    x_k3 = wb + aft
-
-    # REV-B: rise over axle, plateau, then step back down aft of kickup
-    # into a short key bay ending at rail_end_x (receivers aft of that).
+    # Rise from kick_start into stock hoop; top plateau inset by ramp; bottom
+    # spans full 14 in hoop then vertical step at kick end into key bay.
     if top:
         return [
             (xf, y_top),
-            (x_k0, y_top),
-            (x_k1, y_top_hi),
-            (x_k2, y_top_hi),
-            (x_k3, y_top),
+            (xs["kick0"], y_top),
+            (xs["plat0"], y_top_hi),
+            (xs["plat1"], y_top_hi),
+            (xs["hoop1"], y_top),
             (xr, y_top),
         ]
     return [
         (xf, y_bot),
-        (x_k0, y_bot),
-        (x_k1, y_bot_hi),
-        (x_k2, y_bot_hi),
-        (x_k3, y_bot),
+        (xs["kick0"], y_bot),
+        (xs["hoop0"], y_bot_hi),
+        (xs["hoop1"], y_bot_hi),
+        (xs["hoop1"], y_bot),
         (xr, y_bot),
     ]
 
@@ -1300,21 +1399,13 @@ def _build_cap_plates(comp, design, side, sign, z_in_outer, z_out_outer):
     rise = param_cm(design, "kickup_rise")
     xf = param_cm(design, "clip_front_x")
     xr = param_cm(design, "rail_end_x")
-    wb = param_cm(design, "wb")
-    ahead = param_cm(design, "kickup_ahead")
-    aft = param_cm(design, "kickup_aft")
-    ramp = param_cm(design, "kickup_ramp")
-
-    x_k0 = wb - ahead
-    x_k1 = x_k0 + ramp
-    x_k2 = wb + aft - ramp
-    x_k3 = wb + aft
-    # Forward ends at kickup start; raised plateau between ramps; aft after step-down
-    # ends at rail_end_x (not clip_rear_x — receivers own the overhang).
-    x_fwd_end = x_k0
-    x_plat_start = x_k1
-    x_plat_end = x_k2
-    x_aft_start = x_k3
+    xs = _kickup_x_stations(design)
+    # Forward ends at kick_start; raised plateau on top hoop inset; aft after
+    # kick end at stock hoop aft (receivers own the overhang).
+    x_fwd_end = xs["kick0"]
+    x_plat_start = xs["plat0"]
+    x_plat_end = xs["plat1"]
+    x_aft_start = xs["hoop1"]
 
     y_bot_outer = rb - clear - t
     y_top_outer = rb + th + clear
@@ -1450,8 +1541,6 @@ def _add_rail_tabs_and_slots(comp, design, side, sign, z_in_inner, z_out_inner, 
     into the top-forward plate region. Slots are cut in TOP_FWD / BOT_FWD.
     """
     xf = param_cm(design, "clip_front_x")
-    wb = param_cm(design, "wb")
-    ahead = param_cm(design, "kickup_ahead")
     pitch = param_cm(design, "tab_pitch")
     tw = param_cm(design, "tab_width")
     tl = param_cm(design, "tab_length")
@@ -1460,7 +1549,7 @@ def _add_rail_tabs_and_slots(comp, design, side, sign, z_in_inner, z_out_inner, 
     clear = param_cm(design, "clip_clear")
     th = param_cm(design, "tube_h")
 
-    x_end = wb - ahead
+    x_end = _kickup_x_stations(design)["kick0"]
     span = x_end - xf
     if span <= pitch:
         return
@@ -2362,7 +2451,10 @@ def _extrude_bolt_axis_housing(comp, center, width, od, bore, name):
 
 def build_axle_ref(comp):
     design = adsk.fusion.Design.cast(comp.parentDesign)
-    wb = param_cm(design, "wb")
+    try:
+        axle_x = param_cm(design, "rear_axle_x")
+    except Exception:
+        axle_x = param_cm(design, "wb")
     ay = param_cm(design, "axle_cl_y")
     po = param_cm(design, "pinion_offset")
     csw = param_cm(design, "cs_width")
@@ -2371,9 +2463,12 @@ def build_axle_ref(comp):
     b = param_cm(design, "housing_end_b")
 
     # Center section box — PLACEHOLDER geometry awaiting Currie data.
+    # X = design rear axle (wb_stock + axle_setback); hoop/OA XM stay on wb_stock.
     planes = comp.constructionPlanes
     pin = planes.createInput()
-    pin.setByOffset(comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(wb - csd / 2.0))
+    pin.setByOffset(
+        comp.yZConstructionPlane, adsk.core.ValueInput.createByReal(axle_x - csd / 2.0)
+    )
     pl = planes.add(pin)
     pl.name = "PL_AXLE_CS"
 
@@ -2384,10 +2479,10 @@ def build_axle_ref(comp):
     cy, cz = ay, po
     half_w = csw / 2.0
     half_h = csh / 2.0
-    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(wb, cy - half_h, cz - half_w))
-    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(wb, cy + half_h, cz - half_w))
-    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(wb, cy + half_h, cz + half_w))
-    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(wb, cy - half_h, cz + half_w))
+    p00 = sk.modelToSketchSpace(adsk.core.Point3D.create(axle_x, cy - half_h, cz - half_w))
+    p01 = sk.modelToSketchSpace(adsk.core.Point3D.create(axle_x, cy + half_h, cz - half_w))
+    p11 = sk.modelToSketchSpace(adsk.core.Point3D.create(axle_x, cy + half_h, cz + half_w))
+    p10 = sk.modelToSketchSpace(adsk.core.Point3D.create(axle_x, cy - half_h, cz + half_w))
     lines = sk.sketchCurves.sketchLines
     lines.addByTwoPoints(p00, p01)
     lines.addByTwoPoints(p01, p11)
@@ -2425,7 +2520,7 @@ def build_axle_ref(comp):
     skw.name = "SK_WMS"
     skw.isComputeDeferred = True
     for z in (a / 2.0, -a / 2.0, b / 2.0, -b / 2.0):
-        pt = skw.modelToSketchSpace(adsk.core.Point3D.create(wb, ay, z))
+        pt = skw.modelToSketchSpace(adsk.core.Point3D.create(axle_x, ay, z))
         skw.sketchPoints.add(pt)
     skw.isComputeDeferred = False
 
@@ -2433,7 +2528,10 @@ def build_axle_ref(comp):
 def _axle_tube(comp, design, passenger=True):
     sign = 1.0 if passenger else -1.0
     side = "RH" if passenger else "LH"
-    wb = param_cm(design, "wb")
+    try:
+        axle_x = param_cm(design, "rear_axle_x")
+    except Exception:
+        axle_x = param_cm(design, "wb")
     ay = param_cm(design, "axle_cl_y")
     po = param_cm(design, "pinion_offset")
     csw = param_cm(design, "cs_width")
@@ -2453,7 +2551,7 @@ def _axle_tube(comp, design, passenger=True):
     sk = comp.sketches.add(pl)
     sk.name = "SK_AXLE_TUBE_{}".format(side)
     sk.isComputeDeferred = True
-    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(wb, ay, z0))
+    ctr = sk.modelToSketchSpace(adsk.core.Point3D.create(axle_x, ay, z0))
     sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, tube_od / 2.0)
     sk.sketchCurves.sketchCircles.addByCenterRadius(ctr, tube_od / 2.0 - tube_wall)
     sk.isComputeDeferred = False
@@ -3773,7 +3871,10 @@ def receiver_packaging_report(design):
             xm_t = param_cm(design, "rcv_xm_w")
         key_w = param_cm(design, "rcv_key_w")
         overhang = param_cm(design, "rear_overhang")
-        wb = param_cm(design, "wb")
+        try:
+            wb = param_cm(design, "wb_stock")
+        except Exception:
+            wb = param_cm(design, "wb")
         tip_clear = 0.125 * IN_TO_CM
         try:
             insert = param_cm(design, "mod_insert_depth")
@@ -3834,7 +3935,7 @@ def receiver_packaging_report(design):
                 "  X stations (in): key_tab=[{:.3f},{:.3f}]  rcv_front={:.3f}  "
                 "rail_end={:.3f}  cap_aft={:.3f}  mod_front={:.3f}  "
                 "insert={:.3f}  rcv_rear=clip_rear={:.3f}  "
-                "wb+rear_overhang={:.3f}".format(
+                "wb_stock+rear_overhang={:.3f}".format(
                     key_x0 / IN_TO_CM,
                     rail_end / IN_TO_CM,
                     rcv_front / IN_TO_CM,
@@ -3850,7 +3951,7 @@ def receiver_packaging_report(design):
             lines.append(
                 "  X stations (in): key_tab=[{:.3f},{:.3f}]  rcv_front={:.3f}  "
                 "rail_end={:.3f}  cap_aft={:.3f}  "
-                "rcv_rear=clip_rear={:.3f}  wb+rear_overhang={:.3f}".format(
+                "rcv_rear=clip_rear={:.3f}  wb_stock+rear_overhang={:.3f}".format(
                     key_x0 / IN_TO_CM,
                     rail_end / IN_TO_CM,
                     rcv_front / IN_TO_CM,

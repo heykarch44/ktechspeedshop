@@ -3,14 +3,16 @@ tube_w,2,in,Shared spine name — A500 width (cab 2x5 ref)
 tube_h,5,in,Shared spine name — A500 height (cab 2x5; was 6)
 wall,0.188,in,Shared spine wall (reference)
 rail_bottom,3.5,in,Shared — cab/rear bottom at design ride (was stale 8)
-wb_73_87_short,117.5,in,73-87 C10 shortbed wheelbase — first prototype
-wb,wb_73_87_short,in,Active wheelbase (match rear clip)
+wb_stock,116.5,in,TAPED 2026-11-27. Stock hub-to-hub / stock rear-axle station (was 117.5). Match rear clip
+wb_73_87_short,wb_stock,in,73-87 C10 shortbed stock WB — first prototype
+wb,wb_stock,in,Active STOCK wheelbase (match rear clip frame/hoop driver)
+axle_setback,0.5,in,DEFAULT 0.5 (range 0.5–1.0). Documented for parity; tray uses stock frame end
 core_width,33.5,in,TAPED. Core support C-C
 rail_cl,16.0,in,Literal. Match rear clip / front 34 in OD (was core_width/2)
 clip_t,0.188,in,Laser plate thickness for tray / bulkhead / keys
 clip_clear,0.030,in,Shared slip clear name (module uses mod_slip_clear)
-kickup_aft,8,in,PLACEHOLDER. Match rear clip — kickup ends aft of axle
-rear_overhang,36,in,TAPED 2026-11-26. Match rear clip — axle CL to frame end (was 42). Frame end = wb+36 = 153.5
+kickup_aft,7,in,Match rear clip — kick end aft of STOCK rear axle (123.5 = 116.5+7)
+rear_overhang,36,in,TAPED 2026-11-27. From STOCK rear axle to frame end. Frame end = wb_stock+36 = 152.5
 mod_w,2.000,in,Air & fuel utility module rail width — 2x4 rectangle (2 in across car)
 mod_h,4.000,in,Air & fuel utility module rail height — 2x4 rectangle (4 in tall)
 mod_wall,0.188,in,PLACEHOLDER. Module rail tube wall
@@ -18,11 +20,11 @@ mod_slip_clear,0.030,in,PLACEHOLDER. Per-side clearance vs receiver ID (tube-in-
 rcv_wall,0.188,in,PLACEHOLDER. Match rear clip receiver wall
 rcv_w,mod_w + 2 * mod_slip_clear + 2 * rcv_wall,in,Match rear clip — receiver outer width for 2x4 module
 rcv_h,mod_h + 2 * mod_slip_clear + 2 * rcv_wall,in,Match rear clip — receiver outer height for 2x4 module
-rcv_front_x,wb + kickup_aft,in,PLACEHOLDER. Match rear clip — receiver forward face
+rcv_front_x,wb_stock + kickup_aft,in,Match rear clip — receiver forward face (= kick end ~123.5)
 rcv_key_w,1.500,in,PLACEHOLDER. Match rear clip — forward lap of key tab onto rail side plate ahead of rcv_front_x (also key-bay length)
 mod_insert_depth,6.000,in,PLACEHOLDER. Match rear clip — module rail insert depth into receiver
 rcv_length,rcv_key_w + clip_t + 0.125 in + mod_insert_depth,in,Match rear clip — key bay + end cap + tip clear + insert depth
-rcv_rear_x,rcv_front_x + rcv_length,in,Match rear clip — receiver aft mouth X
+rcv_rear_x,rcv_front_x + rcv_length,in,Match rear clip — receiver aft mouth X (~131.313)
 rcv_cl_y,rail_bottom + mod_h / 2,in,Module/receiver CL — bottom at rail_bottom 3.5 / top 7.5
 rail_end_x,rcv_front_x + rcv_key_w,in,Match rear clip — aft end of plate-box rails / end cap
 clip_rear_x,rcv_rear_x,in,Match rear clip — aft end of clip (= receiver mouths)
@@ -32,10 +34,10 @@ rcv_bolt_pitch,3.000,in,PLACEHOLDER. Match rear clip cross-bolt pitch
 rcv_bolt_first_x,(rcv_rear_x - mod_insert_depth) + (mod_insert_depth - rcv_bolt_pitch) / 2,in,PLACEHOLDER. Match rear clip — first bolt centered in insert
 module_variant,air_fuel,,PLACEHOLDER. air_fuel|fuel_only — string enum (not Fusion length)
 mod_insert_len,mod_insert_depth,in,Insert length into receiver (= mod_insert_depth)
-mod_tray_len,(wb + rear_overhang) - rcv_rear_x,in,"FLAG: shortened from 36 — old tray ended at 159.5 past frame end. Now ends at wb+rear_overhang=153.5 (~20.2 exposed). A 36 tray + receivers cannot fit inside the 36 in axle-to-frame-end."
+mod_tray_len,(wb_stock + rear_overhang) - rcv_rear_x,in,"Exposed tray to frame end 152.5. rcv_rear≈131.313 → mod_tray_len≈21.187 (was ~20.2 at 153.5). Do not run past 152.5"
 mod_rail_len,mod_insert_len + mod_tray_len,in,Total module rail length
 mod_front_x,rcv_rear_x - mod_insert_depth,in,Module rail forward tip = mouth − insert depth (aft of end cap)
-mod_rear_x,mod_front_x + mod_rail_len,in,Module rail aft tip X
+mod_rear_x,mod_front_x + mod_rail_len,in,Module rail aft tip X (= frame end 152.5 at defaults)
 tray_t,clip_t,in,PLACEHOLDER. Tray plate thickness
 tray_width,2 * rail_cl - mod_w,in,PLACEHOLDER. Tray plate width (spans between rail inboard faces)
 tray_length,mod_tray_len,in,PLACEHOLDER. Tray plate length along X

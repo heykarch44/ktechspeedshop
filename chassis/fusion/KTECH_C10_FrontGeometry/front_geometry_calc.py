@@ -18,7 +18,7 @@ import math
 # "ESTIMATE" in a comment = not measured on the truck or not printed on a drawing.
 PARAMS = [
     # --- Tire / wheel --------------------------------------------------------
-    ("fg_tire_od", "29.0 in", "in", "Design tire OD (hub height = OD/2 = 14.5). 2026-11-25 sketch"),
+    ("fg_tire_od", "29.0 in", "in", "LOCKED 22x9 package (hub height = OD/2 = 14.5). FLAG 2026-11-27: Chassis/RearClip lay-out is 27.5 (275/35/20) — do not alter this 29 in package here; confirm whether both ends match"),
     ("fg_tire_w", "10.0 in", "in", "Section width ~10.0 in on 22x9"),
     ("fg_wheel_dia", "22 in", "in", "Wheel diameter"),
     ("fg_wheel_w", "9 in", "in", "Wheel width (bead seat)"),

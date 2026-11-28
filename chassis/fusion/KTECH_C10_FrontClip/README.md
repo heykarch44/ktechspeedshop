@@ -13,7 +13,7 @@ Fusion 360 Python script that builds a parametric **front clip** for the Ktech C
 
 Edit numbers in **Modify → Change Parameters** or in `parameters.csv` before run. After big layout changes, New Design + re-run.
 
-Coordinates match Chassis_Setup: origin = front axle × ground × frame CL; **+X rear, +Y up, +Z passenger**.
+Coordinates match Chassis_Setup: origin = **STOCK** front hub × ground × frame CL; **+X rear, +Y up, +Z passenger**. Design front hub at `front_axle_x` (= `−front_axle_forward`, default **−1.0**) — pickups translate; rails/drop/nose/core stay.
 
 ## Key defaults (rail heights)
 
@@ -25,12 +25,13 @@ Coordinates match Chassis_Setup: origin = front axle × ground × frame CL; **+X
 | `nose_rail_h` / `nose_bottom` / `nose_top` | **4** / **6.07** / **10.07** (vs stock core bottom 9.00 = **−2.93**) |
 | Nose elev | Top drop **5 in** ≈ **35.5°**; bottom drop **4 in** ≈ **29.7°** over 7 in kick (was 1 in top / level bottom) |
 | Kick | **23°**, **7 in**, **3 in** inset/side; constant `box_od_w` ≈ 2.44 |
-| Drop | **6.57** top **and** bottom over **12 in**, `x = 8` → `20`, finished **10.5 in** before `cab_f_x = 30.5` |
+| Drop | **6.57** top **and** bottom over **12 in**, `x = 8` → `20`, finished **9.5 in** before `cab_f_x = 29.5` |
 | Cab / slip | `cab_rail_bottom = 3.5`, `cab_rail_h = 5` (2×5) — matches rear slip |
-| LCA pivot | **(13.50, 8.07)** — 2.00 hang below rail (unchanged; arms on un-dropped clip) |
-| UCA pivot | **(15.50, 17.88)** — ~**2.81** tower above rail top |
+| LCA pivot | **(13.50, 8.07)** Y/Z LOCKED — 2.00 hang; X at `front_axle_x` |
+| UCA pivot | **(15.50, 17.88)** Y/Z LOCKED — ~**2.81** tower; X at `front_axle_x` |
 | Core pads | **2.75** outboard of 28 in nose; `core_width = 33.5` C-C |
-| `cab_to_axle` / `cab_f_x` / `core_x` | **87** FLAG (FRONT mount→rear axle) / **30.5** driver / **−24.5** derived |
+| `wb_stock` / `cab_f_x` / `core_x` | **116.5** / **29.5** / **−25** literal (2026-11-27 tapes) |
+| Tire FLAG | Chassis/RearClip lay-out **27.5** (275/35/20); FrontGeometry still locked **29** on 22×9 — do not alter that package |
 
 Ride notes (comments / FrontGeometry): design cab 3.5 / front 10.07–15.07; laid out frame −3.5; aired cab 7.
 

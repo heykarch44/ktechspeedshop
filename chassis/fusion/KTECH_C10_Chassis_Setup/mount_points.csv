@@ -2,5 +2,5 @@ name,inches,note
 core_width,33.5,Core support C-C. Taped.
 mid_width,42.5,Mid / cab-front mount C-C. Outboard of the 2x5 cab rail.
 rear_cab_width,23.5,Back of cab C-C. Inboard of the 2x5 cab rail.
-core_to_mid,55,Core to mid along the rail.
-mid_to_rear,43,Mid to back of cab along the rail.
+core_to_mid,55,"Earlier tape — recorded only. Direct stations give 54.5 (cab_f 29.5 − core −25). FLAG 0.5 in; do not close."
+mid_to_rear,43,Mid to rear cab MOUNT along the rail. Keep separate from cab_back=45 body/back tape.

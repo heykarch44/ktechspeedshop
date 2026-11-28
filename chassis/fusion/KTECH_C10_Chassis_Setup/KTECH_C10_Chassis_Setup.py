@@ -18,8 +18,9 @@
 #   Forged aluminum, modular hub, 5x4.75 and 5x5. Drawing: wilwood-831-14202.png
 #
 # Coordinates (Fusion Y-up)
-#   Origin = front axle × ground × frame centerline
+#   Origin = STOCK front hub × ground × frame centerline
 #   +X = rear   +Y = up   +Z = passenger (right)
+#   front_axle_forward / axle_setback move suspension pickups only — not frame stations
 
 import csv
 import os
@@ -62,18 +63,60 @@ PARAM_ORDER = [
         "in",
         "Front-clip rail height through cab section AND A-arms (was 6). Top = 15.07",
     ),
-    ("front_overhang", "34 in", "in", "Tube ahead of front axle"),
-    ("wb", "117.5 in", "in", "Wheelbase"),
+    ("front_overhang", "34 in", "in", "Tube ahead of STOCK front hub"),
+    (
+        "wb_stock",
+        "116.5 in",
+        "in",
+        "TAPED 2026-11-27. Stock hub-to-hub / stock rear-axle station (was 117.5)",
+    ),
+    ("wb", "wb_stock", "in", "Active stock WB / stock rear-axle station (frame driver)"),
+    (
+        "front_axle_forward",
+        "1.0 in",
+        "in",
+        "DEFAULT. Design front hub X = −this. Moves spindle/A-arm pickups only",
+    ),
+    (
+        "front_axle_x",
+        "-front_axle_forward",
+        "in",
+        "Design front hub X (default −1.0)",
+    ),
+    (
+        "axle_setback",
+        "0.5 in",
+        "in",
+        "DEFAULT 0.5 (range 0.5–1.0). Design rear hub = wb_stock + this",
+    ),
+    (
+        "rear_axle_x",
+        "wb_stock + axle_setback",
+        "in",
+        "Design rear hub X (default 117.0)",
+    ),
+    (
+        "design_wb",
+        "wb_stock + front_axle_forward + axle_setback",
+        "in",
+        "RESULTING design WB (default 118.0) — not a frame-station driver",
+    ),
     (
         "rear_overhang",
         "36 in",
         "in",
-        "TAPED 2026-11-26. Rear axle CL to end of frame (was 42). Frame end wb+36=153.5; spine 187.5",
+        "TAPED 2026-11-27. From STOCK rear axle to frame end. "
+        "Frame end wb_stock+36=152.5; spine 186.5",
     ),
     ("overlap", "14 in", "in", "Clip socket on the tube"),
     ("clip_t", "0.188 in", "in", "Clip plate thickness"),
     ("clip_clear", "0.030 in", "in", "C-socket clearance per side"),
-    ("tire_od", "32 in", "in", "Lay-out tire"),
+    (
+        "tire_od",
+        "27.5 in",
+        "in",
+        "Lay-out tire OD 275/35/20 (was 32). FLAG: FrontGeometry still 29 in 22x9",
+    ),
     ("bag_stroke", "11 in", "in", "Bag travel target"),
     ("spindle_drop", "2.5 in", "in", "Wilwood 831-14202 2.5 drop. Locked."),
     ("bj_spread", "9.06 in", "in", "Upper to lower BJ hole centers along kingpin"),
@@ -81,7 +124,12 @@ PARAM_ORDER = [
     ("kingpin_deg", "82", "", "BJ axis vs hub face, degrees. Drawing."),
     ("tre_reach", "4.09 in", "in", "Hub center to tie-rod hole, plan"),
     ("tre_drop", "2.35 in", "in", "Tie-rod hole below spindle CL"),
-    ("spine_length", "front_overhang + wb + rear_overhang", "in", "Computed"),
+    (
+        "spine_length",
+        "front_overhang + wb_stock + rear_overhang",
+        "in",
+        "Computed (=186.5) from stock WB",
+    ),
     (
         "core_width",
         "33.5 in",
@@ -90,8 +138,18 @@ PARAM_ORDER = [
     ),
     ("mid_width", "42.5 in", "in", "TAPED. Mid / cab-front mount C-C"),
     ("rear_cab_width", "23.5 in", "in", "TAPED. Back of cab mount C-C"),
-    ("core_to_mid", "55 in", "in", "TAPED. Core to mid mount along the rail"),
-    ("mid_to_rear", "43 in", "in", "TAPED. Mid to back-of-cab along the rail"),
+    (
+        "core_to_mid",
+        "55 in",
+        "in",
+        "TAPED earlier — recorded only. Direct 29.5−(−25)=54.5; FLAG 0.5 in",
+    ),
+    (
+        "mid_to_rear",
+        "43 in",
+        "in",
+        "TAPED. Mid to rear cab MOUNT (keep; do not replace with cab_back 45)",
+    ),
     (
         "mount_y",
         "cab_rail_bottom + cab_rail_h",
@@ -111,21 +169,28 @@ PARAM_ORDER = [
         "cab_to_axle",
         "87 in",
         "in",
-        "FLAG: FRONT cab mount to rear axle CL (2026-11-26). Not rear cab mount",
+        "CONFIRMED 2026-11-27: FRONT cab mount to STOCK rear axle",
     ),
     (
         "cab_f_x",
-        "wb - cab_to_axle",
+        "wb_stock - cab_to_axle",
         "in",
-        "Driver from wb + cab_to_axle (=30.5). Was core_x + core_to_mid",
+        "Driver (=29.5). Was 30.5",
     ),
     (
         "core_x",
-        "cab_f_x - core_to_mid",
+        "-25 in",
         "in",
-        "Derived (=−24.5). Was the old driver (−33 placeholder)",
+        "LITERAL TAPED 2026-11-27 (was −24.5 derived). Not from core_to_mid",
     ),
-    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed (=73.5)"),
+    ("cab_r_x", "cab_f_x + mid_to_rear", "in", "Computed (=72.5). Was 73.5"),
+    (
+        "cab_back",
+        "45 in",
+        "in",
+        "TAPED. Back of cab behind front mount → kick start 74.5. "
+        "FLAG: 45 vs mid_to_rear 43 mount tape",
+    ),
 ]
 
 STATIONS = (
@@ -214,8 +279,9 @@ def run(_context):
             "Cab/center 2x5 rails sit at rail_cl = 16.0 in (34 in OD) — not on the origin.\n"
             "core_width 33.5 is the core-mount C-C (28 in nose + 2.75 pads/side), not rail spacing.\n"
             "FLAG: purchased center spine is now 2x5 (cab_rail_h=5), bottom cab_rail_bottom=3.5.\n"
-            "FLAG: cab_to_axle=87 is FRONT cab mount to rear axle; cab_f_x=wb-87=30.5; "
-            "core_x derived (=−24.5). rear_overhang=36 → spine 187.5.\n"
+            "Origin = STOCK front hub. wb_stock=116.5; cab_f_x=29.5; core_x=−25 literal.\n"
+            "front_axle_forward=1 / axle_setback=0.5 → design WB 118; frame end 152.5 / spine 186.5.\n"
+            "FLAG: core_to_mid tape 55 vs direct 54.5; cab_back 45 vs mid_to_rear 43.\n"
             "Front clip (02_CLIP_FRONT) is empty here — run KTECH_C10_FrontClip into that component.\n\n"
             "Browser (left) should list 00_SKELETON and 01_SPINE_2x5.\n"
             "Save as KTECH_C10_CHASSIS."
@@ -338,7 +404,7 @@ def draw_layout_sketches(comp):
         DO.HorizontalDimensionOrientation,
         adsk.core.Point3D.create(20, -8, 0),
     )
-    wb_dim.parameter.expression = "wb + 0 in"
+    wb_dim.parameter.expression = "wb_stock + 0 in"
     g_dim = dims.addDistanceDimension(
         ground.startSketchPoint,
         ground.endSketchPoint,
@@ -397,7 +463,7 @@ def build_spine(comp):
     ext_in = extrudes.createInput(ring, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
     try:
         ext_in.setTwoSidesDistanceExtent(
-            adsk.core.ValueInput.createByString("wb + rear_overhang"),
+            adsk.core.ValueInput.createByString("wb_stock + rear_overhang"),
             adsk.core.ValueInput.createByString("front_overhang"),
         )
     except Exception:

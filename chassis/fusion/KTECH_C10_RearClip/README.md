@@ -19,7 +19,7 @@ Owner design intent for this script **overrides** the older open-C socket notes 
 
 Edit numbers in **Modify → Change Parameters** (or in `rear_clip_parameters.csv` before run). Geometry is generated at run time from those values — after big layout changes, use a **New Design** and run again (same rule as `KTECH_C10_Chassis_Setup`).
 
-Coordinates match the chassis setup script: origin = front axle × ground × frame CL; **+X rear, +Y up, +Z passenger**.
+Coordinates match the chassis setup script: origin = **STOCK** front hub × ground × frame CL; **+X rear, +Y up, +Z passenger**. `front_axle_forward` / `axle_setback` move suspension pickups and axle centerlines only — not frame stations, kick-up, or hoop.
 
 ## What it builds
 
@@ -40,13 +40,15 @@ Plate DXFs are written to `dxf_out/` next to the script (top-face profile sketch
 
 ## Generation switch (73–87 vs 67–72)
 
-Prototype defaults to **73–87 short**:
+Prototype defaults to **73–87 short** (2026-11-27 tapes):
 
-- `wb_73_87_short` = 117.5 in  
-- `wb_67_72_short` = 115.0 in  
-- `wb` = `wb_73_87_short`
+- `wb_stock` = **116.5** in (stock hub-to-hub / stock rear-axle station; was 117.5)
+- `wb` = `wb_stock` (frame + hoop driver)
+- `axle_setback` = **0.5** default (range **0.5–1.0**) → `rear_axle_x` = 117.0
+- `front_axle_forward` = **1.0** → design WB = **118.0** (resulting; not a frame driver)
+- `wb_67_72_short` = 115.0 in
 
-For 67–72 short, set the `wb` expression to `wb_67_72_short` in User Parameters (or in the CSV) and re-run on a new design. Cab hats stay generation-specific elsewhere; wheelbase lives on the rear clip.
+For 67–72 short, set the `wb` expression to `wb_67_72_short` and re-run. Cab hats stay generation-specific; stock WB / hoop live on the rear clip.
 
 ## Slip-fit box rail
 
@@ -57,25 +59,25 @@ For 67–72 short, set the `wb` expression to `wb_67_72_short` in User Parameter
 - Tab-and-slot: `tab_width`, `tab_length` (= `clip_t`), `slot_clear`, `tab_pitch`
 - Lower-bracket key pockets in the **outboard** plates (REV-B outboard lowers); rails fixture those brackets
 - Over-axle XM key pockets in the **inboard** plates so rails fixture the kickup crossmember
-- Kickup **steps back down** aft of `wb + kickup_aft` (REV-B C10-style); plate-box rails **end** at `rail_end_x` (not at body overhang)
+- Kickup rises from `kick_start_x` (=74.5) into a stock hoop (**14** bottom / **8** top, centered on `wb_stock`); steps down at `wb_stock + kickup_aft` (~123.5); plate-box rails **end** at `rail_end_x`
 - Tail top/bottom plates (`*_TOP_TAIL` / `*_BOT_TAIL`) + `*_END_CAP` at normal rail height in the short key bay
 
 ## Aft receivers (slide-in utility module)
 
-Receiver length is sized to the insert, not a long empty stub. With `wb=117.5`, `kickup_aft=8`, `rcv_key_w=1.5`, `clip_t=0.188`, `mod_insert_depth=6`, and **0.125 in** tip clear between end-cap aft face and module tip:
+Receiver length is sized to the insert, not a long empty stub. With `wb_stock=116.5`, `kickup_aft=7`, `rcv_key_w=1.5`, `clip_t=0.188`, `mod_insert_depth=6`, and **0.125 in** tip clear between end-cap aft face and module tip:
 
 `rcv_length = rcv_key_w + clip_t + 0.125 in + mod_insert_depth` → **7.813 in** (a bare 7.5 in would put the 6 in insert into the end cap).
 
 | Station | Expression | Default (in) |
 |---|---|---|
-| `rcv_front_x` | `wb + kickup_aft` | **125.5** |
-| `rail_end_x` | `rcv_front_x + rcv_key_w` | **127.0** |
-| end-cap aft | `rail_end_x + clip_t` | **127.188** |
-| `mod_front` (equiv.) | `rcv_rear_x - mod_insert_depth` | **127.313** |
-| bolt 1 | `rcv_bolt_first_x` | **128.813** |
-| bolt 2 | `+ rcv_bolt_pitch` | **131.813** |
-| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **133.313** |
-| `wb + rear_overhang` | frame end / body envelope | **153.5** (was 159.5; rear_overhang now **36**) |
+| `rcv_front_x` | `wb_stock + kickup_aft` | **123.5** |
+| `rail_end_x` | `rcv_front_x + rcv_key_w` | **125.0** |
+| end-cap aft | `rail_end_x + clip_t` | **125.188** |
+| `mod_front` (equiv.) | `rcv_rear_x - mod_insert_depth` | **125.313** |
+| bolt 1 | `rcv_bolt_first_x` | **126.813** |
+| bolt 2 | `+ rcv_bolt_pitch` | **129.813** |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | **131.313** |
+| `wb_stock + rear_overhang` | frame end / body envelope | **152.5** |
 
 - Rectangular tube per side: `rcv_w` / `rcv_h` / `rcv_wall` sized from `mod_w=2` / `mod_h=4` + slip clear (≈ **2.436 × 4.436**), CL at `rcv_cl_y = rail_bottom + mod_h/2` (module bottom 3.5 / top 7.5)
 - Plate-box rails stop at `rail_end_x`; open receiver mouths at `rcv_rear_x` are the **aft-most** clip feature (`clip_rear_x = rcv_rear_x`)
@@ -121,7 +123,7 @@ Selected by string param **`rear_link_type`** = `triangulated` (default) \| `par
 
 ### Over-axle crossmember
 
-- Spans LH↔RH kickup rails, centered on axle CL (`wb`)
+- Spans LH↔RH kickup rails, centered on **STOCK** rear axle (`wb_stock`); design axle may sit `axle_setback` aft under the same hoop
 - Laser plate stack: **top**, **front web**, **rear web**, optional **bottom** (`ox_include_bottom`); thickness `ox_plate_t` (default **0.188 PLACEHOLDER**)
 - End keys tab into inboard rail pockets (rails fixture the XM)
 - All OA plates export to DXF (`XMEMBER_OA_*`)
@@ -152,15 +154,19 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 
 | Param | Default | Notes |
 |---|---|---|
-| `wb` | `wb_73_87_short` | Active wheelbase |
+| `wb_stock` / `wb` | 116.5 / `wb_stock` | Stock WB + hoop center (was 117.5) |
+| `axle_setback` / `rear_axle_x` | 0.5 / expr | Range 0.5–1.0; design rear hub (default 117.0) |
+| `design_wb` | expr | RESULTING 118.0 — not a frame driver |
 | `slip_overlap` | 8 in | Box over tube |
 | `clip_clear` | 0.030 in | Per side |
 | `clip_t` | 0.188 in | Plate thickness |
-| `splice_aft` | 3 in | PLACEHOLDER — split aft of `cab_r` |
+| `splice_aft` | 3 in | PLACEHOLDER — FLAG: cab_r+3=75.5 is 1 in into kick 74.5 |
 | `tube_h` / `arch_rail_h` | 5 / 4 in | Straight 2×5; 4 in tall over arch (1 in cut on ramps) |
 | `rail_bottom` / `rail_cl` | 3.5 / 16.0 in | Absolute ride height (cab match); 34 in OD |
-| `kickup_rise` / `kickup_top_rise` | 8 / expr | Bottom rise 8; top rise 7 (= rise + arch − tube_h). Arch at ride: bottom **11.5** / top **15.5** |
-| `kickup_*` | various | PLACEHOLDER — ahead/aft/ramp lengths |
+| `kick_start_x` / `cab_back` | expr / 45 | Rise starts at 74.5; FLAG 45 vs mount 43 |
+| `kickup_rise` / `kickup_top_rise` | 17 / expr | Bottom rise 17; top rise 16. Ride: bottom **20.5** / top **24.5**; laid out **17** / **21** |
+| `kickup_ahead` / `aft` / `ramp` | 7 / 7 / 3 | Stock hoop 109.5–123.5 bottom / 112.5–120.5 top |
+| `tire_od` | 27.5 in | 275/35/20 (was 32) |
 | `lower_link_y` | rail outboard + 0.75 in | PLACEHOLDER lateral (Fusion \|Z\|) — outboard lowers |
 | `frame_link_spread_z` / `axle_lower_spread_z` | `lower_link_y` | Outboard lower pickups |
 | `rear_link_type` | triangulated | triangulated\|parallel_watts (string) |
@@ -183,24 +189,32 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `rcv_w` / `rcv_h` / `rcv_wall` | derived / 0.188 | Rectangular pocket = mod + 2×clear + 2×wall |
 | `mod_insert_depth` | 6.000 in | Shared with UtilityModule — slip depth into receiver |
 | `rcv_length` | `rcv_key_w + clip_t + 0.125 + mod_insert_depth` | ≈7.813 in — key bay + cap + tip clear + insert |
-| `rcv_front_x` | `wb + kickup_aft` | Receiver forward face |
+| `rcv_front_x` | `wb_stock + kickup_aft` | Receiver forward face (~123.5) |
 | `rcv_key_w` | 1.5 in | Forward lap of key tab onto rail side plate (also key-bay length) |
 | `rail_end_x` | `rcv_front_x + rcv_key_w` | Plate-box aft end (key bay); end cap welds aft |
-| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | Receiver mouths = clip aft end (≈133.313) |
+| `rcv_rear_x` / `clip_rear_x` | `rcv_front_x + rcv_length` | Receiver mouths = clip aft end (≈131.313) |
 | `rcv_weld_clear` | 0.030 in | PLACEHOLDER end-cap cutout oversize |
 | `rcv_bolt_d` / `rcv_bolt_count` | 0.5 in / 2 | PLACEHOLDER cross-bolts (inside insert) |
 | `rcv_bolt_first_x` | centered in insert (see above) | Equal ~1.5 in end distance; pitch 3.000 |
 | `rcv_xm_w` / `rcv_xm_t` | 2 / `clip_t` in | PLACEHOLDER rear receiver XM |
-| `rear_overhang` | 36 in | TAPED axle CL → frame end (was 42) — **not** rail length |
-| `cab_to_axle` / `cab_f_x` / `core_x` / `cab_r_x` | 87 / 30.5 / −24.5 / 73.5 | FLAG: 87 is **FRONT** cab→axle; cab_f driver; core derived |
-| `axle_wms_a` | **58.0 in** | PLACEHOLDER — tire TBD (was 63.625) |
+| `rear_overhang` | 36 in | TAPED from **STOCK** rear axle → frame end **152.5** — **not** rail length |
+| `cab_to_axle` / `cab_f_x` / `core_x` / `cab_r_x` | 87 / 29.5 / −25 / 72.5 | FRONT cab→**stock** axle; core literal |
+| `axle_wms_a` | **58.0 in** | PLACEHOLDER — LOCKED this pass |
 | `cs_width` / `cs_height` / `cs_depth` / `tube_insert` | — | PLACEHOLDER UNVERIFIED — Currie |
 
-## FLAG — arch / axle-tube clearance (2026-11-26)
+## FLAG — arch / axle / tire clearance (2026-11-27)
 
-`kickup_rise = 8` with `arch_rail_h = 4` → arch underside **11.5** / top **15.5** at ride (`rail_bottom = 3.5`).
+`kickup_rise = 17` with `arch_rail_h = 4` → arch underside **20.5** / top **24.5** at ride (`rail_bottom = 3.5`); laid out underside **17** / top **21**.
 
-A **32 in** rear tire puts axle CL at **16** at ride and axle-tube top at **17.5** (3 in tube OD). At the `axle_travel_up = 3` PLACEHOLDER, tube top at full bump is **20.5**. An **11.5** arch underside is **below** the axle at ride and at bump (the previous 4 in rise had the same problem). To clear the tube at full bump with 0.5 in margin, the arch underside would need ~**21.0** (bottom rise ~**17.5**, not 8). Bags (8 in OD) are typically inboard on the over-axle XM, so the rail arch must clear the axle tubes first. The 8–9 in tape under the stock arch (bag visible below) may be ground-to-underside, a gap, or the requested rise; applied as an **8 in bottom rise** as instructed — leave this flag until a real bump package is taped.
+Stock tape: arch underside **23** off the floor and **8** above the axle imply an axle at **15**, which does **not** match the **13.75** tire radius on a **27.5** OD (275/35/20). The same **1.25** gap shows up as: 20.5 underside is **6.75** above a 13.75 axle CL (and **5.25** above a 3 in tube top at 15.25) — **not** 8. Do not close one tape to match the other.
+
+In side view the rail will cross the 27.5 tire OD because the rails sit **inboard** of the tires; the relevant clearance is to the **axle / tube**, not the tire OD.
+
+Default `axle_setback = 0.5` puts the design rear axle **0.5 aft of hoop center** — still under the 8/14 hoop; hoop stays on the stock station.
+
+Rear bag: ~**9** nearly fully aired at the taped stance; probably ~**10** fully stretched. Record only — no invented bag-to-crossmember packaging.
+
+FLAG: FrontGeometry still locks a **29 in** 22×9 front package; both ends are specified here as 275/35/20 / 27.5 — confirm whether front matches.
 
 ## Open items
 
@@ -208,7 +222,7 @@ A **32 in** rear tire puts axle CL at **16** at ride and axle-tube top at **17.5
 - **Currie 9-inch CAD** requested **2026-11-15** — replace `cs_width`, `cs_height`, `cs_depth`, `tube_insert` placeholders
 - **Wilwood CAD** requested **2026-11-15** — front/related; rear brake package still TBD against WMS / housing ends
 - Freeze `slot_clear` with a laser coupon
-- Tape / fixture: confirm `splice_aft`, kickup envelope vs 32" tire + bag stroke, and 4-link pickup coordinates (frame + axle)
+- Tape / fixture: confirm `splice_aft` vs kick_start (75.5 vs 74.5), kickup vs 27.5 tire + bag stroke, and 4-link pickup coordinates (frame + axle)
 - Confirm REV-B laterals: `lower_link_y` (outboard lowers), `bag_y` / `shock_y` (inboard bay), and `bag_diameter` against purchased bags
 - Confirm rod-end / bung stack (`rod_end_eye_to_shoulder`, `bung_length`, thread callout) against purchased ends before cutting tubes
 - Confirm over-axle XM plate gauge (`ox_plate_t`), bag stud/air pattern, and shock bore against purchased hardware

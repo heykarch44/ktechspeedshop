@@ -89,8 +89,20 @@ PARAM_ORDER = [
         "in",
         "Shared — cab/rear bottom at design ride (was stale 8)",
     ),
-    ("wb_73_87_short", "117.5 in", "in", "73-87 shortbed WB"),
-    ("wb", "wb_73_87_short", "in", "Active wheelbase — match rear clip"),
+    (
+        "wb_stock",
+        "116.5 in",
+        "in",
+        "TAPED 2026-11-27. Stock WB / stock rear-axle station. Match rear clip",
+    ),
+    ("wb_73_87_short", "wb_stock", "in", "73-87 shortbed stock WB"),
+    ("wb", "wb_stock", "in", "Active STOCK wheelbase — match rear clip"),
+    (
+        "axle_setback",
+        "0.5 in",
+        "in",
+        "DEFAULT 0.5 (range 0.5–1.0). Tray uses stock frame end",
+    ),
     ("core_width", "33.5 in", "in", "TAPED. Core support C-C"),
     (
         "rail_cl",
@@ -100,12 +112,17 @@ PARAM_ORDER = [
     ),
     ("clip_t", "0.188 in", "in", "Laser plate thickness"),
     ("clip_clear", "0.030 in", "in", "Shared slip-clear name"),
-    ("kickup_aft", "8 in", "in", "PLACEHOLDER. Match rear clip kickup_aft"),
+    (
+        "kickup_aft",
+        "7 in",
+        "in",
+        "Match rear clip — kick end aft of STOCK rear axle (~123.5)",
+    ),
     (
         "rear_overhang",
         "36 in",
         "in",
-        "TAPED 2026-11-26. Match rear clip — axle CL to frame end (was 42). Frame end 153.5",
+        "TAPED 2026-11-27. From STOCK rear axle to frame end 152.5",
     ),
     # Air & fuel utility module: 2x4 rails + matching rectangular receivers
     (
@@ -140,7 +157,12 @@ PARAM_ORDER = [
         "in",
         "Match rear clip — receiver outer height for 2x4 module",
     ),
-    ("rcv_front_x", "wb + kickup_aft", "in", "PLACEHOLDER. Match rear clip rcv_front_x"),
+    (
+        "rcv_front_x",
+        "wb_stock + kickup_aft",
+        "in",
+        "Match rear clip — kick end / receiver forward face (~123.5)",
+    ),
     (
         "rcv_key_w",
         "1.500 in",
@@ -203,9 +225,9 @@ PARAM_ORDER = [
     ),
     (
         "mod_tray_len",
-        "(wb + rear_overhang) - rcv_rear_x",
+        "(wb_stock + rear_overhang) - rcv_rear_x",
         "in",
-        "FLAG: shortened from 36 — ends at frame end 153.5 (~20.2). Old 36 tray stuck past frame",
+        "Exposed tray to frame end 152.5 (~21.187 at defaults). Was ~20.2 at 153.5",
     ),
     ("mod_rail_len", "mod_insert_len + mod_tray_len", "in", "Total module rail length"),
     (
@@ -733,9 +755,11 @@ def _fit_check_note(design):
         bolt_d = param_cm(design, "rcv_bolt_d") / IN_TO_CM
         pitch = param_cm(design, "rcv_bolt_pitch") / IN_TO_CM
         n = _int_param(design, "rcv_bolt_count", 2)
-        body_end = (
-            param_cm(design, "wb") + param_cm(design, "rear_overhang")
-        ) / IN_TO_CM
+        try:
+            wb_frame = param_cm(design, "wb_stock")
+        except Exception:
+            wb_frame = param_cm(design, "wb")
+        body_end = (wb_frame + param_cm(design, "rear_overhang")) / IN_TO_CM
         expect_front = rcv_rear - insert
         bolt1 = bolt0
         bolt2 = bolt0 + pitch if n > 1 else bolt0
@@ -743,7 +767,7 @@ def _fit_check_note(design):
             "Stations (in): rcv_front={:.3f} rail_end={:.3f} cap_aft={:.3f} "
             "mod_front={:.3f} (expect {:.3f}) insert={:.3f} "
             "bolt1={:.3f} bolt2={:.3f} rcv_rear={:.3f} tray_x0={:.3f} "
-            "mod_rear={:.3f} (wb+rear_overhang={:.3f}).".format(
+            "mod_rear={:.3f} (wb_stock+rear_overhang={:.3f}).".format(
                 rcv_front,
                 rail_end,
                 cap_aft,
@@ -793,7 +817,7 @@ def _fit_check_note(design):
                 )
         if abs(mod_rear - body_end) > 6.0:
             lines.append(
-                "NOTE: mod_rear_x is >6 in from wb+rear_overhang — "
+                "NOTE: mod_rear_x is >6 in from wb_stock+rear_overhang — "
                 "adjust mod_tray_len PLACEHOLDER if packaging to body end."
             )
         return "\n".join(lines)

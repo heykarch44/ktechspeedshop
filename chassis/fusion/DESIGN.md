@@ -1,6 +1,6 @@
 # Ktech C10 boxed frame — design pack
 
-Last updated 2026-11-26. This is the working spec for a 67–87 C10 2WD restomod chassis: 2×5 spine (FLAG: was 2×6), plate clips, weld-on body hats, Wilwood 2.5" ProSpindle.
+Last updated 2026-11-27. This is the working spec for a 67–87 C10 2WD restomod chassis: 2×5 spine (FLAG: was 2×6), plate clips, weld-on body hats, Wilwood 2.5" ProSpindle.
 
 Fusion script lives in `KTECH_C10_Chassis_Setup/`. On the Fusion PC, copy that whole folder into:
 
@@ -23,7 +23,7 @@ Not one universal 67–87 weldment. One rail architecture, generation-specific b
 
 Raised bed: bed mounts are free. Body problem is core + cab only.
 
-Prototype: **73–87 C10 short (117.5")**. Same clips cover 67–72 once the second hat exists. Stay 2WD until the box is right.
+Prototype: **73–87 C10 short** — stock WB **116.5"** taped; design WB **118.0"** at defaults (`front_axle_forward=1.0`, `axle_setback=0.5`, range 0.5–1.0). Same clips cover 67–72 once the second hat exists. Stay 2WD until the box is right.
 
 ---
 
@@ -36,7 +36,7 @@ Prototype: **73–87 C10 short (117.5")**. Same clips cover 67–72 once the sec
 | Hub | Modular / unit hub on the Wilwood, 5×4.75 and 5×5 |
 | Brakes | Wilwood kit for this spindle, 12–14" when the wheel is picked |
 | Rear | Triangulated or parallel 4-link, **22–24" lowers** (20" floor) |
-| Tire / bags | 32" OD lay-out target, ~11" bag stroke |
+| Tire / bags | 27.5" OD (275/35/20); ~11" bag stroke. FLAG: FrontGeometry still 29" 22×9 |
 | Rail | Cab/center **2×5**; front clip flat **5"** / 34" OD (was 6); nose 28×4 |
 
 CPP X10 was considered (same modern hub idea) then dropped because Wilwood published the print. Drawing: `KTECH_C10_Chassis_Setup/wilwood-831-14202.png`.
@@ -64,15 +64,17 @@ Core to cab-rear = **98"**.
 
 **Straight rails:** `rail_cl = 16.0` (34 in OD through arms/engine). `core_width = 33.5` is core-mount C-C (28 in nose + 2.75 pads/side), not rail spacing. Mid/cab-rear mounts stay weld-on hats — do not dogleg the tube.
 
-**Cab stations (2026-11-26):** `cab_to_axle = 87` is **FRONT** cab mount to rear axle (FLAG). `cab_f_x = wb − 87 = 30.5`; `core_x = cab_f_x − 55 = −24.5` (was old driver / −33); `cab_r_x = 73.5`. `rear_overhang = 36` → frame end 153.5 / spine 187.5.
+**Cab stations (2026-11-27):** Origin = STOCK front hub. `cab_to_axle = 87` FRONT→**stock** rear axle. `cab_f_x = 29.5`; `core_x = −25` literal; `cab_r_x = 72.5`. `cab_back = 45` → kick 74.5 (**FLAG vs mount 43**). `core_to_mid` 55 recorded only (**FLAG vs direct 54.5**). `rear_overhang = 36` from stock rear → frame end **152.5** / spine **186.5**.
 
-Wheelbases to hit later (rear clip / splice, not cab hats):
+Axle shifts (pickups only): `front_axle_forward = 1.0`, `axle_setback = 0.5` (range 0.5–1.0). Arch: `kickup_rise = 17` → ride underside **20.5** / laid out **17**. Tire **27.5**. Open: 15 vs 13.75 axle, front tire package.
 
-| Body | Years | WB |
+Wheelbases (rear clip / splice, not cab hats):
+
+| Body | Years | Stock WB |
 |---|---|---|
 | Short 6.5' | 67–72 | 115.0" |
 | Long 8' | 67–72 | 127.0" |
-| Short 6.5' | 73–87 | 117.5" |
+| Short 6.5' | 73–87 | **116.5"** (design 118.0 at defaults) |
 | Long 8' | 73–87 | 131.5" |
 
 ---
@@ -91,7 +93,7 @@ Split 2–4" behind rear cab mount, in the straight rail. Not at the engine, kic
 
 **Split by generation:** cab/core hole pattern, core support / horns vs OEM clip, engine-to-firewall. Do not share cab holes.
 
-Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack (top drop 5 in / bottom 4 in over 7 in kick; nose 10.07 / 6.07). Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes 10.5 in before `cab_f_x=30.5`. Front clip at arms unchanged (10.07–15.07). Rear arch rise 8 / rail 4 (FLAG: tube clearance). Rear `axle_wms_a = 58.0` PLACEHOLDER.
+Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack (top drop 5 in / bottom 4 in over 7 in kick; nose 10.07 / 6.07). Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes 9.5 in before `cab_f_x=29.5`. Front clip at arms LOCKED (10.07–15.07). Rear arch rise **17** / rail 4 (ride underside 20.5; FLAG: 15 vs 13.75). Rear `axle_wms_a = 58.0` PLACEHOLDER.
 
 ---
 
@@ -99,7 +101,7 @@ Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack (top 
 
 Order: knuckle → travel envelope → lower inner → upper inner → rack last.
 
-1. Ground, 32" tire, spindle at ride and at lay-out (frame near ground = full jounce).
+1. Ground, 27.5" tire (FLAG vs FrontGeometry 29"), spindle at ride and at lay-out (frame near ground = full jounce).
 2. Drop in 831-14202. That locks BJ height vs hub.
 3. Lower arm ~level at ride, as long as the fender allows (~14–16").
 4. Upper inner from BJ spread, not from the rail.
@@ -139,7 +141,7 @@ A500 corner radii: clip is a 3-sided C + closing strap, ~0.030" per side clearan
 | 06_REAR | 4-link |
 | 07_FIXTURE | Weld table |
 
-Coordinates: origin = front axle × ground × frame CL. **+X rear, +Y up, +Z passenger.**
+Coordinates: origin = **STOCK** front hub × ground × frame CL. **+X rear, +Y up, +Z passenger.** Axle offsets move pickups only.
 
 If the canvas looks empty after Run: Fit view. Rails are at `rail_cl = 16.0` (34 in OD), not on the origin.
 
@@ -152,8 +154,8 @@ Do not run the Fusion-generated hello script named `C10` — it only pops “Unt
 1. Pull this repo / copy `chassis/fusion/KTECH_C10_Chassis_Setup` into Fusion My Scripts.
 2. Preferences → Hybrid. New Design. Run **KTECH_C10_Chassis_Setup**.
 3. Confirm six mount points match the tape.
-4. Cab stations from `cab_to_axle=87` (FRONT mount); re-tape if needed.
+4. Cab stations from 2026-11-27 tapes; resolve open FLAGs (45 vs 43, 54.5 vs 55, 15 vs 13.75, front tire).
 5. Model 831-14202 on SK_SIDE from the Wilwood png.
-6. Front clip C-socket + LCA inners. Rear 4-link at 22–24".
+6. Front clip C-socket + LCA inners at `front_axle_x`. Rear 4-link at 22–24"; arch rise 17.
 
 This is a fabrication architecture, not a stamped chassis. FEA the splice, IFS pickups, and 4-link before kits leave the shop.
