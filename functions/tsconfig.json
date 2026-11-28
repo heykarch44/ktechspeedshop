@@ -13,6 +13,6 @@
     "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": false
   },
-  "include": ["./**/*.ts", "../src/data/catalog.ts"],
-  "exclude": ["./**/*.test.ts"]
+  "include": ["./**/*.ts", "../src/data/catalog.ts", "../shared/merch/server/**/*.ts"],
+  "exclude": ["./**/*.test.ts", "../shared/merch/server/**/*.test.ts"]
 }

@@ -2,13 +2,24 @@
 
 On-site cart and Embedded Checkout for K-TECH Speedshop merch. Buyers stay on `ktechspeedshop.com`. Product prices come from `src/data/catalog.ts` (server re-prices; the client never sets unit prices). D1 stores paid orders only.
 
+## Shared framework
+
+Cart/checkout logic lives in **`shared/merch/`** (v1.0.0) — the same package is copied into C10 United. Keep both copies **byte-identical**: after any change, copy `shared/merch/` to the other repo, run `node shared/merch/scripts/sync-merch-core.mjs` in both, and confirm `shared/merch/CHECKSUM` matches. See `shared/merch/README.md`.
+
+K-Tech site layer (thin):
+
+- Catalog adapter: `functions/_lib/catalog.ts` (ids `<slug>|<size>`, 2XL +$2 / 3XL +$3)
+- D1 + Resend hooks: `functions/_lib/db.ts`, `functions/_lib/notify.ts`, `functions/_lib/email.ts`
+- API wrappers: `functions/api/**` → shared server helpers
+- Pages: `data-merch-add` / `data-merch-mount` shells; config + assets loaded from `Base.astro`
+
 ## Flow
 
-1. `/shop` — size + qty + Add to cart (`localStorage` key `ktech_cart_v1`)
-2. `/shop/cart` — quote via `POST /api/cart/quote`
-3. `/shop/checkout` — Embedded Checkout via `POST /api/checkout` + Stripe.js (`https://js.stripe.com/endive/stripe.js`)
+1. `/shop/` — size + qty + Add to cart (`localStorage` key `ktech_cart_v2`, lines `{id,qty}`)
+2. `/shop/cart/` — quote via `POST /api/cart/quote`
+3. `/shop/checkout/` — Embedded Checkout via `POST /api/checkout` + Stripe.js (`https://js.stripe.com/endive/stripe.js`)
 4. Stripe webhook `POST /api/stripe/webhook` — verify signature, ignore non-`metadata.site=ktech` events, upsert `merch_orders`, optional Resend emails
-5. `/shop/thanks` — `GET /api/session-status?session_id=`
+5. `/shop/thanks/` — `GET /api/session-status?session_id=`
 
 Shipping: **$6 flat** (`MERCH_SHIPPING_CENTS`, default `600`), free at/over **$75** (`MERCH_FREE_SHIP_CENTS`, default `7500`). Placeholders — adjust later. **No sales tax** handling yet.
 
@@ -59,9 +70,11 @@ npx wrangler d1 execute ktechspeedshop --remote --command "SELECT * FROM merch_o
 
 | Path | Role |
 | --- | --- |
+| `shared/merch/` | Shared client + server (keep in sync with C10 United) |
+| `public/js/merch-core.js` / `.css` | Generated copies (sync script + `prebuild --check`) |
 | `src/data/catalog.ts` | Merch products + `priceCents` / `sizes` |
-| `functions/api/*` | Quote, checkout, config, session-status, webhook |
-| `functions/_lib/*` | Stripe, cart, D1, email helpers |
+| `functions/api/*` | Thin wrappers: quote, checkout, config, session-status, webhook |
+| `functions/_lib/*` | Catalog adapter, D1, email/notify, env |
 | `migrations/0001_merch_orders.sql` | Orders table |
-| `src/pages/shop*.astro` / `src/pages/shop/**` | Shop UI |
-| `public/js/ktech-cart.js` | Client cart |
+| `src/pages/shop.astro` / `src/pages/shop/**` | Shop UI shells |
+| `src/layouts/Base.astro` | Loads merch config + core CSS/JS |

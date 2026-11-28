@@ -34,7 +34,7 @@ Point the custom domain at the Pages project when you are ready.
 | --- | --- |
 | Shop name, email, Instagram | `src/data/site.ts` |
 | Builds, for-sale trucks, parts, merch | `src/data/catalog.ts` |
-| Merch cart / Embedded Checkout | `docs/merch-checkout.md`, `functions/`, `src/pages/shop*.astro`, `src/pages/shop/` |
+| Merch cart / Embedded Checkout | `docs/merch-checkout.md`, `shared/merch/` (shared with C10 United — keep byte-identical), `functions/`, `src/pages/shop*.astro`, `src/pages/shop/` |
 | Project trucks | `src/content/projects/` |
 | Dated build updates (photos + video) | `src/content/updates/` |
 | Journal / SEO articles | `src/content/journal/` |

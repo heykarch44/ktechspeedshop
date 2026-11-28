@@ -1,11 +1,13 @@
+import { ktechCatalogAdapter, SITE_TAG, STRIPE_BRANDING } from "../_lib/catalog";
+import type { Env } from "../_lib/env";
 import {
   compactCartMetadata,
-  merchShippingConfig,
+  createCheckoutSession,
+  isStripeConfigured,
   parseCartBody,
-  priceCartFromCatalog,
-} from "../_lib/cart";
-import type { Env } from "../_lib/env";
-import { createCheckoutSession, isStripeConfigured } from "../_lib/stripe";
+  priceCart,
+  shippingConfigFromEnv,
+} from "../../shared/merch/server";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!isStripeConfigured(context.env)) {
@@ -16,21 +18,24 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const body = await context.request.json().catch(() => ({}));
-  const ship = merchShippingConfig(context.env);
-  const priced = priceCartFromCatalog(parseCartBody(body), ship);
+  const priced = await priceCart(
+    parseCartBody(body),
+    ktechCatalogAdapter,
+    shippingConfigFromEnv(context.env),
+  );
   if (!priced.ok) {
     return Response.json({ ok: false, error: priced.error }, { status: 400 });
   }
 
   const origin = new URL(context.request.url).origin;
-  const metadataCart = compactCartMetadata(priced.cart.items);
-
   const result = await createCheckoutSession({
     secretKey: context.env.STRIPE_SECRET_KEY!.trim(),
     items: priced.cart.items,
     shippingCents: priced.cart.shipping_cents,
-    returnUrl: `${origin}/shop/thanks?session_id={CHECKOUT_SESSION_ID}`,
-    metadataCart,
+    returnUrl: `${origin}/shop/thanks/?session_id={CHECKOUT_SESSION_ID}`,
+    metadataCart: compactCartMetadata(priced.cart.items),
+    siteTag: SITE_TAG,
+    branding: { ...STRIPE_BRANDING },
   });
 
   if (!result.ok) {

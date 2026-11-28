@@ -1,9 +1,9 @@
 /**
- * Minimal Stripe REST helpers for Cloudflare Pages (no Node SDK).
+ * Minimal Stripe REST helpers (Web APIs only — no Node SDK, no framework types).
  * Form-encoded Checkout Sessions + webhook signature verification via Web Crypto.
  */
 
-import type { MerchOrderItem } from "./cart";
+import type { QuoteLine, StripeBranding } from "./contract";
 
 export function isStripeConfigured(env: {
   STRIPE_SECRET_KEY?: string;
@@ -23,10 +23,12 @@ function toFormBody(params: Record<string, string | number | undefined | null>):
 
 export type CreateCheckoutSessionInput = {
   secretKey: string;
-  items: MerchOrderItem[];
+  items: QuoteLine[];
   shippingCents: number;
   returnUrl: string;
   metadataCart: string;
+  siteTag: string;
+  branding?: StripeBranding;
 };
 
 export type CreateCheckoutSessionResult =
@@ -47,22 +49,32 @@ export function buildCheckoutSessionFormBody(
     "shipping_address_collection[allowed_countries][0]": "US",
     "metadata[cart]": input.metadataCart.slice(0, 500),
     "metadata[shipping_cents]": String(input.shippingCents),
-    "metadata[site]": "ktech",
-    // Per-session branding so shared Stripe account dashboard branding does not win.
-    "branding_settings[background_color]": "#F1E7D4",
-    "branding_settings[button_color]": "#D3541A",
-    "branding_settings[display_name]": "K-TECH Speedshop",
-    "branding_settings[border_style]": "rectangular",
-    "branding_settings[font_family]": "roboto",
+    "metadata[site]": input.siteTag,
   };
+
+  const branding = input.branding;
+  if (branding?.backgroundColor) {
+    params["branding_settings[background_color]"] = branding.backgroundColor;
+  }
+  if (branding?.buttonColor) {
+    params["branding_settings[button_color]"] = branding.buttonColor;
+  }
+  if (branding?.displayName) {
+    params["branding_settings[display_name]"] = branding.displayName;
+  }
+  if (branding?.borderStyle) {
+    params["branding_settings[border_style]"] = branding.borderStyle;
+  }
+  if (branding?.fontFamily) {
+    params["branding_settings[font_family]"] = branding.fontFamily;
+  }
 
   input.items.forEach((item, i) => {
     params[`line_items[${i}][quantity]`] = item.qty;
     params[`line_items[${i}][price_data][currency]`] = "usd";
     params[`line_items[${i}][price_data][unit_amount]`] = item.unit_cents;
-    params[`line_items[${i}][price_data][product_data][name]`] = `${item.title} (${item.size})`;
-    params[`line_items[${i}][price_data][product_data][metadata][slug]`] = item.slug;
-    params[`line_items[${i}][price_data][product_data][metadata][size]`] = item.size;
+    params[`line_items[${i}][price_data][product_data][name]`] = `${item.title} (${item.label})`;
+    params[`line_items[${i}][price_data][product_data][metadata][id]`] = item.id;
   });
 
   params["shipping_options[0][shipping_rate_data][type]"] = "fixed_amount";
@@ -127,6 +139,24 @@ export type StripeCheckoutSession = {
   shipping_cost?: { amount_total?: number | null } | null;
   metadata?: Record<string, string> | null;
   status?: string;
+  line_items?: {
+    data?: Array<{
+      quantity?: number | null;
+      amount_total?: number | null;
+      amount_subtotal?: number | null;
+      price?: {
+        unit_amount?: number | null;
+        product?:
+          | string
+          | {
+              name?: string | null;
+              metadata?: Record<string, string> | null;
+            }
+          | null;
+      } | null;
+      description?: string | null;
+    }>;
+  } | null;
 };
 
 export async function retrieveCheckoutSession(
@@ -134,17 +164,62 @@ export async function retrieveCheckoutSession(
   sessionId: string,
 ): Promise<StripeCheckoutSession | null> {
   try {
-    const res = await fetch(
+    const url = new URL(
       `https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`,
-      {
-        headers: { Authorization: `Bearer ${secretKey}` },
-      },
     );
+    url.searchParams.append("expand[]", "line_items.data.price.product");
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${secretKey}` },
+    });
     if (!res.ok) return null;
     return (await res.json()) as StripeCheckoutSession;
   } catch {
     return null;
   }
+}
+
+/** Map a Stripe session into the shared session-status JSON shape. */
+export function formatSessionStatus(session: StripeCheckoutSession): {
+  ok: true;
+  status: string;
+  paymentStatus: string | null;
+  email: string | null;
+  amount_total_cents: number | null;
+  shipping_cents: number | null;
+  items: Array<{
+    id?: string;
+    title: string;
+    label?: string;
+    qty: number;
+    unit_cents?: number;
+    line_cents?: number;
+  }>;
+} {
+  const items = (session.line_items?.data || []).map((li) => {
+    const product = li.price?.product;
+    const productObj = product && typeof product === "object" ? product : null;
+    const name = productObj?.name || li.description || "Item";
+    const id = productObj?.metadata?.id;
+    const paren = name.match(/^(.*)\s+\(([^)]+)\)\s*$/);
+    return {
+      ...(id ? { id } : {}),
+      title: paren ? paren[1]! : name,
+      ...(paren ? { label: paren[2] } : {}),
+      qty: li.quantity ?? 1,
+      ...(li.price?.unit_amount != null ? { unit_cents: li.price.unit_amount } : {}),
+      ...(li.amount_total != null ? { line_cents: li.amount_total } : {}),
+    };
+  });
+
+  return {
+    ok: true,
+    status: session.status || "open",
+    paymentStatus: session.payment_status || null,
+    email: session.customer_details?.email || null,
+    amount_total_cents: session.amount_total ?? null,
+    shipping_cents: session.shipping_cost?.amount_total ?? null,
+    items,
+  };
 }
 
 /** Verify Stripe-Signature using HMAC-SHA256 (Web Crypto). Tolerance 5 minutes. */

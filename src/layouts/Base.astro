@@ -24,6 +24,26 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.url).toString
 const imageUrl = new URL(image, site.url).toString();
 const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
 
+const merchConfig = {
+  siteName: "K-TECH Speedshop",
+  storageKey: "ktech_cart_v2",
+  endpoints: {
+    quote: "/api/cart/quote",
+    checkout: "/api/checkout",
+    sessionStatus: "/api/session-status",
+    config: "/api/config",
+  },
+  paths: {
+    shop: "/shop/",
+    cart: "/shop/cart/",
+    checkout: "/shop/checkout/",
+    thanks: "/shop/thanks/",
+  },
+  stripeJsUrl: "https://js.stripe.com/endive/stripe.js",
+  pill: true,
+  freeShippingNote: "(free over $75)",
+};
+
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -83,10 +103,13 @@ const schema = {
     <meta name="twitter:image" content={imageUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="stylesheet" href="/js/merch-core.css" />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script type="application/json" id="merch-config" set:html={JSON.stringify(merchConfig)} />
   </head>
   <body>
     <a class="skip" href="#main" style="position:absolute;left:-999px">Skip to content</a>
     <slot />
+    <script src="/js/merch-core.js" is:inline></script>
   </body>
 </html>

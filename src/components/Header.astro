@@ -26,29 +26,12 @@ const path = Astro.url.pathname;
       aria-label="Cart"
       data-cart-link
     >
-      Cart<span class="cart-badge" data-cart-badge hidden>0</span>
+      Cart<span class="cart-badge" data-merch-badge hidden>0</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   </div>
 </header>
 
-<script src="/js/ktech-cart.js" is:inline></script>
-<script is:inline>
-  (function () {
-    function refreshCartBadge() {
-      var badge = document.querySelector("[data-cart-badge]");
-      if (!badge || !window.KtechCart) return;
-      var n = window.KtechCart.count();
-      badge.textContent = String(n);
-      badge.hidden = n < 1;
-    }
-    refreshCartBadge();
-    window.addEventListener("ktech-cart-change", refreshCartBadge);
-    window.addEventListener("storage", function (e) {
-      if (e.key === "ktech_cart_v1") refreshCartBadge();
-    });
-  })();
-</script>
 <script>
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector("#nav");

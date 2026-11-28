@@ -16,6 +16,19 @@
   --font-body: "Figtree", sans-serif;
   --max: 1280px;
   --pad: clamp(1.1rem, 3vw, 2.4rem);
+
+  /* Shared merch framework theme (cream on dark, rust accent) */
+  --merch-bg: var(--bg);
+  --merch-fg: #f1e7d4;
+  --merch-muted: var(--muted);
+  --merch-line: var(--line);
+  --merch-accent: #d3541a;
+  --merch-accent-fg: var(--bg);
+  --merch-input-bg: var(--bg-2);
+  --merch-input-fg: #f1e7d4;
+  --merch-radius: 0;
+  --merch-font: var(--font-body);
+  --merch-font-display: var(--font-display);
 }
 
 *,
@@ -426,6 +439,46 @@ h2,
 .merch-add {
   margin-top: auto;
   padding-top: 0.8rem;
+}
+
+/* Merch cart / checkout readability on dark theme (desktop + ~390px) */
+.merch-qty,
+.merch-remove,
+.merch-toast,
+.merch-pill,
+.merch-totals,
+.merch-line-title,
+.merch-line-price,
+.merch-lede,
+.merch-empty {
+  color: var(--merch-fg);
+}
+
+.merch-qty,
+.merch-remove {
+  background: var(--merch-input-bg);
+  border-color: var(--merch-line);
+}
+
+.merch-remove {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.merch-checkout-mount {
+  background: #f1e7d4;
+  color: #0b0a09;
+}
+
+.merch-error,
+.merch-inline-error,
+.merch-toast {
+  color: #d3541a;
+}
+
+.merch-pill {
+  background: var(--merch-accent);
+  color: var(--merch-accent-fg);
 }
 
 .product-body h3 {

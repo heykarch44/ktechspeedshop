@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node shared/merch/scripts/sync-merch-core.mjs --check",
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "astro build && wrangler pages deploy dist --project-name=ktechspeedshop",
-    "test:merch": "npx tsx --test functions/_lib/*.test.ts",
+    "test:merch": "npx tsx --test shared/merch/server/cart.test.ts shared/merch/server/stripe.test.ts shared/merch/server/webhook.test.ts",
     "typecheck:functions": "npx tsc --noEmit -p functions"
   },
   "dependencies": {

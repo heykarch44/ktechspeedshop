@@ -1,6 +1,15 @@
-/** D1 merch order helpers. */
+/** D1 merch order helpers (K-Tech `merch_orders` schema). */
 
-import type { MerchOrderItem } from "./cart";
+import type { PaidOrder } from "../../shared/merch/server";
+
+export type MerchOrderItemRow = {
+  slug: string;
+  title: string;
+  size: string;
+  qty: number;
+  unit_cents: number;
+  line_cents: number;
+};
 
 export type MerchOrder = {
   id: string;
@@ -19,6 +28,22 @@ export type MerchOrder = {
   shipped_at: string | null;
 };
 
+function paidItemsToRows(order: PaidOrder): MerchOrderItemRow[] {
+  return order.items.map((item) => {
+    const pipe = item.id.indexOf("|");
+    const slug = pipe >= 0 ? item.id.slice(0, pipe) : item.id;
+    const size = pipe >= 0 ? item.id.slice(pipe + 1) : item.label;
+    return {
+      slug,
+      title: item.title,
+      size: size || item.label,
+      qty: item.qty,
+      unit_cents: item.unit_cents,
+      line_cents: item.line_cents,
+    };
+  });
+}
+
 export async function upsertMerchOrder(
   db: D1Database,
   order: {
@@ -28,7 +53,7 @@ export async function upsertMerchOrder(
     name: string | null;
     phone: string | null;
     shipping_address: string | null;
-    items: MerchOrderItem[];
+    items: MerchOrderItemRow[];
     subtotal_cents: number;
     shipping_cents: number;
     total_cents: number;
@@ -62,6 +87,26 @@ export async function upsertMerchOrder(
     )
     .run();
   return { inserted: true };
+}
+
+/** Shared webhook hook — maps PaidOrder into the existing D1 row shape. */
+export async function savePaidOrder(
+  db: D1Database,
+  order: PaidOrder,
+): Promise<{ inserted: boolean }> {
+  return upsertMerchOrder(db, {
+    id: newOrderId(),
+    stripe_session_id: order.stripe_session_id,
+    email: order.email,
+    name: order.name,
+    phone: order.phone,
+    shipping_address: order.shipping_address,
+    items: paidItemsToRows(order),
+    subtotal_cents: order.subtotal_cents,
+    shipping_cents: order.shipping_cents,
+    total_cents: order.total_cents,
+    status: "paid",
+  });
 }
 
 export async function getMerchOrderBySessionId(

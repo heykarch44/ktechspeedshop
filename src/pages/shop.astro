@@ -41,20 +41,19 @@ import { site } from "../data/site";
                 <p>{item.summary}</p>
                 <p class="fine">{oneSize ? item.sizes[0] : item.sizes.join(" · ")}</p>
                 <p class="price">{item.price}</p>
-                <form class="merch-add" data-add-form>
-                  <input type="hidden" name="slug" value={item.slug} />
+                <form class="merch-add" data-merch-add>
                   {!oneSize ? (
                     <label class="merch-field">
                       <span>Size</span>
-                      <select name="size" required>
+                      <select name="id" required>
                         {item.sizes.map((size) => (
-                          <option value={size}>{size}</option>
+                          <option value={`${item.slug}|${size}`}>{size}</option>
                         ))}
                       </select>
                     </label>
                   ) : (
                     <>
-                      <input type="hidden" name="size" value={item.sizes[0]} />
+                      <input type="hidden" name="id" value={`${item.slug}|${item.sizes[0]}`} />
                       <label class="merch-field">
                         <span>Size</span>
                         <span class="merch-size-static">{item.sizes[0]}</span>
@@ -67,7 +66,6 @@ import { site } from "../data/site";
                   </label>
                   <button class="btn rust" type="submit">Add to cart</button>
                 </form>
-                <p class="add-msg" data-add-msg aria-live="polite" hidden></p>
               </div>
             </article>
           );
@@ -81,9 +79,6 @@ import { site } from "../data/site";
       <a href={site.instagramUrl}>DM</a>.
     </p>
   </main>
-  <a class="shop-cart-pill" href="/shop/cart/" data-shop-cart-pill hidden>
-    Cart (<span data-shop-cart-count>0</span>) →
-  </a>
   <Footer />
 </Base>
 
@@ -141,127 +136,4 @@ import { site } from "../data/site";
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
-  .add-msg {
-    color: #d3541a;
-    font-size: 0.92rem;
-    margin: 0.55rem 0 0;
-  }
-  .add-msg a {
-    color: #d3541a;
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-  .shop-cart-pill {
-    position: fixed;
-    right: max(1rem, env(safe-area-inset-right));
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    z-index: 35;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.65rem 0.95rem;
-    background: var(--rust);
-    color: var(--bg);
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border: 1px solid color-mix(in srgb, var(--rust) 70%, #000);
-    box-shadow: 0 8px 24px color-mix(in srgb, #000 45%, transparent);
-  }
-  .shop-cart-pill[hidden] {
-    display: none;
-  }
 </style>
-
-<script is:inline>
-  (function () {
-    var cartScriptPromise = null;
-
-    function ensureCart() {
-      if (window.KtechCart) return Promise.resolve(window.KtechCart);
-      if (cartScriptPromise) return cartScriptPromise;
-      cartScriptPromise = new Promise(function (resolve, reject) {
-        var s = document.createElement("script");
-        s.src = "/js/ktech-cart.js";
-        s.onload = function () {
-          if (window.KtechCart) resolve(window.KtechCart);
-          else reject(new Error("KtechCart missing"));
-        };
-        s.onerror = function () {
-          reject(new Error("Failed to load cart"));
-        };
-        document.head.appendChild(s);
-      });
-      return cartScriptPromise;
-    }
-
-    function showMsg(msg, ok) {
-      if (!msg) return;
-      msg.hidden = false;
-      msg.replaceChildren();
-      if (!ok) {
-        msg.textContent =
-          "Could not save your cart. Turn off private browsing and try again.";
-        return;
-      }
-      msg.appendChild(document.createTextNode("Added to cart. "));
-      var link = document.createElement("a");
-      link.href = "/shop/cart/";
-      link.textContent = "View cart";
-      msg.appendChild(link);
-      msg.appendChild(document.createTextNode("."));
-    }
-
-    function handleAdd(form) {
-      var fd = new FormData(form);
-      var slug = String(fd.get("slug") || "");
-      var size = String(fd.get("size") || "");
-      var qty = Number(fd.get("qty") || 1);
-      var ok = window.KtechCart.add(slug, size, qty);
-      var btn = form.querySelector('button[type="submit"]');
-      var msg = form.parentElement && form.parentElement.querySelector("[data-add-msg]");
-      if (!ok) {
-        showMsg(msg, false);
-        return;
-      }
-      if (btn) {
-        var prev = btn.textContent;
-        btn.textContent = "Added ✓";
-        window.setTimeout(function () {
-          btn.textContent = prev;
-        }, 1500);
-      }
-      showMsg(msg, true);
-    }
-
-    document.querySelectorAll("[data-add-form]").forEach(function (form) {
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        ensureCart()
-          .then(function () {
-            handleAdd(form);
-          })
-          .catch(function () {
-            var msg = form.parentElement && form.parentElement.querySelector("[data-add-msg]");
-            showMsg(msg, false);
-          });
-      });
-    });
-
-    function refreshShopPill() {
-      var pill = document.querySelector("[data-shop-cart-pill]");
-      var countEl = document.querySelector("[data-shop-cart-count]");
-      if (!pill || !countEl || !window.KtechCart) return;
-      var n = window.KtechCart.count();
-      countEl.textContent = String(n);
-      pill.hidden = n < 1;
-    }
-    refreshShopPill();
-    window.addEventListener("ktech-cart-change", refreshShopPill);
-    window.addEventListener("storage", function (e) {
-      if (e.key === "ktech_cart_v1") refreshShopPill();
-    });
-  })();
-</script>

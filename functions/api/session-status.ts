@@ -1,5 +1,9 @@
 import type { Env } from "../_lib/env";
-import { isStripeConfigured, retrieveCheckoutSession } from "../_lib/stripe";
+import {
+  formatSessionStatus,
+  isStripeConfigured,
+  retrieveCheckoutSession,
+} from "../../shared/merch/server";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!isStripeConfigured(context.env)) {
@@ -20,14 +24,5 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ ok: false, error: "Session not found." }, { status: 404 });
   }
 
-  return Response.json({
-    ok: true,
-    status: session.status || null,
-    payment_status: session.payment_status || null,
-    customer_email: session.customer_details?.email || null,
-    customer_name: session.customer_details?.name || session.shipping_details?.name || null,
-    amount_subtotal: session.amount_subtotal ?? null,
-    amount_total: session.amount_total ?? null,
-    shipping_cents: session.shipping_cost?.amount_total ?? null,
-  });
+  return Response.json(formatSessionStatus(session));
 };

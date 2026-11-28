@@ -1,0 +1,265 @@
+/* Shared merch UI — theme only via CSS variables (site maps these in its own stylesheet). */
+:root {
+  --merch-bg: #ffffff;
+  --merch-fg: #111111;
+  --merch-muted: #666666;
+  --merch-line: #dddddd;
+  --merch-accent: #c62828;
+  --merch-accent-fg: #ffffff;
+  --merch-input-bg: #ffffff;
+  --merch-input-fg: #111111;
+  --merch-radius: 0;
+  --merch-font: system-ui, sans-serif;
+  --merch-font-display: system-ui, sans-serif;
+}
+
+.merch-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 60;
+  max-width: min(92vw, 28rem);
+  padding: 0.75rem 1rem;
+  background: var(--merch-bg);
+  color: var(--merch-accent);
+  border: 1px solid var(--merch-accent);
+  font: inherit;
+  font-family: var(--merch-font);
+  box-shadow: 0 8px 24px color-mix(in srgb, #000 25%, transparent);
+}
+
+.merch-toast a {
+  color: var(--merch-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.merch-toast[hidden] {
+  display: none !important;
+}
+
+.merch-pill {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 55;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.65rem 0.95rem;
+  background: var(--merch-accent);
+  color: var(--merch-accent-fg);
+  font-family: var(--merch-font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--merch-accent) 70%, #000);
+  border-radius: var(--merch-radius);
+  box-shadow: 0 8px 24px color-mix(in srgb, #000 35%, transparent);
+}
+
+.merch-pill[hidden] {
+  display: none !important;
+}
+
+.merch-pill:focus-visible {
+  outline: 2px solid var(--merch-accent);
+  outline-offset: 3px;
+}
+
+.merch-cart,
+.merch-checkout,
+.merch-thanks {
+  font-family: var(--merch-font);
+  color: var(--merch-fg);
+  color-scheme: light dark;
+}
+
+.merch-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--merch-line);
+}
+
+.merch-line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.8rem 1.2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--merch-line);
+  align-items: center;
+}
+
+.merch-line-title {
+  font-weight: 600;
+  color: var(--merch-fg);
+}
+
+.merch-line-label {
+  color: var(--merch-muted);
+  font-size: 0.92rem;
+}
+
+.merch-line-price {
+  color: var(--merch-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.merch-line-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin-top: 0.45rem;
+}
+
+.merch-line-meta label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--merch-muted);
+  font-size: 0.9rem;
+}
+
+.merch-qty {
+  width: 4.25rem;
+  min-height: 44px;
+  padding: 0.35rem 0.45rem;
+  box-sizing: border-box;
+  background: var(--merch-input-bg);
+  color: var(--merch-input-fg);
+  border: 1px solid var(--merch-line);
+  border-radius: var(--merch-radius);
+  font: inherit;
+  color-scheme: light dark;
+}
+
+.merch-qty:focus-visible {
+  outline: 2px solid var(--merch-accent);
+  outline-offset: 2px;
+}
+
+.merch-remove {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.35rem 0.55rem;
+  background: var(--merch-input-bg);
+  color: var(--merch-fg);
+  border: 1px solid var(--merch-line);
+  border-radius: var(--merch-radius);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.merch-remove:focus-visible {
+  outline: 2px solid var(--merch-accent);
+  outline-offset: 2px;
+}
+
+.merch-totals {
+  margin-top: 1.4rem;
+  color: var(--merch-fg);
+  line-height: 1.7;
+}
+
+.merch-totals .merch-muted {
+  color: var(--merch-muted);
+  font-size: 0.92rem;
+}
+
+.merch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}
+
+.merch-actions a,
+.merch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.55rem 0.95rem;
+  font-family: var(--merch-font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--merch-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.merch-btn-primary,
+.merch-actions a.merch-btn-primary {
+  background: var(--merch-accent);
+  color: var(--merch-accent-fg);
+  border-color: color-mix(in srgb, var(--merch-accent) 70%, #000);
+}
+
+.merch-btn-ghost,
+.merch-actions a.merch-btn-ghost {
+  background: transparent;
+  color: var(--merch-fg);
+  border-color: var(--merch-line);
+}
+
+.merch-btn:focus-visible,
+.merch-actions a:focus-visible {
+  outline: 2px solid var(--merch-accent);
+  outline-offset: 2px;
+}
+
+.merch-empty,
+.merch-lede {
+  color: var(--merch-fg);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.merch-error {
+  color: var(--merch-accent);
+  font-size: 0.92rem;
+  margin: 0.5rem 0 0;
+}
+
+.merch-inline-error {
+  color: var(--merch-accent);
+  font-size: 0.85rem;
+  margin: 0.35rem 0 0;
+}
+
+.merch-summary-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.merch-summary-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--merch-line);
+  color: var(--merch-fg);
+}
+
+.merch-checkout-mount {
+  margin-top: 1rem;
+  min-height: 12rem;
+  background: var(--merch-input-bg);
+  color: var(--merch-input-fg);
+  padding: 0.5rem;
+  border: 1px solid var(--merch-line);
+}
+
+.merch-note {
+  color: var(--merch-muted);
+  font-size: 0.92rem;
+}

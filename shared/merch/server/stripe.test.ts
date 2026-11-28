@@ -7,21 +7,29 @@ import {
 } from "./stripe";
 
 describe("buildCheckoutSessionFormBody", () => {
-  it("uses embedded_page ui_mode, return_url with session template, site=ktech", () => {
+  it("uses embedded_page ui_mode, return_url with session template, site tag + branding", () => {
     const body = buildCheckoutSessionFormBody({
       items: [
         {
-          slug: "speedshop-tee",
+          id: "speedshop-tee|L",
           title: "K-TECH tee",
-          size: "L",
+          label: "L",
           qty: 1,
           unit_cents: 2800,
           line_cents: 2800,
         },
       ],
       shippingCents: 600,
-      returnUrl: "https://ktechspeedshop.com/shop/thanks?session_id={CHECKOUT_SESSION_ID}",
+      returnUrl: "https://example.com/shop/thanks/?session_id={CHECKOUT_SESSION_ID}",
       metadataCart: "speedshop-tee|L:1",
+      siteTag: "ktech",
+      branding: {
+        backgroundColor: "#F1E7D4",
+        buttonColor: "#D3541A",
+        displayName: "Example Shop",
+        borderStyle: "rectangular",
+        fontFamily: "roboto",
+      },
     });
 
     assert.match(body, /ui_mode=embedded_page/);
