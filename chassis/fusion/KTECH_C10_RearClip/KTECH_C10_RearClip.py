@@ -268,16 +268,17 @@ PARAM_ORDER = [
     ),
     (
         "kickup_rise",
-        "17 in",
+        "19 in",
         "in",
-        "TAPED 2026-11-27. 17 above rail bottom (was 8). Ride underside 20.5 / "
-        "laid out 17. FLAG: 15 vs 13.75 axle; clear is tube not tire OD; bag ~9–10",
+        "USER 2026-11-27. 19 above rail bottom (was 17). Ride underside 22.5 / "
+        "laid out 19. Top rise 18. +1 keeps 2 in to housing with 5 in rail, "
+        "+1 for a roughly 29 in tire combo. Hoop/kick/frame end unchanged.",
     ),
     (
         "kickup_top_rise",
         "kickup_rise + arch_rail_h - tube_h",
         "in",
-        "Top rise over arch (=16 at defaults: 17+4−5)",
+        "Top rise over arch (=18 at defaults: 19+4-5)",
     ),
     (
         "kickup_ramp",
@@ -853,11 +854,11 @@ def run(_context):
             "{}\n"
             "{}\n"
             "{}\n"
-            "2x5 slip (tube_h=5); kickup_rise=17 / arch_rail_h=4 "
-            "(arch bottom 20.5 / top 24.5 at ride; laid out 17 / 21). "
-            "Hoop on wb_stock 109.5–123.5 / 112.5–120.5; kick_start=74.5. "
-            "FLAG: 15 vs 13.75 axle tape; tire OD cross in side view OK "
-            "(clear is tube); bag ~9–10; see CSV/README.\n"
+            "2x5 slip (tube_h=5); kickup_rise=19 / arch_rail_h=4 "
+            "(arch bottom 22.5 / top 26.5 at ride; laid out 19 / 23). "
+            "Hoop on wb_stock 109.5-123.5 / 112.5-120.5; kick_start=74.5. "
+            "Arch sized 19 above rail bottom (2 in to housing at pancake "
+            "+1 for 5 in rail +1 for ~29 in tire). Bag ~9-10; see CSV/README.\n"
             "cab_f_x=29.5; core_x=−25; rear_overhang=36 (frame end 152.5).\n"
             "Aft receivers: rectangular rcv_w x rcv_h for 2x4 module; "
             "rails end at rail_end_x; end cap welded aft; open mouths at "

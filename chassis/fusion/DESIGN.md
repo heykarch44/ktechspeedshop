@@ -36,7 +36,7 @@ Prototype: **73–87 C10 short** — stock WB **116.5"** taped; design WB **118.
 | Hub | Modular / unit hub on the Wilwood, 5×4.75 and 5×5 |
 | Brakes | Wilwood kit for this spindle, 12–14" when the wheel is picked |
 | Rear | Triangulated or parallel 4-link, **22–24" lowers** (20" floor) |
-| Tire / bags | 27.5" OD (275/35/20); ~11" bag stroke. FLAG: FrontGeometry still 29" 22×9 |
+| Tire / bags | 27.5" OD (275/35/20) both ends; ~11" bag stroke. FrontGeometry tire is 27.5; pivots/rail not moved. Arch includes +1 for a roughly 29 in combo |
 | Rail | Cab/center **2×5**; front clip flat **5"** / 34" OD (was 6); nose 28×4 |
 
 CPP X10 was considered (same modern hub idea) then dropped because Wilwood published the print. Drawing: `KTECH_C10_Chassis_Setup/wilwood-831-14202.png`.
@@ -66,7 +66,7 @@ Core to cab-rear = **98"**.
 
 **Cab stations (2026-11-27):** Origin = STOCK front hub. `cab_to_axle = 87` FRONT→**stock** rear axle. `cab_f_x = 29.5`; `core_x = −25` literal; `cab_r_x = 72.5`. `cab_back = 45` → kick 74.5 (**FLAG vs mount 43**). `core_to_mid` 55 recorded only (**FLAG vs direct 54.5**). `rear_overhang = 36` from stock rear → frame end **152.5** / spine **186.5**.
 
-Axle shifts (pickups only): `front_axle_forward = 1.0`, `axle_setback = 0.5` (range 0.5–1.0). Arch: `kickup_rise = 17` → ride underside **20.5** / laid out **17**. Tire **27.5**. Open: 15 vs 13.75 axle, front tire package.
+Axle shifts (pickups only): `front_axle_forward = 1.0`, `axle_setback = 0.5` (range 0.5–1.0). Arch: `kickup_rise = 19` → ride underside **22.5** / top **26.5**; laid out **19** / **23**. Tire **27.5** both ends. Open: 54.5 vs 55 core-to-cab.
 
 Wheelbases (rear clip / splice, not cab hats):
 
@@ -93,7 +93,7 @@ Split 2–4" behind rear cab mount, in the straight rail. Not at the engine, kic
 
 **Split by generation:** cab/core hole pattern, core support / horns vs OEM clip, engine-to-firewall. Do not share cab holes.
 
-Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack (top drop 5 in / bottom 4 in over 7 in kick; nose 10.07 / 6.07). Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes 9.5 in before `cab_f_x=29.5`. Front clip at arms LOCKED (10.07–15.07). Rear arch rise **17** / rail 4 (ride underside 20.5; FLAG: 15 vs 13.75). Rear `axle_wms_a = 58.0` PLACEHOLDER.
+Track vs rails: 34 in OD through arms/engine; 28×4 nose ahead of the rack (top drop 5 in / bottom 4 in over 7 in kick; nose 10.07 / 6.07). Big wheels are housing width and backspacing. Angular cab drop x=8→20 finishes 9.5 in before `cab_f_x=29.5`. Front clip at arms LOCKED (10.07–15.07). Rear arch rise **19** / rail 4 (ride underside 22.5 / top 26.5; laid out 19 / 23). Rear `axle_wms_a = 58.0` PLACEHOLDER.
 
 ---
 
@@ -154,8 +154,8 @@ Do not run the Fusion-generated hello script named `C10` — it only pops “Unt
 1. Pull this repo / copy `chassis/fusion/KTECH_C10_Chassis_Setup` into Fusion My Scripts.
 2. Preferences → Hybrid. New Design. Run **KTECH_C10_Chassis_Setup**.
 3. Confirm six mount points match the tape.
-4. Cab stations from 2026-11-27 tapes; resolve open FLAGs (45 vs 43, 54.5 vs 55, 15 vs 13.75, front tire).
+4. Cab stations from 2026-11-27 tapes; 45 in is the back cab wall; front tire is 27.5. Remaining FLAG: 54.5 vs 55.
 5. Model 831-14202 on SK_SIDE from the Wilwood png.
-6. Front clip C-socket + LCA inners at `front_axle_x`. Rear 4-link at 22–24"; arch rise 17.
+6. Front clip C-socket + LCA inners at `front_axle_x`. Rear 4-link at 22-24"; arch rise 19.
 
 This is a fabrication architecture, not a stamped chassis. FEA the splice, IFS pickups, and 4-link before kits leave the shop.

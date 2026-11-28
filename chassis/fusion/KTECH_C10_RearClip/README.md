@@ -164,7 +164,7 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 | `tube_h` / `arch_rail_h` | 5 / 4 in | Straight 2×5; 4 in tall over arch (1 in cut on ramps) |
 | `rail_bottom` / `rail_cl` | 3.5 / 16.0 in | Absolute ride height (cab match); 34 in OD |
 | `kick_start_x` / `cab_back` | expr / 45 | Rise starts at 74.5; FLAG 45 vs mount 43 |
-| `kickup_rise` / `kickup_top_rise` | 17 / expr | Bottom rise 17; top rise 16. Ride: bottom **20.5** / top **24.5**; laid out **17** / **21** |
+| `kickup_rise` / `kickup_top_rise` | 19 / expr | Bottom rise 19; top rise 18. Ride: bottom **22.5** / top **26.5**; laid out **19** / **23** |
 | `kickup_ahead` / `aft` / `ramp` | 7 / 7 / 3 | Stock hoop 109.5–123.5 bottom / 112.5–120.5 top |
 | `tire_od` | 27.5 in | 275/35/20 (was 32) |
 | `lower_link_y` | rail outboard + 0.75 in | PLACEHOLDER lateral (Fusion \|Z\|) — outboard lowers |
@@ -204,17 +204,19 @@ Anything invented for layout and not yet taped or vendor-confirmed is marked **P
 
 ## FLAG — arch / axle / tire clearance (2026-11-27)
 
-`kickup_rise = 17` with `arch_rail_h = 4` → arch underside **20.5** / top **24.5** at ride (`rail_bottom = 3.5`); laid out underside **17** / top **21**.
+`kickup_rise = 19` with `arch_rail_h = 4` → top rise **18** (`19+4-5`). Arch underside **22.5** / top **26.5** at ride (`rail_bottom = 3.5`); laid out underside **19** / top **23**.
 
-Stock tape: arch underside **23** off the floor and **8** above the axle imply an axle at **15**, which does **not** match the **13.75** tire radius on a **27.5** OD (275/35/20). The same **1.25** gap shows up as: 20.5 underside is **6.75** above a 13.75 axle CL (and **5.25** above a 3 in tube top at 15.25) — **not** 8. Do not close one tape to match the other.
+User decision: the rail **top** stays at stock height, so the 5 in rail bottom is **1 in higher** than stock (stock rail is 6 in). Stock aired-out (bag pancaked, 3 in housing) has **2 in** from the arch underside to the housing top. To keep that 2 in with the 5 in rail, the underside is **+1** (18 above our rail bottom), plus **1 more** for a roughly 29 in tire combo → **19** above our rear/cab rail bottom. Hoop **8/14** on the stock axle, kick start **74.5**, and frame end **152.5** are unchanged.
 
-In side view the rail will cross the 27.5 tire OD because the rails sit **inboard** of the tires; the relevant clearance is to the **axle / tube**, not the tire OD.
+At ride, 22.5 underside is **8.75** above a 13.75 axle CL (and **7.25** above a 3 in tube/housing top at 15.25). Laid out, 19 underside is **5.25** above the 13.75 CL (**3.75** above the 15.25 tube top). Side-view rail may still cross the tire OD because the rails sit **inboard** of the tires; the relevant clearance is to the **axle / housing**, not the tire OD.
+
+Record only (not used to size the arch): stock tape of underside **23** off the floor and **8** above the axle still implies an axle at **15**, which does not match the **13.75** tire radius on 275/35/20.
 
 Default `axle_setback = 0.5` puts the design rear axle **0.5 aft of hoop center** — still under the 8/14 hoop; hoop stays on the stock station.
 
 Rear bag: ~**9** nearly fully aired at the taped stance; probably ~**10** fully stretched. Record only — no invented bag-to-crossmember packaging.
 
-FLAG: FrontGeometry still locks a **29 in** 22×9 front package; both ends are specified here as 275/35/20 / 27.5 — confirm whether front matches.
+FrontGeometry tire is **27.5** (275/35/20, both ends); inner pivots and the front rail were not moved. The extra 1 in in the arch is for a roughly 29 in tire combo, not a change to the front package.
 
 ## Open items
 

@@ -84,7 +84,7 @@ Drawing file in the Fusion script folder: `wilwood-831-14202.png`.
 | Tube (cab/center) | 2 × 5 × 0.188" A500 (FLAG: was 2×6) |
 | Front clip at arms | Flat **5"** tall, 34" OD (`rail_cl = 16.0`), bottom 10.07 / top 15.07 at ride |
 | Nose | 28 × 4 in, 23° / 7 in kick, top ramps **5 in** (~35.5°), bottom **4 in** (~29.7°); nose top **10.07** / bottom **6.07** (vs stock core bottom 9.00 = −2.93); drop 6.57 x=8→20 finishes 9.5 in before `cab_f_x=29.5` |
-| Rear arch | `kickup_rise=17`, `arch_rail_h=4` → ride bottom **20.5** / top **24.5**; laid out **17** / **21**. Hoop on stock axle 109.5–123.5 / 112.5–120.5. FLAG: 15 vs 13.75 axle tape — see RearClip README |
+| Rear arch | `kickup_rise=19`, `arch_rail_h=4` → top rise **18**. Ride bottom **22.5** / top **26.5**; laid out **19** / **23**. Hoop on stock axle 109.5-123.5 / 112.5-120.5. Sized 19 above rail bottom (2 in to housing at pancake +1 for 5 in rail +1 for ~29 in tire). |
 | Clip overlap | 14" (legacy) / FrontClip slip 8" over 2×5 |
 | Clip plate | 0.188" |
 | Slip clearance | 0.030" per side |
@@ -209,9 +209,9 @@ Numbers live in `parameters.csv` and `mount_points.csv`. The `.py` script builds
 ## Next on the Fusion PC
 
 1. Hybrid + New Design + Run **KTECH_C10_Chassis_Setup**. Confirm six mount points.
-2. Cab stations from 2026-11-27 tapes (`cab_f_x=29.5`, `core_x=−25`); resolve FLAGs (54.5 vs 55, 45 vs 43, 15 vs 13.75).
+2. Cab stations from 2026-11-27 tapes (`cab_f_x=29.5`, `core_x=-25`); 45 in is the back cab wall (kick starts at 74.5). Remaining FLAG: 54.5 vs 55 core-to-cab.
 3. Model 831-14202 on SK_SIDE from `wilwood-831-14202.png`.
 4. Front clip C-socket + LCA inners at `front_axle_x`. Do not dogleg the 2×5.
-5. Rear 4-link at 22–24", arch rise 17 around 27.5" tire + bags.
+5. Rear 4-link at 22-24", arch rise 19 (underside 19 above the cab/rear rail bottom).
 
 This is a fabrication architecture, not a stamped chassis. FEA the splice, IFS pickups, and 4-link before kits leave the shop.
