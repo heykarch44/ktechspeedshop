@@ -93,7 +93,7 @@ import Footer from "../../components/Footer.astro";
       var items = window.KtechCart.read();
       if (!items.length) {
         root.innerHTML =
-          '<p class="lede">Your cart is empty.</p><p class="cart-actions"><a class="btn rust" href="/shop">Browse merch</a></p>';
+          '<p class="lede">Your cart is empty.</p><p class="cart-actions"><a class="btn rust" href="/shop/">Browse merch</a></p>';
         return;
       }
 
@@ -110,7 +110,7 @@ import Footer from "../../components/Footer.astro";
         root.innerHTML =
           '<p class="lede">' +
           (data.error || "Could not price cart.") +
-          '</p><p class="cart-actions"><a class="btn ghost" href="/shop">Back to shop</a></p>';
+          '</p><p class="cart-actions"><a class="btn ghost" href="/shop/">Back to shop</a></p>';
         return;
       }
 
@@ -152,7 +152,7 @@ import Footer from "../../components/Footer.astro";
         money(data.cart.total_cents) +
         "</strong></p>";
       html +=
-        '<div class="cart-actions"><a class="btn rust" href="/shop/checkout">Checkout</a><a class="btn ghost" href="/shop">Keep shopping</a></div>';
+        '<div class="cart-actions"><a class="btn rust" href="/shop/checkout/">Checkout</a><a class="btn ghost" href="/shop/">Keep shopping</a></div>';
       root.innerHTML = html;
 
       root.querySelectorAll("[data-qty]").forEach(function (input) {

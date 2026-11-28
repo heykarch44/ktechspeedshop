@@ -47,7 +47,7 @@ import Footer from "../../components/Footer.astro";
     var sessionId = (params.get("session_id") || "").trim();
     if (!sessionId) {
       root.innerHTML =
-        '<h1>Payment not completed</h1><p class="lede">No checkout session was found.</p><p><a class="btn rust" href="/shop/checkout">Back to checkout</a></p>';
+        '<h1>Payment not completed</h1><p class="lede">No checkout session was found.</p><p><a class="btn rust" href="/shop/checkout/">Back to checkout</a></p>';
       return;
     }
 
@@ -64,7 +64,7 @@ import Footer from "../../components/Footer.astro";
           root.innerHTML =
             '<h1>Could not confirm payment</h1><p class="lede">' +
             (data.error || "Try again from checkout.") +
-            '</p><p><a class="btn rust" href="/shop/checkout">Back to checkout</a></p>';
+            '</p><p><a class="btn rust" href="/shop/checkout/">Back to checkout</a></p>';
           return;
         }
 
@@ -88,24 +88,24 @@ import Footer from "../../components/Footer.astro";
             money(data.amount_total) +
             "</strong></p>" +
             "</div>" +
-            '<p style="margin-top:1.4rem"><a class="btn rust" href="/shop">Back to shop</a></p>';
+            '<p style="margin-top:1.4rem"><a class="btn rust" href="/shop/">Back to shop</a></p>';
           return;
         }
 
         if (data.status === "open") {
           root.innerHTML =
-            '<h1>Payment not completed</h1><p class="lede">Your checkout session is still open.</p><p><a class="btn rust" href="/shop/checkout">Back to checkout</a></p>';
+            '<h1>Payment not completed</h1><p class="lede">Your checkout session is still open.</p><p><a class="btn rust" href="/shop/checkout/">Back to checkout</a></p>';
           return;
         }
 
         root.innerHTML =
           "<h1>Payment status: " +
           (data.status || "unknown") +
-          '</h1><p class="lede">If you were charged, email shop@ktechspeedshop.com with your receipt.</p><p><a class="btn ghost" href="/shop">Back to shop</a></p>';
+          '</h1><p class="lede">If you were charged, email shop@ktechspeedshop.com with your receipt.</p><p><a class="btn ghost" href="/shop/">Back to shop</a></p>';
       })
       .catch(function () {
         root.innerHTML =
-          '<h1>Could not confirm payment</h1><p class="lede">Network error. Try again.</p><p><a class="btn rust" href="/shop/checkout">Back to checkout</a></p>';
+          '<h1>Could not confirm payment</h1><p class="lede">Network error. Try again.</p><p><a class="btn rust" href="/shop/checkout/">Back to checkout</a></p>';
       });
   })();
 </script>

@@ -104,7 +104,6 @@ h2,
   z-index: 40;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding: 0.85rem var(--pad);
   background: color-mix(in srgb, var(--bg) 82%, transparent);
@@ -116,6 +115,14 @@ h2,
   display: flex;
   flex-direction: column;
   line-height: 0.8;
+  margin-right: auto;
+}
+
+.header-end {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .wordmark strong {
@@ -387,9 +394,13 @@ h2,
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.7rem;
+  align-items: stretch;
 }
 
 .product {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--bg-2);
   border: 1px solid var(--line);
 }
@@ -402,7 +413,19 @@ h2,
 }
 
 .product-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   padding: 1rem 1.05rem 1.15rem;
+}
+
+.product-body > p:first-of-type {
+  flex: 1;
+}
+
+.merch-add {
+  margin-top: auto;
+  padding-top: 0.8rem;
 }
 
 .product-body h3 {

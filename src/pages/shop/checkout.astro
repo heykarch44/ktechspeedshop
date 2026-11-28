@@ -19,7 +19,7 @@ import Footer from "../../components/Footer.astro";
     <p class="fine" id="checkout-error" hidden></p>
     <div id="checkout-soon" class="checkout-soon" hidden>
       <p class="lede">Checkout opening soon. Payments are not connected yet.</p>
-      <p><a class="btn ghost" href="/shop">Back to shop</a></p>
+      <p><a class="btn ghost" href="/shop/">Back to shop</a></p>
     </div>
     <div id="checkout" class="stripe-embedded-checkout"></div>
   </main>
@@ -87,7 +87,7 @@ import Footer from "../../components/Footer.astro";
       var items = window.KtechCart ? window.KtechCart.read() : [];
       if (!items.length) {
         summary.innerHTML =
-          '<p class="lede">Your cart is empty.</p><p><a class="btn rust" href="/shop">Browse merch</a></p>';
+          '<p class="lede">Your cart is empty.</p><p><a class="btn rust" href="/shop/">Browse merch</a></p>';
         if (mountEl) mountEl.hidden = true;
         return false;
       }
@@ -125,7 +125,7 @@ import Footer from "../../components/Footer.astro";
         money(data.cart.shipping_cents) +
         "<br/><strong>Total " +
         money(data.cart.total_cents) +
-        '</strong></p><p><a href="/shop/cart">Edit cart</a></p>';
+        '</strong></p><p><a href="/shop/cart/">Edit cart</a></p>';
       summary.innerHTML = html;
       return true;
     }
@@ -152,7 +152,7 @@ import Footer from "../../components/Footer.astro";
     }
 
     function onComplete() {
-      var dest = "/shop/thanks";
+      var dest = "/shop/thanks/";
       if (sessionId) dest += "?session_id=" + encodeURIComponent(sessionId);
       window.location.href = dest;
     }

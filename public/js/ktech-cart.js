@@ -25,8 +25,13 @@
   }
 
   function write(items) {
-    localStorage.setItem(KEY, JSON.stringify(items));
-    window.dispatchEvent(new CustomEvent("ktech-cart-change"));
+    try {
+      localStorage.setItem(KEY, JSON.stringify(items));
+      window.dispatchEvent(new CustomEvent("ktech-cart-change"));
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   function count() {
@@ -47,7 +52,7 @@
       }
     }
     if (!found) items.push({ slug: slug, size: size, qty: qty });
-    write(items);
+    return write(items);
   }
 
   function setQty(slug, size, qty) {
@@ -59,11 +64,11 @@
       }
       return true;
     });
-    write(items);
+    return write(items);
   }
 
   function remove(slug, size) {
-    write(
+    return write(
       read().filter(function (row) {
         return !(row.slug === slug && row.size === size);
       }),
@@ -71,7 +76,7 @@
   }
 
   function clear() {
-    write([]);
+    return write([]);
   }
 
   window.KtechCart = {

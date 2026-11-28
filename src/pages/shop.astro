@@ -21,7 +21,7 @@ import { site } from "../data/site";
           Hats, tees, hoodies. Pick a size, add to cart, check out here. When a drop is gone, it is gone.
         </p>
       </div>
-      <a class="btn ghost" href="/shop/cart">View cart</a>
+      <a class="btn ghost" href="/shop/cart/">View cart</a>
     </div>
     <div class="product-grid" style="margin-top:2.2rem">
       {
@@ -53,7 +53,13 @@ import { site } from "../data/site";
                       </select>
                     </label>
                   ) : (
-                    <input type="hidden" name="size" value={item.sizes[0]} />
+                    <>
+                      <input type="hidden" name="size" value={item.sizes[0]} />
+                      <label class="merch-field">
+                        <span>Size</span>
+                        <span class="merch-size-static">{item.sizes[0]}</span>
+                      </label>
+                    </>
                   )}
                   <label class="merch-field">
                     <span>Qty</span>
@@ -61,7 +67,7 @@ import { site } from "../data/site";
                   </label>
                   <button class="btn rust" type="submit">Add to cart</button>
                 </form>
-                <p class="fine" data-add-msg hidden></p>
+                <p class="add-msg" data-add-msg aria-live="polite" hidden></p>
               </div>
             </article>
           );
@@ -75,6 +81,9 @@ import { site } from "../data/site";
       <a href={site.instagramUrl}>DM</a>.
     </p>
   </main>
+  <a class="shop-cart-pill" href="/shop/cart/" data-shop-cart-pill hidden>
+    Cart (<span data-shop-cart-count>0</span>) →
+  </a>
   <Footer />
 </Base>
 
@@ -91,7 +100,8 @@ import { site } from "../data/site";
     flex-wrap: wrap;
     gap: 0.7rem;
     align-items: end;
-    margin-top: 0.8rem;
+    margin-top: auto;
+    padding-top: 0.8rem;
   }
   .merch-field {
     display: flex;
@@ -104,13 +114,23 @@ import { site } from "../data/site";
     color: var(--paper-dim);
   }
   .merch-field select,
-  .merch-field input {
+  .merch-field input,
+  .merch-size-static {
     min-height: 2.6rem;
     min-width: 4.5rem;
     padding: 0.4rem 0.55rem;
     background: var(--bg-2);
     border: 1px solid var(--line);
     color: var(--paper);
+    box-sizing: border-box;
+  }
+  .merch-size-static {
+    display: inline-flex;
+    align-items: center;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: normal;
+    text-transform: none;
   }
   .fine {
     color: var(--muted);
@@ -121,25 +141,127 @@ import { site } from "../data/site";
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
+  .add-msg {
+    color: #d3541a;
+    font-size: 0.92rem;
+    margin: 0.55rem 0 0;
+  }
+  .add-msg a {
+    color: #d3541a;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .shop-cart-pill {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 35;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.65rem 0.95rem;
+    background: var(--rust);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid color-mix(in srgb, var(--rust) 70%, #000);
+    box-shadow: 0 8px 24px color-mix(in srgb, #000 45%, transparent);
+  }
+  .shop-cart-pill[hidden] {
+    display: none;
+  }
 </style>
 
 <script is:inline>
   (function () {
+    var cartScriptPromise = null;
+
+    function ensureCart() {
+      if (window.KtechCart) return Promise.resolve(window.KtechCart);
+      if (cartScriptPromise) return cartScriptPromise;
+      cartScriptPromise = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = "/js/ktech-cart.js";
+        s.onload = function () {
+          if (window.KtechCart) resolve(window.KtechCart);
+          else reject(new Error("KtechCart missing"));
+        };
+        s.onerror = function () {
+          reject(new Error("Failed to load cart"));
+        };
+        document.head.appendChild(s);
+      });
+      return cartScriptPromise;
+    }
+
+    function showMsg(msg, ok) {
+      if (!msg) return;
+      msg.hidden = false;
+      msg.replaceChildren();
+      if (!ok) {
+        msg.textContent =
+          "Could not save your cart. Turn off private browsing and try again.";
+        return;
+      }
+      msg.appendChild(document.createTextNode("Added to cart. "));
+      var link = document.createElement("a");
+      link.href = "/shop/cart/";
+      link.textContent = "View cart";
+      msg.appendChild(link);
+      msg.appendChild(document.createTextNode("."));
+    }
+
+    function handleAdd(form) {
+      var fd = new FormData(form);
+      var slug = String(fd.get("slug") || "");
+      var size = String(fd.get("size") || "");
+      var qty = Number(fd.get("qty") || 1);
+      var ok = window.KtechCart.add(slug, size, qty);
+      var btn = form.querySelector('button[type="submit"]');
+      var msg = form.parentElement && form.parentElement.querySelector("[data-add-msg]");
+      if (!ok) {
+        showMsg(msg, false);
+        return;
+      }
+      if (btn) {
+        var prev = btn.textContent;
+        btn.textContent = "Added ✓";
+        window.setTimeout(function () {
+          btn.textContent = prev;
+        }, 1500);
+      }
+      showMsg(msg, true);
+    }
+
     document.querySelectorAll("[data-add-form]").forEach(function (form) {
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        if (!window.KtechCart) return;
-        var fd = new FormData(form);
-        var slug = String(fd.get("slug") || "");
-        var size = String(fd.get("size") || "");
-        var qty = Number(fd.get("qty") || 1);
-        window.KtechCart.add(slug, size, qty);
-        var msg = form.parentElement && form.parentElement.querySelector("[data-add-msg]");
-        if (msg) {
-          msg.hidden = false;
-          msg.textContent = "Added to cart.";
-        }
+        ensureCart()
+          .then(function () {
+            handleAdd(form);
+          })
+          .catch(function () {
+            var msg = form.parentElement && form.parentElement.querySelector("[data-add-msg]");
+            showMsg(msg, false);
+          });
       });
+    });
+
+    function refreshShopPill() {
+      var pill = document.querySelector("[data-shop-cart-pill]");
+      var countEl = document.querySelector("[data-shop-cart-count]");
+      if (!pill || !countEl || !window.KtechCart) return;
+      var n = window.KtechCart.count();
+      countEl.textContent = String(n);
+      pill.hidden = n < 1;
+    }
+    refreshShopPill();
+    window.addEventListener("ktech-cart-change", refreshShopPill);
+    window.addEventListener("storage", function (e) {
+      if (e.key === "ktech_cart_v1") refreshShopPill();
     });
   })();
 </script>

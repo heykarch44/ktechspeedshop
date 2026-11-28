@@ -9,7 +9,6 @@ const path = Astro.url.pathname;
     <strong>K-TECH</strong>
     <span>SPEEDSHOP</span>
   </a>
-  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   <nav class="nav" id="nav">
     {
       nav.map((item) => (
@@ -18,16 +17,19 @@ const path = Astro.url.pathname;
         </a>
       ))
     }
+    <a class="nav-cta" href="/contact">Build inquiry</a>
+  </nav>
+  <div class="header-end">
     <a
       class="nav-cart"
-      href="/shop/cart"
+      href="/shop/cart/"
       aria-label="Cart"
       data-cart-link
     >
       Cart<span class="cart-badge" data-cart-badge hidden>0</span>
     </a>
-    <a class="nav-cta" href="/contact">Build inquiry</a>
-  </nav>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+  </div>
 </header>
 
 <script src="/js/ktech-cart.js" is:inline></script>
