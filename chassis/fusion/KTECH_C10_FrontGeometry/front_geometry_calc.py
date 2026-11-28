@@ -5,12 +5,13 @@
 # 2D front view, inches. z = lateral from vehicle centerline (+ = outboard),
 # y = height above ground. One side is computed; the other is a mirror.
 #
-# Design pose locked to 2026-11-25 box sketches (rail height update):
-#   29.0 OD tire, rail_cl 16.0 (34 in OD flat rail, no arch),
-#   LCA pivot (13.50, 8.07), UCA pivot (15.50, 17.88),
-#   UBJ (26.56, 19.04) / LBJ (28.10, 8.07) from Wilwood 831-14202 math,
-#   front rail 10.07–15.07 (5 in; was 6 / 16.07), hanging LCA 2 in below
-#   rail, ~2.81 in UCA tower, cab/center bottom 3.5 at design ride.
+# Design pose: inner pivots and rail locked to the 2026-11-25 package.
+#   Tire is now 27.5 OD (275/35/20, both ends; was 29.0 on 22x9).
+#   Hub at ride ~13.75 (was 14.50). Inner pivots were NOT moved:
+#   LCA (13.50, 8.07), UCA (15.50, 17.88), front rail 10.07–15.07.
+#   Wilwood 831-14202 BJ math is unchanged (relative to the hub).
+#   FLAG: with the 27.5 tire the lower arm is no longer level at ride;
+#   ride LBJ ~7.34 (was 8.07). Arm still clears the rail at ride and layout.
 
 import math
 
@@ -18,9 +19,9 @@ import math
 # "ESTIMATE" in a comment = not measured on the truck or not printed on a drawing.
 PARAMS = [
     # --- Tire / wheel --------------------------------------------------------
-    ("fg_tire_od", "29.0 in", "in", "LOCKED 22x9 package (hub height = OD/2 = 14.5). FLAG 2026-11-27: Chassis/RearClip lay-out is 27.5 (275/35/20) — do not alter this 29 in package here; confirm whether both ends match"),
-    ("fg_tire_w", "10.0 in", "in", "Section width ~10.0 in on 22x9"),
-    ("fg_wheel_dia", "22 in", "in", "Wheel diameter"),
+    ("fg_tire_od", "27.5 in", "in", "275/35/20 both ends (2026-11-27). Hub at ride = OD/2 ≈ 13.75 (was 29 in / 14.50 on 22x9). Inner pivots and rail were not moved."),
+    ("fg_tire_w", "10.83 in", "in", "275 mm section (275/35/20). Was 10.0 on the 22x9 package. FLAG: fender lip gap shrinks ~3.10 to ~2.69 if BS/offset stay."),
+    ("fg_wheel_dia", "20 in", "in", "275/35R20 wheel. Was 22. Width and backspace were not retaped (still fg_wheel_w=9 / fg_backspace=7)."),
     ("fg_wheel_w", "9 in", "in", "Wheel width (bead seat)"),
     ("fg_hub_y", "fg_tire_od / 2", "in", "Hub centerline above ground = tire OD / 2"),
     ("fg_backspace", "7.0 in", "in", "Wheel backspacing. 5.0 = zero offset on a 9 in wheel. 7.0 cuts scrub to ~1.6 in"),
@@ -53,7 +54,7 @@ PARAMS = [
     ("fg_cab_rail_bottom", "3.5 in", "in", "Cab/center section bottom at design ride (= fg_rh_design)"),
     ("fg_rail_cl", "16.0 in", "in", "Rail CL from vehicle CL through arms/engine (34 in OD). Literal — NOT core_width/2"),
     # --- Inner pivots (locked) + derived hang / tower -----------------------
-    ("fg_lca_pivot_y", "8.07 in", "in", "Lower inner pivot height (locked; = LBJ height, arm level at ride)"),
+    ("fg_lca_pivot_y", "8.07 in", "in", "LOCKED lower inner pivot height. Was = LBJ and level at the 29 in ride. With 27.5 tire, ride LBJ ~7.34 and the lower arm droops ~2.9 deg — pivot was not moved."),
     ("fg_lca_pivot_z", "13.50 in", "in", "Lower inner pivot from vehicle CL (locked)"),
     ("fg_uca_pivot_y", "17.88 in", "in", "Upper inner pivot height at design ride (locked; ~2.81 tower above rail top)"),
     ("fg_uca_pivot_z", "15.50 in", "in", "Upper inner pivot lateral off CL (locked; not rail_cl - tube_w/4)"),
@@ -95,7 +96,7 @@ def default_values():
 def design_geometry(v):
     """Points at design ride height. z outboard (+), y up. Inches.
 
-    With fg_tire_od=29 and Wilwood defaults, UBJ≈(26.56, 19.04), LBJ≈(28.10, 8.07).
+    Wilwood BJ math is relative to the hub. At the frozen 29 in hub 14.50, UBJ≈(26.56, 19.04), LBJ≈(28.10, 8.07). With fg_tire_od=27.5 the hub is 13.75; if this function is evaluated at that hub without a pose solve, BJ Y values drop 0.75. The locked inner pivots stay at 8.07 / 17.88 — do not re-derive them from the new LBJ.
     """
     k = math.radians(v["fg_kpi"])
     hub_y = v["fg_hub_y"]

@@ -37,7 +37,7 @@ tab_width,0.750,in,PLACEHOLDER. Tab width along plate edge
 tab_length,clip_t,in,Tab protrusion = mating plate thickness
 slot_clear,0.010,in,PLACEHOLDER. Laser slot oversize vs tab (freeze with coupon)
 tab_pitch,4.000,in,PLACEHOLDER. Center-to-center tab spacing along long edges
-tire_od,27.5,in,Lay-out tire OD — 275/35/20 (was 32). Axle CL ~13.75 off ground. FLAG: FrontGeometry still 29 in 22x9
+tire_od,27.5,in,Lay-out tire OD — 275/35/20 both ends (was 32). Axle CL ~13.75 off ground. FrontGeometry tire is 27.5; front inner pivots and rail were not moved.
 bag_stroke,11,in,Bag travel target
 kickup_ahead,7,in,Hoop bottom half ahead of STOCK rear axle (109.5 = 116.5−7). 14 wide at bottom with kickup_aft
 kickup_aft,7,in,Hoop bottom half aft of STOCK rear axle (123.5 = 116.5+7). Kick end / rcv_front. Top 8 wide via kickup_ramp=3

@@ -19,7 +19,7 @@ rear_overhang,36,in,TAPED 2026-11-27. From STOCK rear axle to frame end (was mea
 overlap,14,in,Front and rear clip socket length on the tube
 clip_t,0.188,in,Plate thickness for clips
 clip_clear,0.030,in,Per-side clearance in the C-socket
-tire_od,27.5,in,Lay-out tire OD — 275/35/20 (was 32). FLAG: FrontGeometry still locked at 29 in 22x9 package
+tire_od,27.5,in,Lay-out tire OD — 275/35/20 both ends (was 32 rear / 29 front). FrontGeometry tire is 27.5; inner pivots and rail were not moved.
 bag_stroke,11,in,Bag travel target
 spindle_drop,2.5,in,LOCKED. Wilwood ProSpindle 831-14202 2.5 drop 71-87. Same knuckle 67-87 with 73-87 BJs.
 bj_spread,9.06,in,Upper to lower BJ centers. From Wilwood drawing.

@@ -115,7 +115,7 @@ PARAM_ORDER = [
         "tire_od",
         "27.5 in",
         "in",
-        "Lay-out tire OD 275/35/20 (was 32). FLAG: FrontGeometry still 29 in 22x9",
+        "Lay-out tire OD 275/35/20 both ends (was 32 rear / 29 front). FrontGeometry tire is 27.5; inner pivots and rail were not moved",
     ),
     ("bag_stroke", "11 in", "in", "Bag travel target"),
     ("spindle_drop", "2.5 in", "in", "Wilwood 831-14202 2.5 drop. Locked."),
