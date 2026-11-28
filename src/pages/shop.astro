@@ -8,36 +8,138 @@ import { site } from "../data/site";
 
 <Base
   title="K-TECH Speedshop Merch"
-  description="K-TECH Speedshop hats, tees, hoodies, and K_tech merch. Order by Instagram DM or email. Sizes ship from the shop."
+  description="K-TECH Speedshop hats, tees, hoodies, and K_tech merch. Add to cart and checkout on-site. Sizes ship from the shop."
   image="/images/merch/trucker-print.png"
 >
   <Header />
   <main id="main" class="wrap page-hero">
-    <span class="kicker">Merch</span>
-    <h1>The uniform.</h1>
-    <p class="lede">
-      Hats, tees, hoodies. Order by Instagram or email with size. No fake 40-page store.
-      When a drop is gone, it is gone.
-    </p>
+    <div class="shop-head">
+      <div>
+        <span class="kicker">Merch</span>
+        <h1>The uniform.</h1>
+        <p class="lede">
+          Hats, tees, hoodies. Pick a size, add to cart, check out here. When a drop is gone, it is gone.
+        </p>
+      </div>
+      <a class="btn ghost" href="/shop/cart">View cart</a>
+    </div>
     <div class="product-grid" style="margin-top:2.2rem">
       {
-        merch.map((item) => (
-          <article class="product">
-            <img src={item.cover} alt={`${item.title} K-TECH Speedshop merch`} width="800" height="800" loading="lazy" />
-            <div class="product-body">
-              <h3>{item.title}</h3>
-              <p>{item.summary}</p>
-              <p>{item.sizes}</p>
-              <p class="price">{item.price}</p>
-              <div class="btn-row" style="margin-top:0.8rem">
-                <a class="btn rust" href={`mailto:${site.email}?subject=${encodeURIComponent("Merch: " + item.title)}`}>Email to buy</a>
-                <a class="btn ghost" href={site.instagramUrl}>DM to buy</a>
+        merch.map((item) => {
+          const oneSize = item.sizes.length === 1;
+          return (
+            <article class="product" data-merch-slug={item.slug}>
+              <img
+                src={item.cover}
+                alt={`${item.title} K-TECH Speedshop merch`}
+                width="800"
+                height="800"
+                loading="lazy"
+              />
+              <div class="product-body">
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+                <p class="fine">{oneSize ? item.sizes[0] : item.sizes.join(" · ")}</p>
+                <p class="price">{item.price}</p>
+                <form class="merch-add" data-add-form>
+                  <input type="hidden" name="slug" value={item.slug} />
+                  {!oneSize ? (
+                    <label class="merch-field">
+                      <span>Size</span>
+                      <select name="size" required>
+                        {item.sizes.map((size) => (
+                          <option value={size}>{size}</option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : (
+                    <input type="hidden" name="size" value={item.sizes[0]} />
+                  )}
+                  <label class="merch-field">
+                    <span>Qty</span>
+                    <input type="number" name="qty" min="1" max="99" value="1" required />
+                  </label>
+                  <button class="btn rust" type="submit">Add to cart</button>
+                </form>
+                <p class="fine" data-add-msg hidden></p>
               </div>
-            </div>
-          </article>
-        ))
+            </article>
+          );
+        })
       }
     </div>
+    <p class="fine" style="margin-top:2rem">
+      Questions?{" "}
+      <a href={`mailto:${site.email}?subject=${encodeURIComponent("Merch question")}`}>Email</a>
+      {" "}or{" "}
+      <a href={site.instagramUrl}>DM</a>.
+    </p>
   </main>
   <Footer />
 </Base>
+
+<style>
+  .shop-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .merch-add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    align-items: end;
+    margin-top: 0.8rem;
+  }
+  .merch-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+    color: var(--paper-dim);
+  }
+  .merch-field select,
+  .merch-field input {
+    min-height: 2.6rem;
+    min-width: 4.5rem;
+    padding: 0.4rem 0.55rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--paper);
+  }
+  .fine {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .fine a {
+    color: var(--paper-dim);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    document.querySelectorAll("[data-add-form]").forEach(function (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!window.KtechCart) return;
+        var fd = new FormData(form);
+        var slug = String(fd.get("slug") || "");
+        var size = String(fd.get("size") || "");
+        var qty = Number(fd.get("qty") || 1);
+        window.KtechCart.add(slug, size, qty);
+        var msg = form.parentElement && form.parentElement.querySelector("[data-add-msg]");
+        if (msg) {
+          msg.hidden = false;
+          msg.textContent = "Added to cart.";
+        }
+      });
+    });
+  })();
+</script>

@@ -8,6 +8,7 @@ type Props = {
   image?: string;
   canonical?: string;
   type?: "website" | "article";
+  noindex?: boolean;
 };
 
 const {
@@ -16,6 +17,7 @@ const {
   image = site.ogImage,
   canonical,
   type = "website",
+  noindex = false,
 } = Astro.props;
 
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.url).toString();
@@ -65,7 +67,10 @@ const schema = {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
-    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="robots"
+      content={noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large"}
+    />
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />

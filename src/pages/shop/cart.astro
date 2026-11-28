@@ -1,0 +1,178 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<Base
+  title="Cart"
+  description="Your K-TECH Speedshop merch cart."
+  noindex={true}
+>
+  <Header />
+  <main id="main" class="wrap page-hero">
+    <span class="kicker">Merch</span>
+    <h1>Cart</h1>
+    <div id="cart-root" class="cart-root">
+      <p class="lede">Loading cart…</p>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .cart-root {
+    margin-top: 1.6rem;
+    max-width: 42rem;
+  }
+  .cart-lines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .cart-lines li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.8rem 1.2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+  }
+  .cart-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: 0.45rem;
+  }
+  .cart-meta input {
+    width: 4rem;
+    min-height: 2.2rem;
+    padding: 0.3rem 0.4rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+  }
+  .cart-meta button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+  .cart-totals {
+    margin-top: 1.4rem;
+    color: var(--paper-dim);
+    line-height: 1.7;
+  }
+  .cart-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.4rem;
+  }
+  .fine {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var root = document.getElementById("cart-root");
+    if (!root || !window.KtechCart) return;
+
+    function money(cents) {
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+        cents / 100,
+      );
+    }
+
+    async function render() {
+      var items = window.KtechCart.read();
+      if (!items.length) {
+        root.innerHTML =
+          '<p class="lede">Your cart is empty.</p><p class="cart-actions"><a class="btn rust" href="/shop">Browse merch</a></p>';
+        return;
+      }
+
+      root.innerHTML = '<p class="lede">Pricing…</p>';
+      var res = await fetch("/api/cart/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: items }),
+      });
+      var data = await res.json().catch(function () {
+        return {};
+      });
+      if (!res.ok || !data.ok) {
+        root.innerHTML =
+          '<p class="lede">' +
+          (data.error || "Could not price cart.") +
+          '</p><p class="cart-actions"><a class="btn ghost" href="/shop">Back to shop</a></p>';
+        return;
+      }
+
+      var html = '<ul class="cart-lines">';
+      data.cart.items.forEach(function (item) {
+        html +=
+          "<li><div><strong>" +
+          item.title +
+          '</strong> <span class="fine">(' +
+          item.size +
+          ")</span>" +
+          '<div class="cart-meta">' +
+          '<label>Qty <input type="number" min="1" max="99" value="' +
+          item.qty +
+          '" data-slug="' +
+          item.slug +
+          '" data-size="' +
+          item.size +
+          '" data-qty /></label>' +
+          '<button type="button" data-remove data-slug="' +
+          item.slug +
+          '" data-size="' +
+          item.size +
+          '">Remove</button>' +
+          "</div></div><span>" +
+          money(item.line_cents) +
+          "</span></li>";
+      });
+      html += "</ul>";
+      html +=
+        '<p class="cart-totals">Subtotal ' +
+        money(data.cart.subtotal_cents) +
+        "<br/>Shipping " +
+        money(data.cart.shipping_cents) +
+        (data.cart.shipping_cents === 0 && data.cart.subtotal_cents > 0
+          ? ' <span class="fine">(free over $75)</span>'
+          : "") +
+        "<br/><strong>Total " +
+        money(data.cart.total_cents) +
+        "</strong></p>";
+      html +=
+        '<div class="cart-actions"><a class="btn rust" href="/shop/checkout">Checkout</a><a class="btn ghost" href="/shop">Keep shopping</a></div>';
+      root.innerHTML = html;
+
+      root.querySelectorAll("[data-qty]").forEach(function (input) {
+        input.addEventListener("change", function () {
+          window.KtechCart.setQty(
+            input.getAttribute("data-slug"),
+            input.getAttribute("data-size"),
+            input.value,
+          );
+          render();
+        });
+      });
+      root.querySelectorAll("[data-remove]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          window.KtechCart.remove(btn.getAttribute("data-slug"), btn.getAttribute("data-size"));
+          render();
+        });
+      });
+    }
+
+    render();
+  })();
+</script>

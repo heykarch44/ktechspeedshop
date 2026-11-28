@@ -18,10 +18,35 @@ const path = Astro.url.pathname;
         </a>
       ))
     }
+    <a
+      class="nav-cart"
+      href="/shop/cart"
+      aria-label="Cart"
+      data-cart-link
+    >
+      Cart<span class="cart-badge" data-cart-badge hidden>0</span>
+    </a>
     <a class="nav-cta" href="/contact">Build inquiry</a>
   </nav>
 </header>
 
+<script src="/js/ktech-cart.js" is:inline></script>
+<script is:inline>
+  (function () {
+    function refreshCartBadge() {
+      var badge = document.querySelector("[data-cart-badge]");
+      if (!badge || !window.KtechCart) return;
+      var n = window.KtechCart.count();
+      badge.textContent = String(n);
+      badge.hidden = n < 1;
+    }
+    refreshCartBadge();
+    window.addEventListener("ktech-cart-change", refreshCartBadge);
+    window.addEventListener("storage", function (e) {
+      if (e.key === "ktech_cart_v1") refreshCartBadge();
+    });
+  })();
+</script>
 <script>
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector("#nav");

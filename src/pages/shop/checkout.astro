@@ -1,0 +1,203 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<Base
+  title="Checkout"
+  description="Checkout for K-TECH Speedshop merch."
+  noindex={true}
+>
+  <Header />
+  <main id="main" class="wrap page-hero checkout-page">
+    <span class="kicker">Merch</span>
+    <h1>Checkout</h1>
+    <div id="checkout-summary" class="cart-summary">
+      <p class="lede">Loading cart…</p>
+    </div>
+    <p class="fine" id="checkout-error" hidden></p>
+    <div id="checkout-soon" class="checkout-soon" hidden>
+      <p class="lede">Checkout opening soon. Payments are not connected yet.</p>
+      <p><a class="btn ghost" href="/shop">Back to shop</a></p>
+    </div>
+    <div id="checkout" class="stripe-embedded-checkout"></div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .checkout-page {
+    max-width: 52rem;
+  }
+  .cart-summary {
+    margin: 1.2rem 0 1.6rem;
+    color: var(--paper-dim);
+  }
+  .cart-summary ul {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+  .cart-summary li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stripe-embedded-checkout {
+    margin-top: 1rem;
+    min-height: 12rem;
+    background: #f1e7d4;
+    color: #0b0a09;
+    padding: 0.5rem;
+  }
+  .fine {
+    color: var(--muted);
+  }
+  #checkout-error {
+    color: #e07a4a;
+    margin-bottom: 1rem;
+  }
+</style>
+
+<script src="https://js.stripe.com/endive/stripe.js" is:inline></script>
+<script is:inline>
+  (function () {
+    var summary = document.getElementById("checkout-summary");
+    var errorEl = document.getElementById("checkout-error");
+    var mountEl = document.getElementById("checkout");
+    var soonEl = document.getElementById("checkout-soon");
+    var sessionId = null;
+
+    function money(cents) {
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+        cents / 100,
+      );
+    }
+
+    function showError(msg) {
+      if (!errorEl) return;
+      errorEl.hidden = false;
+      errorEl.textContent = msg || "Checkout failed.";
+    }
+
+    async function renderSummary() {
+      var items = window.KtechCart ? window.KtechCart.read() : [];
+      if (!items.length) {
+        summary.innerHTML =
+          '<p class="lede">Your cart is empty.</p><p><a class="btn rust" href="/shop">Browse merch</a></p>';
+        if (mountEl) mountEl.hidden = true;
+        return false;
+      }
+      var res = await fetch("/api/cart/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: items }),
+      });
+      var data = await res.json().catch(function () {
+        return {};
+      });
+      if (!res.ok || !data.ok) {
+        summary.innerHTML = '<p class="lede">' + (data.error || "Could not price cart.") + "</p>";
+        if (mountEl) mountEl.hidden = true;
+        return false;
+      }
+      var html = "<ul>";
+      data.cart.items.forEach(function (item) {
+        html +=
+          "<li><span><strong>" +
+          item.title +
+          "</strong> (" +
+          item.size +
+          ") × " +
+          item.qty +
+          "</span><span>" +
+          money(item.line_cents) +
+          "</span></li>";
+      });
+      html += "</ul>";
+      html +=
+        "<p>Subtotal " +
+        money(data.cart.subtotal_cents) +
+        "<br/>Shipping " +
+        money(data.cart.shipping_cents) +
+        "<br/><strong>Total " +
+        money(data.cart.total_cents) +
+        '</strong></p><p><a href="/shop/cart">Edit cart</a></p>';
+      summary.innerHTML = html;
+      return true;
+    }
+
+    async function fetchClientSecret() {
+      var res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: window.KtechCart.read() }),
+      });
+      var data = await res.json().catch(function () {
+        return {};
+      });
+      if (res.status === 503) {
+        if (soonEl) soonEl.hidden = false;
+        if (mountEl) mountEl.hidden = true;
+        throw new Error(data.error || "Checkout opening soon. Payments are not connected yet.");
+      }
+      if (!res.ok || !data.clientSecret) {
+        throw new Error(data.error || "Checkout failed.");
+      }
+      sessionId = data.id || null;
+      return data.clientSecret;
+    }
+
+    function onComplete() {
+      var dest = "/shop/thanks";
+      if (sessionId) dest += "?session_id=" + encodeURIComponent(sessionId);
+      window.location.href = dest;
+    }
+
+    async function mountCheckout(publishableKey) {
+      if (typeof Stripe !== "function") {
+        throw new Error("Stripe.js failed to load.");
+      }
+      var stripe = Stripe(publishableKey);
+      var checkout;
+      if (typeof stripe.createEmbeddedCheckoutPage === "function") {
+        checkout = await stripe.createEmbeddedCheckoutPage({
+          fetchClientSecret: fetchClientSecret,
+          onComplete: onComplete,
+        });
+      } else if (typeof stripe.initEmbeddedCheckout === "function") {
+        checkout = await stripe.initEmbeddedCheckout({
+          fetchClientSecret: fetchClientSecret,
+          onComplete: onComplete,
+        });
+      } else {
+        throw new Error("Embedded Checkout is not available in this Stripe.js build.");
+      }
+      checkout.mount("#checkout");
+    }
+
+    (async function () {
+      var ok = await renderSummary();
+      if (!ok) return;
+
+      var cfgRes = await fetch("/api/config");
+      var cfg = await cfgRes.json().catch(function () {
+        return {};
+      });
+      if (!cfg.publishableKey) {
+        if (soonEl) soonEl.hidden = false;
+        if (mountEl) mountEl.hidden = true;
+        return;
+      }
+
+      try {
+        await mountCheckout(cfg.publishableKey);
+      } catch (err) {
+        showError(err && err.message ? err.message : "Checkout failed.");
+      }
+    })();
+  })();
+</script>

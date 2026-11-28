@@ -47,10 +47,18 @@ export type Merch = {
   slug: string;
   title: string;
   price: string;
+  priceCents: number;
   cover: string;
   summary: string;
-  sizes?: string;
+  /** Available size labels; hats use ["One size"]. */
+  sizes: string[];
+  /** Extra cents by size label (e.g. 2XL +200, 3XL +300). */
+  sizeDeltaCents?: Record<string, number>;
 };
+
+/** Apparel sizes with upsizing surcharges. */
+const APPAREL_SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
+const APPAREL_SIZE_DELTA: Record<string, number> = { "2XL": 200, "3XL": 300 };
 
 export const builds: Build[] = [
   {
@@ -328,43 +336,58 @@ export const merch: Merch[] = [
     slug: "ktech-trucker",
     title: "K-TECH trucker",
     price: "$32",
+    priceCents: 3200,
     cover: "/images/merch/trucker-print.png",
     summary: "Foam-front mesh trucker, flat bill. Printed K-TECH on the front, SPEEDSHOP under it and to the right.",
-    sizes: "One size",
+    sizes: ["One size"],
   },
   {
     slug: "speedshop-tee",
     title: "K-TECH tee",
     price: "$28",
+    priceCents: 2800,
     cover: "/images/merch/tee-c10.png",
     summary: "Heavyweight black tee. K-TECH SPEEDSHOP and a slammed C10 on the chest.",
-    sizes: "S–XXL",
+    sizes: APPAREL_SIZES,
+    sizeDeltaCents: APPAREL_SIZE_DELTA,
   },
   {
     slug: "shop-hoodie",
     title: "K-TECH hoodie",
     price: "$58",
+    priceCents: 5800,
     cover: "/images/merch/hoodie-original.png",
     summary: "Right-leaning rust K-TECH SPEEDSHOP. The hoodie you wear in the bay when the heater is lying.",
-    sizes: "S–XXL",
+    sizes: APPAREL_SIZES,
+    sizeDeltaCents: APPAREL_SIZE_DELTA,
   },
   {
     slug: "tech-tee",
     title: "Tech tee",
     price: "$28",
+    priceCents: 2800,
     cover: "/images/merch/tech-tee.png",
     summary: "K_tech SPEEDSHOP on the chest. The tech side of the shop.",
-    sizes: "S–XXL",
+    sizes: APPAREL_SIZES,
+    sizeDeltaCents: APPAREL_SIZE_DELTA,
   },
   {
     slug: "tech-sweatshirt",
     title: "Tech sweatshirt",
     price: "$48",
+    priceCents: 4800,
     cover: "/images/merch/tech-sweatshirt.png",
     summary: "Crewneck. K_tech SPEEDSHOP on the chest.",
-    sizes: "S–XXL",
+    sizes: APPAREL_SIZES,
+    sizeDeltaCents: APPAREL_SIZE_DELTA,
   },
 ];
+
+/** Unit price in cents for a catalog merch item + size. */
+export function merchUnitCents(item: Merch, size: string): number {
+  const delta = item.sizeDeltaCents?.[size] ?? 0;
+  return Math.max(0, item.priceCents + delta);
+}
 
 export function getBuild(slug: string) {
   return builds.find((item) => item.slug === slug);

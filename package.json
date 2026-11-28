@@ -10,13 +10,17 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler pages deploy dist --project-name=ktechspeedshop"
+    "deploy": "astro build && wrangler pages deploy dist --project-name=ktechspeedshop",
+    "test:merch": "npx tsx --test functions/_lib/*.test.ts",
+    "typecheck:functions": "npx tsc --noEmit -p functions"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.4.2",
     "astro": "^5.13.2"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261128.1",
+    "tsx": "^4.23.15",
     "wrangler": "^4.28.0"
   }
 }

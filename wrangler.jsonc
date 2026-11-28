@@ -1,4 +1,13 @@
 {
   "name": "ktechspeedshop",
-  "pages_build_output_dir": "./dist"
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-11-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ktechspeedshop",
+      "database_id": "6cf02b21-e231-4040-a123-ca939709a7d8",
+      "migrations_dir": "migrations"
+    }
+  ]
 }
